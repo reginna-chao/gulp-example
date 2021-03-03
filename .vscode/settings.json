@@ -1,0 +1,14 @@
+{
+	// stylelint配置
+	"stylelint.enable": true,
+	"css.validate": false,
+	"less.validate": false,
+	"scss.validate": false,
+	"[scss]": {
+	  "editor.formatOnSave": true
+	},
+
+	// 文件最後會留一行
+	// ※因為prettier無法設定，只找到使用vscode的方式
+	"files.insertFinalNewline": true,
+}

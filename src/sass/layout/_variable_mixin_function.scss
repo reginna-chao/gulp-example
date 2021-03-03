@@ -1,0 +1,127 @@
+// 說明 (完整說明見) src/sass/style.sass
+//	* 此檔案包含：通用於所有SCSS/SASS變數檔案
+//      - 變數、mixin、function
+//      - 所有單元都建議須要載入之樣式
+//      - 避免寫實際的樣式於該檔案內（包含檔案內 @import 之其它檔案）
+
+@charset 'utf-8';
+// --------------------------------------------------------
+// Vendor
+// --------------------------------------------------------
+@import '../vendor/font/icons'; // 載入Icon Font 變數
+
+
+
+// --------------------------------------------------------
+// Variable
+// --------------------------------------------------------
+$primary-color: #f46404; // Foundation 主顏色變數
+$white: #fff;
+$black: #000;
+
+
+// --------------------------------------------------------
+// Mixin
+// --------------------------------------------------------
+
+// Flex
+@mixin fc($justify, $align) {
+	display: flex;
+	@if $justify {
+		justify-content: $justify;
+	}
+	@if $align {
+		align-items: $align;
+	}
+}
+
+// 遵循BEM的規則，於class增加tag（僅限於單層方式，多層不適用）
+// 可使用（單層）： .component__link => a.component__link
+// 不適用（多層）： .component .component__link => .component a.component__link
+@mixin bem-tag($tag: 'a') {
+	$current: &;
+
+	@at-root #{$tag}#{$current} {
+		@content;
+	}
+}
+
+// 使用 ::before 的 padding-top 撐高度
+@mixin before-img-size($width: 1, $height: 1, $build-other: true) {
+	@if $build-other {
+		content: '';
+		display: block;
+	}
+
+	padding-top: percentage($height / $width);
+}
+
+
+// ---------------------------------------- [START] Media Query 相關
+// Hover Media Query (使用 Foundation Mixin)
+@mixin breakpoint-hover($hover-enable: true) {
+	@if $hover-enable {
+		@media screen and (min-width: 75rem) {
+			@content;
+		}
+	} @else {
+		@media screen and (max-width: 74.9375rem) {
+			@content;
+		}
+	}
+}
+
+// Breakpoint Between (使用 Foundation Mixin)
+@mixin breakpoint-between($start, $end) {
+	@media screen and (min-width: $start) and (max-width: $end) {
+		@content;
+	}
+}
+// ---------------------------------------- [END] Media Query 相關
+
+
+
+// ---------------------------------------- [START] Animation Set
+@mixin set-animate($animateEl) {
+	@each $class in $animateEl {
+		$i: index($animateEl, $class);
+		$i: $i;
+
+		#{$class} {
+			opacity: 0;
+			transform: translateY(50px);
+			transition-duration: 1s;
+			transition-property: opacity, transform;
+			transition-delay: #{$i * 0.3s};
+		}
+	}
+}
+
+@mixin set-animated($animateEl) {
+	@each $class in $animateEl {
+		#{$class} {
+			opacity: 1;
+			transform: none;
+		}
+	}
+}
+
+@mixin set-animate-flow($animateEl) {
+	&.js-ani {
+		@include set-animate($animateEl);
+
+		&.is-animated {
+			@include set-animated($animateEl);
+		}
+	}
+}
+// ---------------------------------------- [END] Animation Set
+
+
+
+
+
+
+// --------------------------------------------------------
+// Function
+// --------------------------------------------------------

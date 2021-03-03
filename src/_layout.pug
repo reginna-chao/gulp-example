@@ -1,0 +1,97 @@
+include _mixin
+block vars
+	//- 頁面標題、敘述
+	- var title= ''
+	- var description= ''
+doctype html
+html.no-js(lang='zh-Hant-TW')
+	head
+		// [START] 測試站防止被爬蟲搜尋
+		//
+			上線後刪除此段Meta與註解
+			參考文件：https://developers.google.com/search/reference/robots_meta_tag?hl=zh-tw
+		meta(name="robots" content="noindex, nofollow,noarchive,nosnippet,noimageindex,noodp")
+		// [END] 測試站防止被爬蟲搜尋
+
+
+		meta(charset='utf-8')
+		meta(http-equiv='x-ua-compatible', content='ie=edge')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=3.0')
+		//- ↓停止自動產生電話(tel:)連結
+		meta(name="format-detection" content="telephone=no")
+		//- ↓Mobile Browser Color
+		meta(name="theme-color" content="#000000")
+		title #{title}專案名稱
+		link(rel="shortcut icon" type="image/x-icon" href="images/favicon.ico")
+		link(rel="apple-touch-icon" href="images/touch-icon.png")
+
+
+		// [START] SEO Setting
+		block seo
+			// 
+				<meta name="keywords" content="關鍵字設定">
+				<meta name="description" content="頁面敘述">
+				<meta property="og:title" content="頁面標題">
+				<meta property="og:description" content="頁面敘述">
+				<meta property="og:url" content="頁面連結">
+				<meta property="og:image" content="網頁代表圖FB使用600x314 ">
+				<meta property="og:locate" content="zh_tw">
+				<meta name="twitter:site" content="@sonytaiwan">
+				<meta name="twitter:title" content="頁面標題">
+				<meta name="twitter:description" content="頁面敘述">
+				<meta name="twitter:image" content="網頁代表圖">
+		// [END] SEO Setting
+
+
+		//- 預先和指定的 Domain 連線（避免要載過多的資源）
+		// [START] preconnect
+		link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+		//- link(rel="preconnect" href="https://www.google-analytics.com" crossorigin)
+		// [END] preconnect
+
+
+		// [START] preload
+		link(rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap")
+		//- link(rel="preload" as="font" crossorigin="anonymous" type="font/woff2" href="fonts/icons/icon.woff2")
+		// [END] preload
+
+
+		// [START] Web Font
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap" media="print" onload="this.media='all'")
+		noscript: link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap")
+		// [END] Web Font
+
+
+		// [START] CSS
+		// CSS - Common
+		link(rel="stylesheet", href="css/style.min.css")
+
+		// CSS - Page
+		block style
+		// [END] CSS
+	body
+		include _header
+		main.main-wrapper
+			block content 
+		include _footer
+
+		// [START] JS
+		// JS - Common
+		script(src="js/vendor/jquery-3.5.1.min.js")
+		//- --------------------------------------- [START] Global Plugin
+		// build:js js/lib.min.js async
+		//- script(src="js/vendor/webfontloader.min.js" async)
+		script(src="js/vendor/javascript.easeScroll.min.js" async)
+		script(src="js/vendor/lazyload.js" async)
+		// endbuild
+		//- --------------------------------------- [END] Global Plugin
+		//- --------------------------------------- [START] Project Script
+		// build:js js/all.min.js defer
+		script(src="js/_all_function.js" defer)
+		script(src="js/_all_main.js" defer)
+		// endbuild
+		//- --------------------------------------- [END] Project Script
+
+		// JS - Page
+		block script
+		// [END] JS

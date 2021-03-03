@@ -1,0 +1,20 @@
+//- ---------------------------------------- [START] TAG
+//- 使用方法：
+//- +tag(tagName)(class="" ...otherAttributes)
+mixin tag(tag)
+	case tag
+		when 'a': a&attributes(attributes): block
+		when 'ul': ul&attributes(attributes): block
+		when 'ol': ol&attributes(attributes): block
+		when 'li': li&attributes(attributes): block
+		when 'strong': strong&attributes(attributes): block
+		when 'span': span&attributes(attributes): block
+		when 'h1': h1&attributes(attributes): block
+		when 'h2': h2&attributes(attributes): block
+		when 'h3': h3&attributes(attributes): block
+		when 'h4': h4&attributes(attributes): block
+		when 'h5': h5&attributes(attributes): block
+		when 'h6': h6&attributes(attributes): block
+		when 'p': p&attributes(attributes): block
+		default: div&attributes(attributes): block
+//- ---------------------------------------- [END] TAG

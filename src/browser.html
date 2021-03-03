@@ -1,0 +1,110 @@
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hant-TW">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>瀏覽器錯誤 | 專案名稱</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico" />
+	<link rel="apple-touch-icon" href="images/touch-icon.png">
+	<style>
+		body {
+			background: #e7e7e7;
+			font-family: 微軟正黑體, "Microsoft JhengHei", Arial, sans-serif;
+		}
+
+		.alert-box {
+			border-style: solid;
+			border-width: 1px;
+			display: block;
+			font-weight: normal;
+			margin: 100px auto 0 auto;
+			position: relative;
+			padding: 30px;
+			font-size: 15px;
+			transition: opacity 300ms ease-out;
+			background-color: #ffffff;
+			border-color: #d6d6d6;
+			color: #052e2d;
+			clear: both;
+			overflow: hidden;
+			max-width: 700px;
+		}
+
+		.alert-box h5 {
+			font-family: inherit;
+			font-weight: 700;
+			font-size: 1.125em;
+			line-height: 1.5;
+			margin-bottom: 20px;
+		}
+
+		.alert-box p {
+			font-family: inherit;
+			font-weight: normal;
+			font-size: 1em;
+			line-height: 1.5;
+			margin-bottom: 20px;
+		}
+
+		.browser-list {
+			width: 80%;
+			padding: 0;
+			margin: 30px auto 30px auto;
+		}
+
+		.browser-list li {
+			width: 25%;
+			float: left;
+		}
+
+		.browser-list li a {
+			outline: 0;
+			display: block;
+		}
+
+		.browser-list li a:hover {
+			/* IE 8 */
+			zoom: 1;
+			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+			/* IE 5-7 */
+			filter: alpha(opacity=50);
+			/* Netscape */
+			-moz-opacity: 0.5;
+			/* Safari 1.x */
+			-khtml-opacity: 0.5;
+			/* Good browsers */
+			opacity: 0.5;
+		}
+
+		.browser-list li img {
+			max-width: 100%;
+		}
+
+		.no-bullet {
+			list-style: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="alert-box">
+		<h5>哎呀！看起來你的網頁瀏覽器已經過時了～ </h5>
+		<p>也許你不知道，但你使用的是過時版本的 Internet Explorer。<br> 請升級您的瀏覽器到最新版本。您也可以使用我們推薦的其他瀏覽器。</p>
+		<p>我們強烈建議您使用支援的瀏覽器以獲得最佳性能： <br>以下為推薦的瀏覽器：</p>
+		<ul class="browser-list no-bullet">
+			<!-- IE -->
+			<!-- <li><a href="http://www.microsoft.com/en-us/download/internet-explorer.aspx" target="_blank" rel="noopener noreferrer"><img src="/images/browser/internet-explorer.png" alt="IE" border="0"></a></li> -->
+			<!-- Edge -->
+			<li><a href="https://www.microsoft.com/edge" target="_blank" rel="noopener noreferrer"><img src="images/browser/edge.png" alt="IE" border="0"></a></li>
+			<!-- Chrome -->
+			<li><a href="https://www.google.com/intl/en/chrome/browser/desktop/" target="_blank" rel="noopener noreferrer"><img src="images/browser/chrome.png" alt="Chrome" border="0"></a></li>
+			<!-- Firefox -->
+			<li><a href="https://www.mozilla.org/en-US/firefox/new/" target="_blank" rel="noopener noreferrer"><img src="images/browser/firefox.png" alt="Firefox" border="0"></a></li>
+			<!-- Safari -->
+			<li><a href="http://www.apple.com/safari/" target="_blank" rel="noopener noreferrer"><img src="images/browser/safari.png" alt="Safari" border="0"></a></li>
+		</ul>
+	</div>
+</body>
+
+</html>

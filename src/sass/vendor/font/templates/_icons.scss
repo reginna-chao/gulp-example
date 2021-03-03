@@ -1,0 +1,95 @@
+@mixin font-icon {
+	@font-face {
+		font-family: "<%= fontName %>";
+		src: url('<%= fontPath %><%= fontName %>.eot?<%= fontDate %>');
+		src: url('<%= fontPath %><%= fontName %>.eot?#iefix-<%= fontDate %>') format('embedded-opentype'),
+		url('<%= fontPath %><%= fontName %>.woff2?<%= fontDate %>') format('woff2'),
+		url('<%= fontPath %><%= fontName %>.woff?<%= fontDate %>') format('woff'),
+		url('<%= fontPath %><%= fontName %>.ttf?<%= fontDate %>') format('truetype'),
+		url('<%= fontPath %><%= fontName %>.svg?<%= fontDate %>#<%= fontName %>') format('svg');
+		font-display: block;
+		unicode-range: U+<%= glyphs[0].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>-<%= glyphs[glyphs.length-1].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>;
+	}
+
+	.<%= cssClass%>:before {
+		@include font-icon-style;
+	}
+	
+	/* Glyphs list */
+	<% _.each(glyphs, function(icon){ %>
+	.<%= cssClass%>-<%= icon.name %>:before {
+		content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+	}
+	<% }) %>
+}
+
+// <i>:before Style
+@mixin font-icon-style {
+	font-family: "<%= fontName %>";
+	
+	// Font smoothing. That was taken from TWBS
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	font-style: normal;
+	font-weight: normal;
+
+	// For safety - reset parent styles, that can break glyph codes
+	font-variant: normal;
+	text-transform: none;
+	text-decoration: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	// only necessary if not using the private unicode range (firstGlyph option)
+	speak: none;
+
+	display: inline-block;
+	text-decoration: inherit;
+	width: 1em;
+	margin-right: .2em;
+	text-align: center;
+
+	// fix buttons height, for twitter bootstrap
+	line-height: 1em;
+
+	// Animation center compensation - margins should be symmetric
+	// remove if not needed
+	margin-left: .2em;
+
+	// you can be more comfortable with increased icons size
+	// font-size: 120%;
+
+	// Uncomment for 3D effect
+	// text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3);
+}
+
+// @include font-icon;
+
+// SASS變數使用範例
+// .icon {
+//     &:before{
+// 		@include font-icon-SVG檔案名稱;
+//     }
+// }
+
+// 內頁使用之Style
+%font-icon-style {
+	@include font-icon-style;
+}
+
+<% _.each(glyphs, function(icon){ %>
+$font-icon-<%= icon.name %>: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+@mixin font-icon-<%=icon.name %>($extendStyle: true) {
+	content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+	
+	@if $extendStyle==true {
+		@extend %font-icon-style;
+	}
+
+	@else {
+		font-family: "<%= fontName %>";
+	}
+}
+<% }) %>

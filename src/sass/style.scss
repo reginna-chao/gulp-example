@@ -1,0 +1,63 @@
+// 本專案已啟用 stylelint （統一SCSS）與 sass-lint（統一SASS）
+// 使用 VSCode 建議安裝套件
+// stylelint: https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint
+// Sass Lint: https://marketplace.visualstudio.com/items?itemName=glen-84.sass-lint
+
+// --------------------------------------------------------
+
+// 說明
+//	* sass/layout/_variable_mixin_function.scss：通用於所有SCSS/SASS變數檔案
+//      - 變數、mixin、fuction
+//      - 所有單元都建議須要載入之樣式
+//      - 避免寫實際的樣式於該檔案內（包含檔案內 @import 之其它檔案）
+//	* sass/layout/_layout.sass：Layout樣式 Loader、Header、Footer
+//	* sass/layout/_common.sass：內頁共用元件
+//		- HTML Tag
+//		- 表單(Form)相關元件
+//		- 修改Foundation元件/修改套件
+//		- keyframes
+//		- 要跨單元使用的放在此檔案
+//	* 每個單元只開一個css(如果有sass、scss檔案綜合的單元)，需統一 import 到一個檔案上（要寫註解）
+//	* Foundation大部分的元件沒有載入
+//		- 請見sass/foundation/_foundation.scss 後半部 @mixin foundation-everything後
+//		- 需要載入請開啟註解的 @include
+
+// --------------------------------------------------------
+// Main Style
+// --------------------------------------------------------
+@import 'layout/variable_mixin_function';
+
+
+
+// --------------------------------------------------------
+// Font
+// --------------------------------------------------------
+@import 'layout/font';
+
+
+
+// --------------------------------------------------------
+
+/* Icon */
+// "layout/main_style" 已 import "../vendor/font/icons";
+// @import "vendor/font/icons"; // 載入Icon Font 變數
+@include font-icon;
+
+
+
+// --------------------------------------------------------
+
+/* Framework */
+
+// --------------------------------------------------------
+
+/* Vendor */
+
+// --------------------------------------------------------
+/* Project Style */
+
+/* Common Style */
+@import 'layout/common';
+
+/* Layout Style */
+@import 'layout/layout';

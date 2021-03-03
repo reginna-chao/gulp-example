@@ -1,0 +1,6 @@
+{
+	"presets": ["@babel/preset-env"],
+	"plugins": ["transform-class-properties"],
+	"sourceType": "script", // 取消use strict 模式
+	"retainLines": true // 保留原本的程式排版（因為編譯後的註解會被換行或更改，沒有其他替代方案先使用這個）
+}

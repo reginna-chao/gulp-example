@@ -1,0 +1,25 @@
+extends _layout
+block append vars
+	- var title= ''
+	//- - var description= ''
+
+block style
+	link(rel="stylesheet", href="css/index.min.css")
+	
+block script
+	//- script(src="js/index.min.js" defer)
+
+//- -------------------------------------------
+//- [START] Mixin區塊
+//- * 所在頁面使用的Mixin一定置放於最前端(mixin前方不可有多餘的Tab與space)
+//- * 共用的Mixin請放置於 _mixin.pug 檔案中
+//- * Mixin帶入的變數規則要寫註解
+//- ----------
+//- mixin使用標題
+//- +conceptItem(標題, 圖)
+//- mixin conceptItem(title, img)
+//- [END] Mixin區塊	
+//- -------------------------------------------
+
+block content
+	p 內容
