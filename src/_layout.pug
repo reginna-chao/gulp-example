@@ -13,7 +13,6 @@ html.no-js(lang='zh-Hant-TW')
 		meta(name="robots" content="noindex, nofollow,noarchive,nosnippet,noimageindex,noodp")
 		// [END] 測試站防止被爬蟲搜尋
 
-
 		meta(charset='utf-8')
 		meta(http-equiv='x-ua-compatible', content='ie=edge')
 		meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=3.0')
@@ -36,7 +35,9 @@ html.no-js(lang='zh-Hant-TW')
 				<meta property="og:url" content="頁面連結">
 				<meta property="og:image" content="網頁代表圖FB使用600x314 ">
 				<meta property="og:locate" content="zh_tw">
-				<meta name="twitter:site" content="@sonytaiwan">
+				<meta name="twitter:card" content="使用[summary|summary_large_image|app|player]其一">
+				<meta name="twitter:site" content="@TwitterUsername">
+				<meta name="twitter:creator" content="@AuthorTwitterUsername">
 				<meta name="twitter:title" content="頁面標題">
 				<meta name="twitter:description" content="頁面敘述">
 				<meta name="twitter:image" content="網頁代表圖">
@@ -62,20 +63,22 @@ html.no-js(lang='zh-Hant-TW')
 		// [END] Web Font
 
 
-		// [START] CSS
+		// [START] CSS ==================================================
 		// CSS - Common
 		link(rel="stylesheet", href="css/style.min.css")
 
 		// CSS - Page
 		block style
-		// [END] CSS
+		// [END] CSS ==================================================
 	body
 		include _header
+		// [START] Content ==================================================
 		main.main-wrapper
 			block content 
+		// [END] Content ==================================================
 		include _footer
 
-		// [START] JS
+		// [START] JS ==================================================
 		// JS - Common
 		script(src="js/vendor/jquery-3.5.1.min.js")
 		//- --------------------------------------- [START] Global Plugin
@@ -94,4 +97,4 @@ html.no-js(lang='zh-Hant-TW')
 
 		// JS - Page
 		block script
-		// [END] JS
+		// [END] JS ==================================================
