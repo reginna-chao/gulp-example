@@ -2,6 +2,7 @@
 const { src, dest, watch, series, parallel } = require('gulp');
 const browserSync = require('browser-sync').create(), // 建立同步虛擬伺服器
   // Tool
+  fs = require('fs'),
   del = require('del'), // 清除檔案
   through = require('through2'), // 處理通過後的檔案
   pipe = require('multipipe'),
@@ -38,8 +39,24 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   iconfont = require('gulp-iconfont'), // [ICON FONT] 編譯font檔案
   consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
 
-// font icon function
+// [font icon] function
 const fontName = 'icon', fontClassName = 'be-icon';
+
+// [font icon] 先建立空值檔案，避免一開始有錯誤，之後會被蓋過
+function iconFontCreateEmptyFile(cb) {
+  if (isDirEmpty('src/images/font_svg')) {
+    // isEmpty
+    cb();
+  } else {
+    fs.writeFile('src/sass/vendor/font/_icons.scss', '/* Empty */ @mixin font-icon {}', cb);
+  }
+}
+// 確認該資料夾內是否有物件
+function isDirEmpty(path) {
+  return fs.readdirSync(path).length === 0;
+}
+
+// [font icon] 建立
 function iconFont(done){
   return src(['src/images/font_svg/*.svg'], {base: './src/'})
     // .pipe(changed('src/images/font_svg/*.svg',{
@@ -122,7 +139,9 @@ function errorMsgRemove(done){
     .pipe(removeCode({ production: true }))
     .pipe(dest('dist'));
   }
-  done();
+  if(typeof done === 'function' ) {
+    done();
+  }
 }
 
 // node sass display error
@@ -590,7 +609,7 @@ const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
 const watchTask = parallel(watchFiles, browsersyncInit);
-const buildTask = series(clean, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
+const buildTask = series(clean, parallel(iconFontCreateEmptyFile, iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
 
 // export tasks
 exports.default = buildTask;
