@@ -609,7 +609,7 @@ const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
 const watchTask = parallel(watchFiles, browsersyncInit);
-const buildTask = series(clean, parallel(iconFontCreateEmptyFile, iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
+const buildTask = series(clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
 
 // export tasks
 exports.default = buildTask;
