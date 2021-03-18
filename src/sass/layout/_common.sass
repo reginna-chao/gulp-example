@@ -30,30 +30,34 @@ button,
 
 // --------------------------------------------------------
 
-/* 反選顏色 */
-// Selection
-::-moz-selection
-	color: $white
-	background: #333
+/* 反選顏色 | Selection */
+$selection-text-color: $white // 反選的文字顏色
+$selection-bg-color: #333 // 反選的背景顏色
 
-::selection
-	color: $white
-	background: #333
+@mixin selection-color($text-color, $bg-color)
+	::-moz-selection
+		color: $text-color
+		background: $bg-color
 
-// 當瀏覽器Tab非Focus狀態
-::selection:window-inactive
-	color: #323232
-	background: #c5c5c5
+	::selection
+		color: $text-color
+		background: $bg-color
 
-// Firefox版本: https://css-tricks.com/window-inactive-styling/#comment-92675
-// 但因為gulp-ruby-sass看不懂導致編譯錯誤(Invalid CSS)，所以無法使用
-// :-moz-window-inactive ::-moz-selection
-// 	color: #323232
-// 	background: #C5C5C5
+	// 當瀏覽器Tab非Focus狀態
+	::selection:window-inactive
+		color: #323232
+		background: #c5c5c5
 
-// No Selection | 無法返選
+	// Firefox版本: https://css-tricks.com/window-inactive-styling/#comment-92675
+	// 但因為gulp-ruby-sass看不懂導致編譯錯誤(Invalid CSS)，所以無法使用
+	// :-moz-window-inactive ::-moz-selection
+	// 	color: #323232
+	// 	background: #C5C5C5
+
+
+// No Selection | 無法反選
 // https://stackoverflow.com/a/4407335/11240898
-.no-selection
+@mixin selection-none
 	-webkit-touch-callout: none // iOS Safari
 	-webkit-user-select: none // Safari
 	-khtml-user-select: none // Konqueror HTML
@@ -61,13 +65,21 @@ button,
 	-ms-user-select: none // Internet Explorer/Edge
 	user-select: none // Non-prefixed version, currently, supported by Chrome and Opera
 
+
+// +selection-color(反選的文字顏色, 反選的背景顏色)
++selection-color($selection-text-color, $selection-bg-color)
+
+// 無法反選 | No Selection
+.no-selection
+	+selection-none
+
 // --------------------------------------------------------
 
 // Custom Scroll Bar
-$scrollbarThumbColor: #dbdbdb; // 操作顏色
-$scrollbarTrackColor: $white; // 滾軸背景
-$scrollbarWidth: 6px; // 寬度(瀏覽器預設為15px)
-$scrollbarBorderRadius: 6px; // 圓角，Firefox不支援
+$scrollbarThumbColor: #dbdbdb // 操作顏色
+$scrollbarTrackColor: $white // 滾軸背景
+$scrollbarWidth: 6px // 寬度(瀏覽器預設為15px)
+$scrollbarBorderRadius: 6px // 圓角，Firefox不支援
 @mixin customScrollBar ($thumbColor: $scrollbarThumbColor, $trackColor: $scrollbarTrackColor)
 	// For Chrome, Opera, Safari, Android, iOS
 	&::-webkit-scrollbar
@@ -89,10 +101,11 @@ $scrollbarBorderRadius: 6px; // 圓角，Firefox不支援
 		// auto為15px，thin為6px，none為不顯示
 		scrollbar-width: thin
 
-+breakpoint-hover
-	+customScrollBar
-	.custom-scrollbar
-		+customScrollBar
+// 需使用則開啟下列樣式
+// +breakpoint-hover
+// 	+customScrollBar
+// 	.custom-scrollbar
+// 		+customScrollBar
 
 // --------------------------------------------------------
 
