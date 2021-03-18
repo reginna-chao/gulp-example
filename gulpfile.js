@@ -1,3 +1,7 @@
+/*
+ * Gulp 版本為 4+
+ */
+
 // init plugin
 const { src, dest, watch, series, parallel } = require('gulp');
 const browserSync = require('browser-sync').create(), // 建立同步虛擬伺服器
