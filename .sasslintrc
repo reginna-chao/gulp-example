@@ -27,8 +27,15 @@
 				"exclude": [
 					"breakpoint",
 					"breakpoint-between",
-					"breakpoint-hover",
-					"mq"
+					"media-breakpoint-hover",
+					"media-breakpoint-up",
+					"media-breakpoint-down",
+					"media-breakpoint-only",
+					"media-breakpoint-between",
+					"media-breakpoint-number",
+					"mq",
+					"ie",
+					"fc"
 				]
 			}
 		],
@@ -53,6 +60,8 @@
 			1,
 			{
 				"order": [
+					"counter-reset",
+					"counter-increment",
 					"content",
 					"position",
 					"z-index",
@@ -90,7 +99,9 @@
 					"max-height",
 					"font-size",
 					"font-family",
+					"font-style",
 					"font-weight",
+					"font-variant",
 					"line-height",
 					"text-align",
 					"text-justify",

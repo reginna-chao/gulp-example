@@ -241,16 +241,19 @@ function image(){
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(imagemin([
       imagemin.gifsicle({interlaced: true}),
+
       // [jpg] quality setting
-      // 原設定數字：Max: 95, min: 40
+      // 原設定數字：Max: 75, min: 60
       imageminJpegRecompress({
         quality: 'veryhigh',
         progressive: true,
         max: 75,/* 符合google speed 範疇 */
         min: 60
       }),
+
       // [png] quality setting
-      // 原設定數字：Type: Array<min: number, max: number>
+      // Type: Array<min: number, max: number>
+      // 原設定數字：[0.8, 0.9]
       imageminPngquant({quality: [0.8, 0.9]})
 
       // [svg] quality setting
@@ -276,6 +279,7 @@ function imageIco() {
 }
 
 // JS compile
+// 如果命名結尾有"--.js"（例如：all-main--.js, all-function--.js），為了保留未壓縮檔會編譯到 js/useref 資料夾（即使沒有用）
 function jsFile(){
   return src([
       'src/js/*.js',
@@ -296,7 +300,17 @@ function jsFile(){
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(babel())
     .pipe(gulpIgnore.exclude('vendor/**/*.*'))
+    .pipe(
+      // 重新命名含有結尾 *--.js (為了使用 useref)
+      gulpif('**/*--.js', rename(function (path) {
+        // Updates the object in-place
+        path.dirname += "/useref"; // 新增進新資料夾
+        path.basename = path.basename;
+        path.extname = path.extname;
+      }))
+    )
     .pipe(dest('dist/js'))
+    .pipe(gulpIgnore.exclude('**/*--.js')) // 排除命名末尾含有 "--" (為了使用 useref)
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
     .pipe(sourcemaps.write('maps', {
@@ -523,6 +537,8 @@ function fontFile() {
 // Other File(EX. robots.txt)f
 function otherFile() {
   return src([
+    './src/*.md',
+    './src/.htaccess',
     './src/**/*.txt',
     './src/download/**/*.*',
     './src/pdf/**/*.*'
@@ -594,12 +610,18 @@ function watchFiles() {
   watch('src/*.ico', imageIco);
   watch('src/images/font_svg/*.svg', series(iconFont, browsersyncReload));
   watch('src/sass/vendor/font/templates/*.*', series(iconFont, browsersyncReload));
-  watch([ 'src/**/*.txt', 'src/download/**/*.*', 'src/pdf/**/*.*' ], otherFile);
+  watch([
+    './src/*.md',
+    './src/.htaccess',
+    'src/**/*.txt',
+    'src/download/**/*.*',
+    'src/pdf/**/*.*'
+  ], otherFile);
   watch('src/fonts/**/*', fontFile);
   
   watch(['src/**/*.pug', '!src/**/_*.pug'], series(errorMsgRemove, pagePugNormal, browsersyncReload));
   watch(['src/**/_*.pug'], series(errorMsgRemove, pagePugLayoutCheck, browsersyncReload));
-  watch(['src/js/_*.js'], series(errorMsgRemove, pagePugForUseref, browsersyncReload) ); // 僅提供給Useref使用
+  watch(['src/js/*--.js'], series(errorMsgRemove, pagePugForUseref, browsersyncReload) ); // 僅提供給Useref使用
   watch(
     ['src/**/*.html', '!src/**/_*.html'] ,
     series(pageHtml, browsersyncReload)

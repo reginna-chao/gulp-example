@@ -1,0 +1,2 @@
+# 測試站 404 導向
+ErrorDocument 404 /error.html
