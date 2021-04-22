@@ -233,35 +233,39 @@ function sassReloadHandler() {
 }
 
 // image compile
+// 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 function image(){
   return src('src/images/**/*')
     .pipe(plumber())
     // .pipe(changed('dist/images'))
     .pipe(cached('image'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(imagemin([
-      imagemin.gifsicle({interlaced: true}),
-
-      // [jpg] quality setting
-      // 原設定數字：Max: 75, min: 60
-      imageminJpegRecompress({
-        quality: 'veryhigh',
-        progressive: true,
-        max: 75,/* 符合google speed 範疇 */
-        min: 60
-      }),
-
-      // [png] quality setting
-      // Type: Array<min: number, max: number>
-      // 原設定數字：[0.8, 0.9]
-      imageminPngquant({quality: [0.8, 0.9]})
-
-      // [svg] quality setting
-      // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
-      // 目前需自行壓縮整理處理svg檔案
-      // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
-      // imagemin.svgo({plugins: [{removeViewBox: false}]}) 
-    ]))
+    .pipe(gulpIgnore.exclude('**--nocopy.*'))
+    .pipe(
+      gulpif('!**/*--uc.*', imagemin([
+        imagemin.gifsicle({interlaced: true}),
+  
+        // [jpg] quality setting
+        // 原設定數字：Max: 75, min: 60
+        imageminJpegRecompress({
+          quality: 'veryhigh',
+          progressive: true,
+          max: 75,/* 符合google speed 範疇 */
+          min: 60
+        }),
+  
+        // [png] quality setting
+        // Type: Array<min: number, max: number>
+        // 原設定數字：[0.8, 0.9]
+        imageminPngquant({quality: [0.8, 0.9]})
+  
+        // [svg] quality setting
+        // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
+        // 目前需自行壓縮整理處理svg檔案
+        // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
+        // imagemin.svgo({plugins: [{removeViewBox: false}]}) 
+      ]))
+    )
     .pipe(dest('dist/images'))
     .pipe(browserSync.stream())
     .pipe(notify({
