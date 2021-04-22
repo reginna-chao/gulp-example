@@ -116,6 +116,10 @@ function iconFont(done){
         .pipe(rename({basename: "iconfont-demo", extname: '.css'}))
         .pipe(dest('dist/fonts/icons'));
 
+      // 複製 Demo 使用的 JS Plugin (Demo HTML使用)
+      src('src/sass/vendor/font/templates/*.js')
+        .pipe(dest('dist/fonts/icons'));
+
       // 生成Demo HTML
       src('src/sass/vendor/font/templates/_index.html')
         .pipe(consolidate('underscore', {
