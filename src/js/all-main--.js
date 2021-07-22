@@ -6,7 +6,8 @@ if (
 	userAgent.indexOf('MSIE 7.0') > 0 ||
 	userAgent.indexOf('MSIE 8.0') > 0 ||
 	userAgent.indexOf('MSIE 9.0') > 0 ||
-	userAgent.indexOf('MSIE 10.0') > 0
+	userAgent.indexOf('MSIE 10.0') > 0 ||
+	!!userAgent.match(/Trident.*rv\:11\./) // IE11
 ) {
 	location.href = 'browser.html';
 }
@@ -29,8 +30,6 @@ if (
 	on(window, 'load', getWinSet);
 	on(window, 'resize', throttle(getWinSet, 50, 100));
 	/* ---------------------------------------- [END] Windows Setting */
-
-
 
 	/* ---------------------------------------- [START] 取得裝置判斷 */
 	// 取得裝置判斷
@@ -59,8 +58,6 @@ if (
 	deviceDetect();
 	on(window, 'resize', throttle(deviceDetect, 50, 100));
 	/* ---------------------------------------- [END] 取得裝置判斷 */
-
-
 
 	/* ---------------------------------------- [START] 判斷browser */
 	var ua = navigator.userAgent;
@@ -98,8 +95,6 @@ if (
 	isiOS && html.classList.add('ios');
 	/* ---------------------------------------- [END] 判斷browser */
 
-
-
 	/* ----------------------------------- [START] Loader 移除 */
 	// var loaderRemove = function () {
 	// 	var loader = document.querySelector('#loader');
@@ -111,8 +106,6 @@ if (
 	// };
 	// window.addEventListener('load', loaderRemove);
 	/* ----------------------------------- [END] Loader 移除 */
-
-
 
 	/* ---------------------------------------- [START] Ease scroll */
 	var buildEaseScroll = function() {
@@ -130,6 +123,7 @@ if (
 			arrowScroll: 30,
 			touchpadSupport: true,
 			fixedBackground: true,
+			// disabledClass: 'modal-open',
 
 			/* Browser Setting Control */
 			browser: {
@@ -144,14 +138,19 @@ if (
 	on(window, 'load', buildEaseScroll);
 	/* ---------------------------------------- [END] Ease scroll */
 
-
-
 	/* ---------------------------------------- [START] Lazyload */
 	/*
 	 * 使用：https://github.com/tuupola/lazyload
 	 * 尋找頁面上的 .lazyload 為執行 lazy load 物件
 	 */
+	var lazyloadTimer = 0;
 	function buildLazyLoad() {
+		if (lazyloadTimer < 5 && window.lazyload === undefined) {
+			return setTimeout( function() {
+				lazyloadTimer++;
+				buildLazyLoad();
+			}, 500);
+		}
 		lazyload();
 	}
 	on(window, 'load', buildLazyLoad);

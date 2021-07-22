@@ -1,10 +1,17 @@
 include _mixin
 block vars
 	//- 頁面標題、敘述
-	- var title= ''
-	- var description= ''
+	- title= ''
+	- description= '頁面敘述'
+
+	//- 網站語系
+	//- FB OG，檢測：https://developers.facebook.com/tools/debug/
+	- lang= 'zh-Hant-TW' // 網站語系，台灣:zh-Hant-TW，寫於<html>的lang
+	- ogLang= 'zh_TW' // 網站語系，台灣:zh_TW，寫於 FB OG 的 lang
+
+	- webUrl= '' // 設定測試站網址，用於 OG Image (要用絕對網址)
 doctype html
-html.no-js(lang='zh-Hant-TW')
+html.no-js(lang=lang)
 	head
 		// [START] 測試站防止被爬蟲搜尋
 		//
@@ -20,45 +27,56 @@ html.no-js(lang='zh-Hant-TW')
 		meta(name="format-detection" content="telephone=no")
 		//- ↓Mobile Browser Color
 		meta(name="theme-color" content="#000000")
-		title #{title}專案名稱
+		//- ↓頁面標題
+		- titleShow= `${title}專案名稱`
+		title= titleShow
+
 		link(rel="shortcut icon" type="image/x-icon" href="images/favicon.ico")
 		link(rel="apple-touch-icon" href="images/touch-icon.png")
 
 
 		// [START] SEO Setting
 		block seo
+			// OG Image 需換上正確網址連結
 			| <!--
+			link(rel="canonical" href="頁面連結")
+			| -->
+			meta(name="description" content=description)
 			meta(name="keywords" content="關鍵字設定")
-			meta(name="description" content="頁面敘述")
-			meta(property="og:title" content="頁面標題")
-			meta(property="og:description" content="頁面敘述")
+			meta(property="og:type" content="website")
+			meta(property="og:title" content=titleShow)
+			meta(property="og:description" content=description)
 			meta(property="og:url" content="頁面連結")
-			meta(property="og:image" content="網頁代表圖FB使用1200x630")
-			meta(property="og:locale" content="網站語系，台灣:zh_TW")
-			meta(name="twitter:card" content="使用[summary|summary_large_image|app|player]其一")
+			//- ↓網頁代表圖FB使用1200x630
+			meta(property="og:image" content=`${webUrl}images/og-img.png`)
+			//- ↓網站語系，台灣:zh_TW
+			meta(property="og:locale" content=ogLang)
+			//- ↓使用[summary|summary_large_image|app|player]其一
+			meta(name="twitter:card" content="summary")
 			meta(name="twitter:site" content="@TwitterUsername")
 			meta(name="twitter:creator" content="@AuthorTwitterUsername")
-			meta(name="twitter:title" content="頁面標題")
-			meta(name="twitter:description" content="頁面敘述")
-			meta(name="twitter:image" content="網頁代表圖")
+			meta(name="twitter:title" content=titleShow)
+			meta(name="twitter:description" content=description)
+			meta(name="twitter:image" content=`${webUrl}images/og-img.png`)
+			| <!--
 			| -->
 		// [END] SEO Setting
 
 
-		//- 預先和指定的 Domain 連線（避免要載過多的資源）
-		// [START] preconnect
-		link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
-		//- link(rel="preconnect" href="https://www.google-analytics.com" crossorigin)
-		// [END] preconnect
+		//- preconnect: 預先和指定的 Domain 連線（避免要載過多的資源）
+		//- // [START] preconnect
+		//- link(rel="preconnect" href="https://www.google-analytics.com" crossorigin='')
+		//- // [END] preconnect
 
-
+		//- preload: 告訴瀏覽器：「這份資源對目前的頁面是必要的，請用最快的速度下載此資源。」
 		// [START] preload
-		link(rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap")
-		//- link(rel="preload" as="font" crossorigin="anonymous" type="font/woff2" href="fonts/icons/icon.woff2")
+		link(rel="preload" as="font" type="font/woff2" crossorigin='' href="fonts/icons/icon.woff2")
 		// [END] preload
 
 
 		// [START] Web Font
+		link(rel='preconnect' href='https://fonts.googleapis.com')
+		link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
 		link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap" media="print" onload="this.media='all'")
 		noscript: link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap")
 		// [END] Web Font
@@ -84,7 +102,6 @@ html.no-js(lang='zh-Hant-TW')
 		script(src="js/vendor/jquery-3.6.0.min.js")
 		//- --------------------------------------- [START] Global Plugin
 		// build:js js/lib.min.js async
-		//- script(src="js/vendor/webfontloader.min.js" async)
 		script(src="js/vendor/javascript.easeScroll.min.js" async)
 		script(src="js/vendor/lazyload.js" async)
 		// endbuild

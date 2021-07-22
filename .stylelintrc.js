@@ -9,6 +9,7 @@ module.exports = {
 		"stylelint-order"
 	],
 	"ignoreFiles": [
+		"dist/",
 		"**/*.js",
 		"**/*.sass",
 		"src/sass/foundation/**/*.scss",
@@ -16,7 +17,7 @@ module.exports = {
 		"src/sass/vendor/**/*.scss"
 	],
 	"rules": {
-		"max-nesting-depth": null,
+		"max-nesting-depth": null, // 限制層級數量
 		"no-empty-source": null,
 		"no-descending-specificity": null,
 		"order/properties-alphabetical-order": null,
@@ -25,6 +26,68 @@ module.exports = {
 		"scss/at-import-partial-extension-blacklist": null,
 		"value-no-vendor-prefix": null,
 		"indentation": "tab",
+		"selector-pseudo-class-no-unknown": [ // 不認識的 Selector
+			true,
+			{
+				ignorePseudoClasses: ["window-inactive"],
+			}
+		],
+		"selector-no-qualifying-type": [ // 禁止用類型選擇器來限定一個選擇器
+			true, {
+			"ignore": [
+				// "attribute",
+				"class"
+				// "id",
+			]
+		} ],
+		"order/order": [
+			[
+				// 指定 mixin 名稱，不影響在文件中的順序(待確認???)
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "breakpoint"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "breakpoint-between"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "breakpoint-hover"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "media-breakpoint-up"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "media-breakpoint-down"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "media-breakpoint-only"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "media-breakpoint-between"
+				},
+				{
+					"type": "at-rule",
+					"name": "include",
+					"parameter": "media-breakpoint-number"
+				}
+			],
+			{
+				"unspecified": "ignore"
+			}
+		],
 		"order/properties-order": [
 			"counter-reset",
 			"counter-increment",
@@ -49,13 +112,13 @@ module.exports = {
 			"overflow-y",
 			"margin",
 			"margin-top",
-			"margin-right",
 			"margin-bottom",
+			"margin-right",
 			"margin-left",
 			"padding",
 			"padding-top",
-			"padding-right",
 			"padding-bottom",
+			"padding-right",
 			"padding-left",
 			"width",
 			"min-width",

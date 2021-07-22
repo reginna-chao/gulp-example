@@ -33,6 +33,9 @@
         src: "data-src",
         srcset: "data-srcset",
         selector: ".lazyload",
+        loaded: 'loaded', // Loaded Class
+        loadedParent: 'loaded-content', // Loaded Class
+        css: 'lazyload-css', // use css to set img
         root: null,
         rootMargin: "0px",
         threshold: 0
@@ -110,16 +113,33 @@
                         self.observer.unobserve(entry.target);
                         let src = entry.target.getAttribute(self.settings.src);
                         let srcset = entry.target.getAttribute(self.settings.srcset);
-                        if ("img" === entry.target.tagName.toLowerCase()) {
-                            if (src) {
-                                entry.target.src = src;
+                        if (!entry.target.classList.contains(self.settings.css)) {
+                            if ("img" === entry.target.tagName.toLowerCase()) {
+                                if (src) {
+                                    entry.target.src = src;
+                                }
+                                if (srcset) {
+                                    entry.target.srcset = srcset;
+                                }
+                            } else {
+                                entry.target.style.backgroundImage = "url(" + src + ")";
                             }
-                            if (srcset) {
-                                entry.target.srcset = srcset;
+                            const img = new Image();
+                            img.onload = function() {
+                                entry.target.classList.add(self.settings.loaded);
+                                entry.target.parentElement.classList.add(self.settings.loadedParent);
+                                entry.target.dispatchEvent(new CustomEvent('lazy:loaded', {
+                                    detail: {
+                                        img: img
+                                    }
+                                } ));
                             }
+                            img.src = src;
                         } else {
-                            entry.target.style.backgroundImage = "url(" + src + ")";
+                            entry.target.classList.add(self.settings.loaded);
+                            entry.target.parentElement.classList.add(self.settings.loadedParent);
                         }
+                        entry.target.removeAttribute(self.settings.srcset);
                     }
                 });
             }, observerConfig);

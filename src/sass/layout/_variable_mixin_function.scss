@@ -2,27 +2,44 @@
 //	* 此檔案包含：通用於所有SCSS/SASS變數檔案
 //      - 變數、mixin、function
 //      - 所有單元都建議須要載入之樣式
-//      - 避免寫實際的樣式於該檔案內（包含檔案內 @import 之其它檔案）
+//      - 避免寫實際的樣式於該檔案內（包含檔案內 @import 之其它CSS檔案）
 
 @charset 'utf-8';
 // --------------------------------------------------------
+
 // Vendor
-// --------------------------------------------------------
+
+// Icon Font
 @import '../vendor/font/icons'; // 載入Icon Font 變數
 
+// Function
+@import '../vendor/trig'; // 三角函數
+@import '../vendor/photoshop-function'; // Photoshop 效果轉換
+@import '../vendor/function'; // 常用的 Function
+
 
 
 // --------------------------------------------------------
+
+
+
 // Variable
-// --------------------------------------------------------
 $primary-color: #f46404; // Foundation 主顏色變數
+
 $white: #fff;
 $black: #000;
 
 
+
 // --------------------------------------------------------
+
+// Function
+
+// --------------------------------------------------------
+
+
+
 // Mixin
-// --------------------------------------------------------
 
 // Flex
 @mixin fc($justify, $align) {
@@ -61,28 +78,93 @@ $black: #000;
 
 // ---------------------------------------- [START] Media Query 相關
 // Hover Media Query (使用 Foundation Mixin)
+$project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @media hover
+
 @mixin breakpoint-hover($hover-enable: true) {
-	@if $hover-enable {
-		@media screen and (min-width: 75rem) {
-			@content;
+	@if $project-has-ie {
+
+		// 有 IE 專案
+		@if $hover-enable {
+			@media screen and (min-width: 75rem) {
+				@content;
+			}
+		}
+
+		@else {
+			@media screen and (max-width: 74.9375rem) {
+				@content;
+			}
 		}
 	}
 
 	@else {
-		@media screen and (max-width: 74.9375rem) {
-			@content;
+
+		// 無 IE 專案
+		@if $hover-enable {
+			@media (hover: hover) {
+				@content;
+			}
+		}
+
+		@else {
+			@media (hover: none) {
+				@content;
+			}
 		}
 	}
 }
 
 // Breakpoint Between (使用 Foundation Mixin)
 @mixin breakpoint-between($start, $end) {
-	@media screen and (min-width: $start) and (max-width: $end) {
+	@media screen and (min-width: #{$start}px) and (max-width: #{$end}px) {
 		@content;
 	}
 }
 
 // ---------------------------------------- [END] Media Query 相關
+
+
+
+// ---------------------------------------- [START] Custom Scroll Bar
+$scrollbar-thumb-color: $primary-color; // 操作顏色
+$scrollbar-track-color: #eee; // 滾軸背景
+$scrollbar-width: 6px; // 寬度(瀏覽器預設為15px)
+$scrollbar-border-radius: 6px; // 圓角，Firefox不支援
+
+@mixin custom-scroll-bar ($thumb-color: $scrollbar-thumb-color, $track-color: $scrollbar-track-color) {
+
+	// For Chrome, Opera, Safari, Android, iOS
+	&::-webkit-scrollbar {
+		width: $scrollbar-width;
+		height: $scrollbar-width;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: $track-color;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: $thumb-color;
+		border-radius: $scrollbar-border-radius;
+
+		&:hover {
+			background: darken($thumb-color, 10%);
+		}
+	}
+
+	@if & {
+		// For Firefox (版本必須64+)
+		// 如果是整頁<body>要使用，必須將Class增加於<html>標籤上
+		// Ref: https://stackoverflow.com/a/6165489/11240898
+		// 顏色：操作顏色(Thumb) 滾軸背景(Track)
+		scrollbar-color: $thumb-color $track-color;
+		// 寬度只有 auto | thin | none 選項
+		// auto為15px，thin為6px，none為不顯示
+		scrollbar-width: thin;
+	}
+}
+
+// ---------------------------------------- [END] Custom Scroll Bar
 
 
 
@@ -122,12 +204,3 @@ $black: #000;
 }
 
 // ---------------------------------------- [END] Animation Set
-
-
-
-
-
-
-// --------------------------------------------------------
-// Function
-// --------------------------------------------------------

@@ -45,6 +45,7 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
 
 // [font icon] function
 const fontName = 'icon', fontClassName = 'be-icon';
+const runTimestamp = Math.round(Date.now()/1000);
 
 // [font icon] 先建立空值檔案，避免一開始有錯誤，之後會被蓋過
 function iconFontCreateEmptyFile(cb) {
@@ -52,7 +53,15 @@ function iconFontCreateEmptyFile(cb) {
     // isEmpty
     cb();
   } else {
-    fs.writeFile('src/sass/vendor/font/_icons.scss', '/* Empty */ @mixin font-icon {}', cb);
+    // 生成空的 @mixin
+    let str = '/* Empty */ @mixin font-icon() {}; @mixin font-icon-style() {};';
+
+    // 依照 font_icon 內的檔案生成假的 @mixin
+    fs.readdirSync('src/images/font_svg/').forEach( file => {
+      str = str + ` @mixin font-icon-${file.replace(/\.svg/g, '')}() {};`
+    });
+
+    fs.writeFile('src/sass/vendor/font/_icons.scss', str, cb);
   }
 }
 // 確認該資料夾內是否有物件
@@ -76,17 +85,16 @@ function iconFont(done){
       normalize: true,
       centerHorizontally: true,
       fontHeight: 1001,
-      descent: 143
+      descent: 143,
+      timestamp: runTimestamp // 官方提供的 API ，避免有快取
     }))
     .on('glyphs', function (glyphs, options) {
       // 生成 ICON SCSS
-      var nowTime = new Date().getTime();
       src('src/sass/vendor/font/templates/_icons.scss')
         .pipe(consolidate('underscore', {
           glyphs: glyphs,
           fontName: options.fontName, // 使用的font-family
           fontPath: '../fonts/icons/', // 生成的SCSS讀取font檔案讀取位置
-          fontDate: nowTime, // 避免有快取問題
           cssClass: fontClassName // 使用的class名稱: <i class="{{fontClassName}} {{fontClassName}}-{{svg file name}}"></i>
         }))
         .pipe(dest('src/sass/vendor/font')) // 生成SCSS位置
@@ -103,7 +111,6 @@ function iconFont(done){
           glyphs: glyphs,
           fontName: options.fontName,
           fontPath: '',
-          fontDate: nowTime,
           cssClass: fontClassName
         }))
         .pipe(replace(/\/\/ @include/g, '@include')) // 開啟@include
@@ -197,7 +204,8 @@ function sassCompile(useCached){
       sassReload = true;
       browserSync.reload();
     }))
-    .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4'))
+    // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一
+    .pipe(autoprefixer()) // 不需要符合 IE11，二擇一
     .pipe(cached('sass'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist/css'))
@@ -341,6 +349,7 @@ function jsVendor(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
     ])
@@ -369,6 +378,7 @@ function jsVendor(){
 function jsVendorMin(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
     ])
@@ -454,7 +464,7 @@ function pagePugLayoutCheck() {
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(notify({
       onLast: true,
-      message: 'Pug Layout Task Complete!'
+      message: 'Pug Layout Check Task Complete!'
     }))
     .on ('end', function () {
         if (fileList.length > 0) {
@@ -485,9 +495,13 @@ function pagePugLayoutBuild() {
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
+    .pipe(notify({
+      onLast: true,
+      message: 'Pug Layout Build Task Complete!'
+    }));
 }
 
-// 為了監聽_*.js更改而設置的
+// 為了監聽*--.js更改而設置的
 function pagePugForUseref() {
   return src(['src/index.pug'])
     .pipe(
@@ -569,8 +583,8 @@ function clean(){
 // browserSync
 function browsersyncInit(done) {
   browserSync.init({
-    open: false,
-    ghostMode: false,
+    open: false, // 自動開啟
+    ghostMode: false, // 是否同步各裝置瀏覽器滑動
     server: {
       baseDir: "./dist",
       online: false
