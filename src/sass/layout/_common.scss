@@ -102,7 +102,7 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 
 	&,
 	a {
-		color: $prim1ary-color;
+		color: $primary-color;
 	}
 }
 
@@ -225,7 +225,7 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 
 /* Section */
 .main-wrapper {
-	position: relative
+	position: relative;
 }
 
 // 區塊內容
