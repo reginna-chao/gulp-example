@@ -81,9 +81,9 @@ $black: #000;
 $project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @media hover
 
 @mixin breakpoint-hover($hover-enable: true) {
-	@if $project-has-ie {
 
-		// 有 IE 專案
+	// 有 IE 專案
+	@if $project-has-ie {
 		@if $hover-enable {
 			@media screen and (min-width: 75rem) {
 				@content;
@@ -97,9 +97,8 @@ $project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @medi
 		}
 	}
 
+	// 無 IE 專案
 	@else {
-
-		// 無 IE 專案
 		@if $hover-enable {
 			@media (hover: hover) {
 				@content;
