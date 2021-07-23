@@ -29,8 +29,13 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   removeCode = require('gulp-remove-code'), // gulp 移除code (為了顯示Error)
   // JS
   jshint = require('gulp-jshint'), // [JS] JS檢查錯誤
-  uglify = require('gulp-uglify'), // [JS] 壓縮JS
-  babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
+  // uglify = require('gulp-uglify'), // [JS] 壓縮JS
+  // babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
+  rollup = require('gulp-better-rollup'), // [JS] 
+  babel = require('rollup-plugin-babel'), // [JS] 
+  uglify = require('rollup-plugin-uglify-es'), // [JS] 
+  resolve = require('rollup-plugin-node-resolve'), // [JS] 
+  commonjs = require('rollup-plugin-commonjs'), // [JS] 
   // Image
   imagemin = require('gulp-imagemin'), // [IMG] Image壓縮
   imageminPngquant = require('imagemin-pngquant'), // [IMG] PNG壓縮
@@ -314,8 +319,9 @@ function jsFile(){
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(jshint())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(babel())
-    .pipe(gulpIgnore.exclude('vendor/**/*.*'))
+    // .pipe(babel())
+    // .pipe(gulpIgnore.exclude('vendor/**/*.*'))
+    .pipe(rollup({ plugins: [babel(), resolve(), commonjs()] }, 'umd'))
     .pipe(
       // 重新命名含有結尾 *--.js (為了使用 useref)
       gulpif('**/*--.js', rename(function (path) {
@@ -328,7 +334,8 @@ function jsFile(){
     .pipe(dest('dist/js'))
     .pipe(gulpIgnore.exclude('**/*--.js')) // 排除命名末尾含有 "--" (為了使用 useref)
     .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
+    // .pipe(uglify())
+    .pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'))
     .pipe(sourcemaps.write('maps', {
       sourceRoot: function(file) {
         var filePathSplit = file.sourceMap.file.split('/');
@@ -364,9 +371,10 @@ function jsVendor(){
     .pipe(cached('jsVendor'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(jshint())
-    .pipe(babel())
+    // .pipe(babel())
+    // .pipe(uglify())
+    .pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'))
     .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
     .pipe(dest('dist/js'))
     // .pipe(browserSync.stream())
     .pipe(notify({
@@ -434,7 +442,8 @@ function pagePugNormal() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
@@ -490,7 +499,8 @@ function pagePugLayoutBuild() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
@@ -518,7 +528,8 @@ function pagePugForUseref() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
