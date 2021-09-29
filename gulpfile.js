@@ -58,7 +58,7 @@ function iconFontCreateEmptyFile(cb) {
 
     // 依照 font_icon 內的檔案生成假的 @mixin
     fs.readdirSync('src/images/font_svg/').forEach( file => {
-      str = str + ` @mixin font-icon-${file.replace(/\.svg/g, '')}() {};`
+      str = str + ` @mixin font-icon-add($icon: '', $extendStyle: true){font-family:'icon'}`
     });
 
     fs.writeFile('src/sass/vendor/font/_icons.scss', str, cb);
@@ -434,7 +434,12 @@ function pagePugNormal() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', 
+      gulpif('*.min.js', 
+        pipe(sourcemaps.write('js/maps')) ,
+        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
+      )
+    ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
@@ -490,7 +495,12 @@ function pagePugLayoutBuild() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', 
+      gulpif('*.min.js', 
+        pipe(sourcemaps.write('js/maps')) ,
+        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
+      )
+    ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
@@ -518,7 +528,12 @@ function pagePugForUseref() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', 
+      gulpif('*.min.js', 
+        pipe(sourcemaps.write('js/maps')) ,
+        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
+      )
+    ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
     // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
@@ -588,7 +603,18 @@ function browsersyncInit(done) {
     server: {
       baseDir: "./dist",
       online: false
-    }
+    },
+    // 使用 https 開發
+    // Ref: https://ithelp.ithome.com.tw/articles/10230052
+    // 1. 本機電腦產生憑證（電腦只要安裝一次）： $ mkcert -install
+    // 2. 專案資料夾產生檔案： $ mkcert localhost 127.0.0.1 192.168.x.xxx ::1
+    //    ※「192.168.x.xxx」要根據電腦不同更換
+    // 3. 手機使用需另外安裝「1. 本機電腦產生憑證（電腦只要安裝一次）： $ mkcert -install」安裝的 rootCA.pem 檔案
+    // ※↓要對照檔案名稱是否正確
+    // https: {
+    //   key: "localhost+3-key.pem",
+    //   cert: "localhost+3.pem"
+    // }
   });
   done();
 }
