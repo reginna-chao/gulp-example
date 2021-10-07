@@ -151,27 +151,27 @@
 				// * key=屬性值(一般專案為class、前端框架(Vue)專案可能會是不同值)
 				// * name=檔案名稱
 				// * mainClass為[一般專案]需求的主要class(fontClassName)[要由模板帶入值]
-				code: '%name'
+				code: '[name]'
 			},
 			{
 				name: 'class',
 				text: 'class',
-				code: '%mainClass %mainClass-%name'
+				code: '[mainClass] [mainClass]-[name]'
 			},
 			{
 				name: 'sass',
 				text: 'SASS Mixin',
-				code: '+font-icon-add(%name)'
+				code: '+font-icon-add([name])'
 			},
 			{
 				name: 'html',
 				text: 'HTML',
-				code: '<tag key="%mainClass %mainClass-%name"></tag>'
+				code: '<[tag] [key]="[mainClass] [mainClass]-[name]"></[tag]>'
 			},
 			{
 				name: 'pug',
 				text: 'Pug',
-				code: '%tag.%mainClass.%mainClass-%name()'
+				code: '[tag].[mainClass].[mainClass]-[name]()'
 			}
 		];
 
@@ -243,10 +243,10 @@
 					var vm = this;
 					var result = selectOptions.filter(function(val) { return val.name === vm.svgIconShow })[0];
 					var val = result.code;
-					val = val.replace(/%name/gi, icon);
-					val = val.replace(/%tag/gi, vm.settings.tag);
-					val = val.replace(/%key=/gi, vm.settings.key + '=');
-					val = val.replace(/%mainClass/gi, vm.settings.mainClass);
+					val = val.replace(/\[name\]/gi, icon);
+					val = val.replace(/\[tag\]/gi, vm.settings.tag);
+					val = val.replace(/\[key\]=/gi, vm.settings.key + '=');
+					val = val.replace(/\[mainClass\]/gi, vm.settings.mainClass);
 
 					if(vm.svgIconShow === 'html' || vm.svgIconShow === 'pug') {
 						var regex = vm.svgIconShow === 'html' ? /></gi : /\(\)/gi;
