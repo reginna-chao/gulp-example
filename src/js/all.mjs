@@ -1,7 +1,12 @@
+/*global EaseScroll, lazyload*/
+
 'use strict';
 
+import { on, off, throttle, isInViewport, init } from './modules/fn.mjs';
+
+/* ---------------------------------------- [START] IE Global Setting */
 // 舊IE提醒
-var userAgent = window.navigator.userAgent;
+const userAgent = window.navigator.userAgent;
 if (
 	userAgent.indexOf('MSIE 7.0') > 0 ||
 	userAgent.indexOf('MSIE 8.0') > 0 ||
@@ -12,8 +17,18 @@ if (
 	location.href = 'browser.html';
 }
 
-(function(window, document) {
+/* 防止IE沒有 JS element.remove() */
+/* Create Element.remove() function if not exist */
+if (!('remove' in Element.prototype)) {
+	Element.prototype.remove = function () {
+		if (this.parentNode) {
+			this.parentNode.removeChild(this);
+		}
+	};
+}
+/* ---------------------------------------- [END] IE Global Setting */
 
+(function (window, document) {
 	/* ---------------------------------------- [START] Windows Setting */
 	const html = document.documentElement;
 	let ww = window.innerWidth;
@@ -33,10 +48,11 @@ if (
 
 	/* ---------------------------------------- [START] 取得裝置判斷 */
 	// 取得裝置判斷
-	var isMobile = false,
-		isTablet = false,
-		isPhone = false;
-	var deviceDetect = function () {
+	let isMobile = false;
+	let isTablet = false;
+	let isPhone = false;
+
+	const deviceDetect = function () {
 		// IsPhone
 		isPhone = ww <= 640;
 
@@ -49,12 +65,13 @@ if (
 		// IsTablet
 		if (navigator.userAgent.match(/Android/i)) {
 			if (!navigator.userAgent.match(/Mobile/i)) {
-				isTablet = true
+				isTablet = true;
 			}
 		} else if (navigator.userAgent.match(/BlackBerry|iPad|Opera Mini|IEMobile/i)) {
-			isTablet = true
+			isTablet = true;
 		}
-	}
+	};
+
 	deviceDetect();
 	on(window, 'resize', throttle(deviceDetect, 50, 100));
 	/* ---------------------------------------- [END] 取得裝置判斷 */
@@ -66,7 +83,7 @@ if (
 		isFirefox: /firefox/i.test(ua),
 		isSafari: /safari/i.test(ua),
 		isIE: /msie/i.test(ua) || /trident/i.test(ua),
-		isEdge: /edge/i.test(ua)
+		isEdge: /edge/i.test(ua),
 	};
 
 	// 修正數值browser
@@ -108,9 +125,9 @@ if (
 	/* ----------------------------------- [END] Loader 移除 */
 
 	/* ---------------------------------------- [START] Ease scroll */
-	var buildEaseScroll = function() {
+	var buildEaseScroll = function () {
 		if (window.EaseScroll === undefined) return false;
-		new EaseScroll({
+		const es = new EaseScroll({
 			frameRate: 60,
 			animationTime: 1000,
 			stepSize: 100,
@@ -131,10 +148,10 @@ if (
 				FireFox: false,
 				Safari: true,
 				IE: true,
-				Edge: true
-			}
+				Edge: true,
+			},
 		});
-	}
+	};
 	on(window, 'load', buildEaseScroll);
 	/* ---------------------------------------- [END] Ease scroll */
 
@@ -146,11 +163,12 @@ if (
 	var lazyloadTimer = 0;
 	function buildLazyLoad() {
 		if (lazyloadTimer < 5 && window.lazyload === undefined) {
-			return setTimeout( function() {
+			return setTimeout(function () {
 				lazyloadTimer++;
 				buildLazyLoad();
 			}, 500);
 		}
+
 		lazyload();
 	}
 	on(window, 'load', buildLazyLoad);

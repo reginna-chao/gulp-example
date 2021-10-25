@@ -29,11 +29,11 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   removeCode = require('gulp-remove-code'), // gulp 移除code (為了顯示Error)
   // JS
   jshint = require('gulp-jshint'), // [JS] JS檢查錯誤
-  // uglify = require('gulp-uglify'), // [JS] 壓縮JS
-  // babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
+  uglify = require('gulp-uglify'), // [JS] 壓縮JS
+  babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
   rollup = require('gulp-better-rollup'), // [JS] 
-  babel = require('rollup-plugin-babel'), // [JS] 
-  uglify = require('rollup-plugin-uglify-es'), // [JS] 
+  rollupBabel = require('rollup-plugin-babel'), // [JS] 
+  rollupUglify = require('rollup-plugin-uglify'), // [JS] 
   resolve = require('rollup-plugin-node-resolve'), // [JS] 
   commonjs = require('rollup-plugin-commonjs'), // [JS] 
   // Image
@@ -59,7 +59,17 @@ function iconFontCreateEmptyFile(cb) {
     cb();
   } else {
     // 生成空的 @mixin
-    let str = '/* Empty */ @mixin font-icon() {}; @mixin font-icon-style() {};';
+    let str = `
+      /* Empty */
+      @mixin font-icon() {};
+      @mixin font-icon-style() {};
+      @mixin font-icon-add($icon, $style: false) {
+          content: #{$icon};
+          @if ($style) {
+            color: #000;
+          }
+      };
+    `;
 
     // 依照 font_icon 內的檔案生成假的 @mixin
     fs.readdirSync('src/images/font_svg/').forEach( file => {
@@ -317,11 +327,10 @@ function jsFile(){
     // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('js'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(jshint())
+    // .pipe(jshint())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    // .pipe(babel())
-    // .pipe(gulpIgnore.exclude('vendor/**/*.*'))
-    .pipe(rollup({ plugins: [babel(), resolve(), commonjs()] }, 'umd'))
+    .pipe(babel())
+    .pipe(gulpIgnore.exclude('vendor/**/*.*'))
     .pipe(
       // 重新命名含有結尾 *--.js (為了使用 useref)
       gulpif('**/*--.js', rename(function (path) {
@@ -334,8 +343,7 @@ function jsFile(){
     .pipe(dest('dist/js'))
     .pipe(gulpIgnore.exclude('**/*--.js')) // 排除命名末尾含有 "--" (為了使用 useref)
     .pipe(rename({ suffix: '.min' }))
-    // .pipe(uglify())
-    .pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'))
+    .pipe(uglify())
     .pipe(sourcemaps.write('maps', {
       sourceRoot: function(file) {
         var filePathSplit = file.sourceMap.file.split('/');
@@ -355,10 +363,10 @@ function jsFile(){
 function jsVendor(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
+      '!src/js/**/{i18n,l10n}/**/*.js',
     ])
     .pipe(
       plumber(function(error) {
@@ -370,11 +378,10 @@ function jsVendor(){
     // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('jsVendor'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(jshint())
-    // .pipe(babel())
-    // .pipe(uglify())
-    .pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'))
+    // .pipe(jshint())
+    .pipe(babel())
     .pipe(rename({ suffix: '.min' }))
+    .pipe(uglify())
     .pipe(dest('dist/js'))
     // .pipe(browserSync.stream())
     .pipe(notify({
@@ -386,21 +393,65 @@ function jsVendor(){
 function jsVendorMin(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
+      'src/js/**/{i18n,l10n}/**/*.js',
     ])
     .pipe(plumber())
     // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('jsVendorMin'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(jshint())
+    // .pipe(jshint())
     .pipe(dest('dist/js'))
     // .pipe(browserSync.stream())
     .pipe(notify({
       onLast: true,
       message: 'JS Plugin Task Complete!'
     }));
+}
+
+// 使用 ES6 Import 之檔案
+// js資料夾底下增加「.mjs」檔案，編譯生成 min.js → 要避免重複到檔案名稱
+function jsModule() {
+  return src([
+    'src/js/*.mjs'
+  ])
+  .pipe(
+    plumber(function(error) {
+      console.log(error.message);
+      errorMsgDisplay(error)
+      this.emit('end');
+    })
+  )
+  .pipe(cached('mjs'))
+  .pipe(debug({title: 'Debug for compile file:'}))
+  .pipe(sourcemaps.init({ loadMaps: true }))
+  .pipe(rollup({
+    plugins: [
+      commonjs(),
+      resolve(),
+      rollupBabel({
+        runtimeHelpers: true
+      }),
+      rollupUglify.uglify()
+    ]
+  },{
+    format: 'iife'
+  }))
+  .pipe(rename({ suffix: '.min', extname: '.js' }))
+  .pipe(sourcemaps.write('maps', {
+    sourceRoot: function(file) {
+      var filePathSplit = file.sourceMap.file.split('/');
+      var backTrack = '../'.repeat(filePathSplit.length-1) || '../' ;
+      var filePath = backTrack+ 'src/';
+      return filePath;
+    }}
+  ))
+  .pipe(dest('dist/js'))
+  .pipe(notify({
+    onLast: true,
+    message: 'JS Module Task Complete!'
+  }));
 }
 
 // JSON File
@@ -442,11 +493,8 @@ function pagePugNormal() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -499,11 +547,8 @@ function pagePugLayoutBuild() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -528,11 +573,8 @@ function pagePugForUseref() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    // .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.js', pipe(rollup({ plugins: [babel(), resolve(), commonjs(), uglify()] }, 'umd'), sourcemaps.write('js/maps')) ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -599,7 +641,11 @@ function browsersyncInit(done) {
     server: {
       baseDir: "./dist",
       online: false
-    }
+    },
+    // https: {
+    //   key: "localhost+3-key.pem",
+    //   cert: "localhost+3.pem"
+    // }
   });
   done();
 }
@@ -620,14 +666,15 @@ function watchFiles() {
       '!src/js/**/_*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
     ],
-    // series(jsFile, jsVendor, jsVendorMin, browsersyncReload)
     series(errorMsgRemove, jsFile, browsersyncReload)
   );
   watch(
     [
-      'src/js/{vendor,lib,plugin,plugins,foundation}/*.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
+      '!src/js/**/{i18n,l10n}/**/*.js',
     ],
     series(jsVendor, browsersyncReload)
   );
@@ -635,8 +682,16 @@ function watchFiles() {
     [
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
+      'src/js/**/{i18n,l10n}/**/*.js',
     ],
     series(jsVendorMin, browsersyncReload)
+  );
+  watch(
+    [
+      'src/js/*.mjs'
+    ],
+    series(jsModule, browsersyncReload)
   );
   watch(['src/json/**/*.json', '!src/json/**/_*.json'], series( json, browsersyncReload ));
   watch('src/images/**/*', image);
@@ -662,7 +717,7 @@ function watchFiles() {
 }
 
 // define complex tasks
-const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, json);
+const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, jsModule, json);
 const cssTask = series(errorMsgRemove, sassExportVendor, sassCompile);
 const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
