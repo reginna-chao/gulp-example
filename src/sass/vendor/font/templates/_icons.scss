@@ -70,7 +70,7 @@
 // SASS變數使用範例
 // .icon {
 //     &:before{
-// 		@include font-icon-SVG檔案名稱;
+// 		@include font-icon-add(SVG檔案名稱);
 //     }
 // }
 
@@ -81,10 +81,17 @@
 
 <% _.each(glyphs, function(icon){ %>
 $font-icon-<%= icon.name %>: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
-@mixin font-icon-<%=icon.name %>($extendStyle: true) {
-	content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
-	
-	@if $extendStyle==true {
+<% }) %>
+
+// 可以帶入變數
+@mixin font-icon-add($icon: '', $extendStyle: true) {
+	<% _.each(glyphs, function(icon){ %>
+	@if $icon == <%= icon.name %> {
+		content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+	}
+	<% }) %>
+
+	@if $extendStyle == true {
 		@extend %font-icon-style;
 	}
 
@@ -92,4 +99,3 @@ $font-icon-<%= icon.name %>: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>
 		font-family: "<%= fontName %>";
 	}
 }
-<% }) %>
