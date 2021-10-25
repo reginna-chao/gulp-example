@@ -349,7 +349,7 @@ function jsVendor(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
+      '!src/js/**/{i18n,l10n}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
     ])
@@ -378,7 +378,7 @@ function jsVendor(){
 function jsVendorMin(){
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation}/*i18n*/**/*.js',
+      'src/js/**/{i18n,l10n}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
       'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js'
     ])
@@ -434,15 +434,8 @@ function pagePugNormal() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', 
-      gulpif('*.min.js', 
-        pipe(sourcemaps.write('js/maps')) ,
-        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
-      )
-    ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -495,15 +488,8 @@ function pagePugLayoutBuild() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', 
-      gulpif('*.min.js', 
-        pipe(sourcemaps.write('js/maps')) ,
-        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
-      )
-    ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -528,15 +514,8 @@ function pagePugForUseref() {
       compileDebug: true
     }))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', 
-      gulpif('*.min.js', 
-        pipe(sourcemaps.write('js/maps')) ,
-        pipe(babel(), uglify(), sourcemaps.write('js/maps'))
-      )
-    ))
+    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
     .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    // .pipe(replace('.css"', '.css?v=' + timestamp + '"'))
-    // .pipe(replace('.js"', '.js?v=' + timestamp + '"'))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
