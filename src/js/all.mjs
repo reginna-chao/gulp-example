@@ -2,7 +2,7 @@
 
 'use strict';
 
-import { on, off, throttle, isInViewport, init } from './modules/fn.mjs';
+import { on, off, throttle, isInViewport } from './modules/fn.mjs';
 
 /* ---------------------------------------- [START] IE Global Setting */
 // 舊IE提醒

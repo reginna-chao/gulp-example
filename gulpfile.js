@@ -414,7 +414,9 @@ function jsVendorMin(){
 // js資料夾底下增加「.mjs」檔案，編譯生成 min.js → 要避免重複到檔案名稱
 function jsModule() {
   return src([
-    'src/js/*.mjs'
+    'src/js/*.mjs',
+    '!src/js/**/_*.mjs',
+    '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
   ])
   .pipe(
     plumber(function(error) {
@@ -432,13 +434,15 @@ function jsModule() {
       resolve(),
       rollupBabel({
         runtimeHelpers: true
-      }),
-      rollupUglify.uglify()
+      })
     ]
   },{
     format: 'iife'
   }))
-  .pipe(rename({ suffix: '.min', extname: '.js' }))
+  .pipe(rename({ extname: '.js' }))
+  .pipe(dest('dist/js'))
+  .pipe(uglify())
+  .pipe(rename({ suffix: '.min' }))
   .pipe(sourcemaps.write('maps', {
     sourceRoot: function(file) {
       var filePathSplit = file.sourceMap.file.split('/');
@@ -451,6 +455,40 @@ function jsModule() {
   .pipe(notify({
     onLast: true,
     message: 'JS Module Task Complete!'
+  }));
+}
+
+function jsVendorModule() {
+  return src([
+    'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.mjs',
+    '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.mjs',
+  ])
+  .pipe(
+    plumber(function(error) {
+      console.log(error.message);
+      errorMsgDisplay(error)
+      this.emit('end');
+    })
+  )
+  .pipe(cached('mjsVendor'))
+  .pipe(debug({title: 'Debug for compile file:'}))
+  .pipe(rollup({
+    plugins: [
+      commonjs(),
+      resolve(),
+      rollupBabel({
+        runtimeHelpers: true
+      }),
+      rollupUglify.uglify()
+    ]
+  },{
+    format: 'iife'
+  }))
+  .pipe(rename({ suffix: '.min', extname: '.js' }))
+  .pipe(dest('dist/js'))
+  .pipe(notify({
+    onLast: true,
+    message: 'JS Module Vendor Task Complete!'
   }));
 }
 
@@ -696,9 +734,18 @@ function watchFiles() {
   );
   watch(
     [
-      'src/js/*.mjs'
+      'src/js/*.mjs',
+      '!src/js/**/_*.mjs',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
     ],
     series(jsModule, browsersyncReload)
+  );
+  watch(
+    [
+      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.mjs',
+      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.mjs',
+    ],
+    series(jsVendorModule, browsersyncReload)
   );
   watch(['src/json/**/*.json', '!src/json/**/_*.json'], series( json, browsersyncReload ));
   watch('src/images/**/*', image);
@@ -724,7 +771,7 @@ function watchFiles() {
 }
 
 // define complex tasks
-const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, jsModule, json);
+const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, jsModule, jsVendorModule, json);
 const cssTask = series(errorMsgRemove, sassExportVendor, sassCompile);
 const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
