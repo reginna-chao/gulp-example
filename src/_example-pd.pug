@@ -1,0 +1,111 @@
+extends _layout
+block append vars
+	- var title= '頁面標題 | '
+	//- - var description= ''
+
+block seo
+	// 內頁SEO設定(商品內頁SEO有不同)
+	meta(name='description', content='商品敘述')
+	meta(name='keywords', content="商品關鍵字")
+	meta(property="og:type" content="og:product")
+	meta(property='og:title', content='商品標題')
+	meta(property='og:description', content='商品敘述')
+	meta(property='og:url', content='商品連結')
+	meta(property='og:image', content='商品縮圖')
+	meta(property='og:locate', content=ogLang)
+	meta(name="twitter:card" content="product")
+	meta(name='twitter:site', content='@TwitterUsername')
+	meta(name='twitter:title', content='商品標題')
+	meta(name='twitter:description', content='商品敘述')
+	meta(name='twitter:image', content='商品縮圖')
+	meta(property="product:price:amount" content="商品價格")
+	meta(property="product:price:currency" content="TWD")
+	// ==========
+	// 結構化資料(JSON-LD) - Product
+		- sku：產品的專屬識別碼，參考：https://support.google.com/merchants/answer/7052112?hl=zh-Hant
+		- 專屬產品 ID 須知，提供全球 ID (例如 gtin、mpn、isbn)，參考：https://support.google.com/merchants/answer/160161?hl=zh-Hant
+		- 供貨狀況，參考（搜尋「ItemAvailability」）：https://developers.google.com/search/docs/advanced/structured-data/product?hl=zh-tw#product
+			- "availability"="填入供貨狀況 Schema.org"
+				- [有現貨] 
+					- 有現貨： https://schema.org/InStock
+					- 有限的可用率： https://schema.org/LimitedAvailability
+					- 僅限在線： https://schema.org/OnlineOnly
+				- [缺貨中]
+					- 缺貨： https://schema.org/OutOfStock
+					- 售罄： https://schema.org/SoldOut
+					- 已停產： https://schema.org/Discontinued
+					- 僅限店內： https://schema.org/InStoreOnly
+				- [預購]
+					- 預購： https://schema.org/PreOrder
+					- 預售： https://schema.org/PreSale
+				- [缺貨待補]
+					- 缺貨待補： https://schema.org/BackOrder
+	script(type="application/ld+json").
+		{
+			"@context": "https://schema.org/",
+			"@type": "Product",
+			"name": "商品標題",
+			"image": [
+				"圖片絕對值網址1",
+				"圖片絕對值網址2"
+			],
+			"description": "商品敘述",
+			"sku": "產品的專屬識別碼，沒有不要生成",
+			"mpn": "製造商零件編號（Manufacturer Part Number），沒有不要生成",
+			"gtin13": "全球交易品項識別碼，長度［8、13或14］，要更換key「gtin『數字』」，沒有不要生成",
+			"brand": {
+				"@type": "Brand",
+				"name": "公司名稱（短）"
+			},
+			"review": {
+				"@type": "Review",
+				"reviewRating": {
+					"@type": "Rating",
+					"ratingValue": "4",
+					"bestRating": "5"
+				},
+				"author": {
+					"@type": "Person",
+					"name": "評論者"
+				}
+			},
+			"aggregateRating": {
+				"@type": "AggregateRating",
+				"ratingValue": "4.5",
+				"reviewCount": "3"
+			},
+			"offers": {
+				"@type": "Offer",
+				"url": "商品絕對值網址",
+				"priceCurrency": "TWD",
+				"price": "商品價格",
+				"availability": "https://schema.org/InStock",
+				"seller": {
+					"@type": "Organization",
+					"name": "賣家名稱",
+					"url": "賣家賣場絕對值網址，沒有不要生成",
+					"image": "賣家頭像圖片絕對值網址，沒有不要生成"
+				}
+			}
+		}
+	// [END] 內頁SEO設定
+
+block style
+	//- link(rel="stylesheet", href="css/index.min.css")
+	
+block script
+	//- script(src="js/index.min.js" defer)
+
+//- -------------------------------------------
+//- [START] Mixin區塊
+//- * 所在頁面使用的Mixin一定置放於最前端(mixin前方不可有多餘的Tab與space)
+//- * 共用的Mixin請放置於 _mixin.pug 檔案中
+//- * Mixin帶入的變數規則要寫註解
+//- ----------
+//- mixin使用標題
+//- +conceptItem(標題, 圖)
+//- mixin conceptItem(title, img)
+//- [END] Mixin區塊	
+//- -------------------------------------------
+
+block content
