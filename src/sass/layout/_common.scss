@@ -59,25 +59,23 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 	// 	background: #C5C5C5
 }
 
-
 // No Selection | 無法反選
 // https://stackoverflow.com/a/4407335/11240898
-@mixin selection-none {
-	-webkit-touch-callout: none; // iOS Safari
-	-webkit-user-select: none; // Safari
-	-khtml-user-select: none; // Konqueror HTML
-	-moz-user-select: none; // Firefox
-	-ms-user-select: none; // Internet Explorer/Edge
-	user-select: none; // Non-prefixed version, currently, supported by Chrome and Opera
+@mixin user-select($val: none) {
+	-webkit-touch-callout: $val; // iOS Safari
+	-webkit-user-select: $val; // Safari
+	-khtml-user-select: $val; // Konqueror HTML
+	-moz-user-select: $val; // Firefox
+	-ms-user-select: $val; // Internet Explorer/Edge
+	user-select: $val; // Non-prefixed version, currently, supported by Chrome and Opera
 }
-
 
 // +selection-color(反選的文字顏色, 反選的背景顏色)
 @include selection-color($selection-text-color, $selection-bg-color);
 
 // 無法反選 | No Selection
 .no-selection {
-	@include selection-none;
+	@include user-select(none);
 }
 
 // --------------------------------------------------------
@@ -93,13 +91,11 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 	}
 }
 
-
 // --------------------------------------------------------
 
 /* Text */
 
 .text-em {
-
 	&,
 	a {
 		color: $primary-color;
