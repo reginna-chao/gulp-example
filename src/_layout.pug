@@ -9,7 +9,7 @@ block vars
 	- lang= 'zh-Hant-TW' // 網站語系，台灣:zh-Hant-TW，寫於<html>的lang
 	- ogLang= 'zh_TW' // 網站語系，台灣:zh_TW，寫於 FB OG 的 lang
 
-	- webUrl= '' // 設定測試站網址，用於 OG Image (要用絕對網址)
+	- webUrl= 'http://example.com.tw/' // 設定測試站網址，用於 OG Image (要用絕對網址)
 doctype html
 html.no-js(lang=lang)
 	head
@@ -46,7 +46,9 @@ html.no-js(lang=lang)
 			meta(property="og:type" content="website")
 			meta(property="og:title" content=titleShow)
 			meta(property="og:description" content=description)
+			| <!--
 			meta(property="og:url" content="頁面連結")
+			| -->
 			//- ↓網頁代表圖FB使用1200x630
 			meta(property="og:image" content=`${webUrl}images/og-img.png`)
 			//- ↓網站語系，台灣:zh_TW
@@ -58,8 +60,77 @@ html.no-js(lang=lang)
 			meta(name="twitter:title" content=titleShow)
 			meta(name="twitter:description" content=description)
 			meta(name="twitter:image" content=`${webUrl}images/og-img.png`)
-			| <!--
-			| -->
+		// 結構化資料(JSON-LD) - Global
+		//- Ref: https://jsonld.com/organization/
+		//- 公司組織、Website + 搜尋框（必填）
+		script(type='application/ld+json').
+			{
+				"@context":"http://schema.org",
+				"@graph": [
+					{
+						"@type":"Organization",
+						"name":"公司名稱（短）",
+						"legalName":"公司名稱（法律上註冊）",
+						"foundingDate":"yyyy-mm-dd",
+						"url":"#{webUrl}",
+						"logo":"#{webUrl}images/logo.svg",
+						"contactPoint" : [
+							{
+								"@type" : "ContactPoint",
+								"telephone" : "+1-888-888-9999",
+								"contactType" : "customer service",
+								"contactOption" : "TollFree",
+								"areaServed" : "US"
+							} , {
+								"@type" : "ContactPoint",
+								"telephone" : "+1-888-888-9998",
+								"contactType" : "Sales"
+							} , {
+								"@type" : "ContactPoint",
+								"telephone" : "+1-888-888-9997",
+								"contactType" : "technical support",
+								"contactOption" : "TollFree",
+								"areaServed" : "US",
+								"availableLanguage" : ["English","French"]
+							} , {
+								"@type" : "ContactPoint",
+								"telephone" : "+1-888-888-9997",
+								"contactType" : "bill payment",
+								"contactOption" : "TollFree",
+								"areaServed" : ["US","GB"]
+							}
+						],
+						"address": {
+							"@type":"PostalAddress",
+							"postalCode":"104",
+							"streetAddress":"街道名稱",
+							"addressLocality":"ＸＸ市ＸＸ區",
+							"addressRegion":"台灣",
+							"addressCountry": {
+								"@type": "Country",
+								"name": "TW"
+							}
+						},
+						"sameAs": [
+							"https://zh.wikipedia.org/wiki/巴拉巴拉",
+							"https://www.example.com/",
+							"https://www.facebook.com/example",
+							"https://www.youtube.com/user/example"
+						]
+					},
+					{
+						"@type":"WebSite",
+						"url":"#{webUrl}",
+						"potentialAction": {
+							"@type":"SearchAction",
+							"target":"/search?q={globalSearch}",
+							"query-input":"required name=globalSearch"
+						},
+						"name":"專案名稱"
+					}
+				]
+				
+			}
 		// [END] SEO Setting
 
 
