@@ -9,8 +9,6 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   fs = require('fs'),
   del = require('del'), // 清除檔案
   through = require('through2'), // 處理通過後的檔案
-  pipe = require('multipipe'),
-  lazypipe = require('lazypipe'), // 分離pipe，可分別處理檔案
   gulpif = require('gulp-if'), // 就是 if ಠ_ಠ
   notify = require('gulp-notify'), // 通知訊息
   debug = require('gulp-debug'), // debug 監控處理檔案
@@ -18,7 +16,6 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   rename = require('gulp-rename'), // 檔案重新命名
   gulpIgnore = require('gulp-ignore'), // [例外處理] 無視指定檔案
   plumber = require('gulp-plumber'), // [例外處理] gulp發生編譯錯誤後仍然可以繼續執行，不會強迫中斷
-  // changed = require('gulp-changed'), // [例外處理] 找出哪些檔是被修改過的
   cached = require('gulp-cached'), // [快取機制] 只傳遞修改過的文件
   sourcemaps = require('gulp-sourcemaps'), // [檔案追蹤] 來源編譯
   // css
@@ -28,12 +25,10 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   inject = require('gulp-inject-string'), // HTML 插入 code (為了顯示Error)
   removeCode = require('gulp-remove-code'), // gulp 移除code (為了顯示Error)
   // JS
-  jshint = require('gulp-jshint'), // [JS] JS檢查錯誤
   uglify = require('gulp-uglify'), // [JS] 壓縮JS
-  babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
+  // babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
   rollup = require('gulp-better-rollup'), // [JS] 
   rollupBabel = require('rollup-plugin-babel'), // [JS] 
-  rollupUglify = require('rollup-plugin-uglify'), // [JS] 
   resolve = require('rollup-plugin-node-resolve'), // [JS] 
   commonjs = require('rollup-plugin-commonjs'), // [JS] 
   // Image
@@ -43,7 +38,7 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   imageminJpegRecompress = require('imagemin-jpeg-recompress'), // [IMG] JPG壓縮
   // HTML
   pug = require('gulp-pug'), // [HTML / PUG] 編譯 PUG（PUG模板）
-  useref = require('gulp-useref'), // [HTML] 合併檔案（需指定於html）
+  // useref = require('gulp-useref'), // [HTML] 合併檔案（需指定於html）
   // Icon(Icon Font)
   iconfont = require('gulp-iconfont'), // [ICON FONT] 編譯font檔案
   consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
@@ -87,10 +82,6 @@ function isDirEmpty(path) {
 // [font icon] 建立
 function iconFont(done){
   return src(['src/images/font_svg/*.svg'], {base: './src/'})
-    // .pipe(changed('src/images/font_svg/*.svg',{
-    //   extension: '.svg',
-    //   hasChanged: changed.compareLastModifiedTime
-    // }))
     // .pipe(cached('iconFont'))
     .pipe(iconfont({
       fontName: fontName,
@@ -246,10 +237,6 @@ function sassCompile(useCached){
 // sass export vendor
 function sassExportVendor(){
   return src('src/sass/vendor/**/*.css')
-    // .pipe(changed('dist/css', {
-    //   extension: '.css',
-    //   hasChanged: changed.compareSha1Digest
-    // }))
     .pipe(cached('sassVendor'))
     .pipe(dest('dist/css/vendor'));
 }
@@ -264,7 +251,6 @@ function sassReloadHandler() {
 function image(){
   return src('src/images/**/*')
     .pipe(plumber())
-    // .pipe(changed('dist/images'))
     .pipe(cached('image'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(gulpIgnore.exclude('**--nocopy.*'))
@@ -310,10 +296,9 @@ function imageIco() {
 }
 
 // JS compile
-// 如果命名結尾有"--.js"（例如：all-main--.js, all-function--.js），為了保留未壓縮檔會編譯到 js/useref 資料夾（即使沒有用）
 function jsFile(){
   return src([
-      'src/js/*.js',
+      'src/js/**/*.js',
       '!src/js/**/_*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
     ])
@@ -324,24 +309,25 @@ function jsFile(){
         this.emit('end');
       })
     )
-    // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('js'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    // .pipe(jshint())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(babel())
-    .pipe(gulpIgnore.exclude('vendor/**/*.*'))
-    .pipe(
-      // 重新命名含有結尾 *--.js (為了使用 useref)
-      gulpif('**/*--.js', rename(function (path) {
-        // Updates the object in-place
-        path.dirname += "/useref"; // 新增進新資料夾
-        path.basename = path.basename;
-        path.extname = path.extname;
-      }))
-    )
+    .pipe(rollup({
+      output: {
+        strick: false
+      },
+      plugins: [
+        commonjs(),
+        resolve(),
+        rollupBabel({
+          runtimeHelpers: true
+        })
+      ]
+    },{
+      format: 'iife'
+    }))
+    // .pipe(babel())
     .pipe(dest('dist/js'))
-    .pipe(gulpIgnore.exclude('**/*--.js')) // 排除命名末尾含有 "--" (為了使用 useref)
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
     .pipe(sourcemaps.write('maps', {
@@ -353,12 +339,12 @@ function jsFile(){
       }}
     ))
     .pipe(dest('dist/js'))
-    // .pipe(browserSync.stream())
     .pipe(notify({
       onLast: true,
       message: 'JS Task Complete!'
     }));
 }
+
 // JS vendor compile
 function jsVendor(){
   return src([
@@ -375,15 +361,23 @@ function jsVendor(){
         this.emit('end');
       })
     )
-    // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('jsVendor'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    // .pipe(jshint())
-    .pipe(babel())
-    .pipe(rename({ suffix: '.min' }))
+    .pipe(rollup({
+      plugins: [
+        commonjs(),
+        resolve(),
+        rollupBabel({
+          runtimeHelpers: true
+        })
+      ]
+    },{
+      format: 'iife'
+    }))
+    // .pipe(babel())
     .pipe(uglify())
+    .pipe(rename({ suffix: '.min' }))
     .pipe(dest('dist/js'))
-    // .pipe(browserSync.stream())
     .pipe(notify({
       onLast: true,
       message: 'JS Plugin Task Complete!'
@@ -398,98 +392,13 @@ function jsVendorMin(){
       'src/js/**/{i18n,l10n}/**/*.js',
     ])
     .pipe(plumber())
-    // .pipe(changed('dist/js', { extension: '.js' }))
     .pipe(cached('jsVendorMin'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    // .pipe(jshint())
     .pipe(dest('dist/js'))
-    // .pipe(browserSync.stream())
     .pipe(notify({
       onLast: true,
       message: 'JS Plugin Task Complete!'
     }));
-}
-
-// 使用 ES6 Import 之檔案
-// js資料夾底下增加「.mjs」檔案，編譯生成 min.js → 要避免重複到檔案名稱
-function jsModule() {
-  return src([
-    'src/js/*.mjs',
-    '!src/js/**/_*.mjs',
-    '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
-  ])
-  .pipe(
-    plumber(function(error) {
-      console.log(error.message);
-      errorMsgDisplay(error)
-      this.emit('end');
-    })
-  )
-  .pipe(cached('mjs'))
-  .pipe(debug({title: 'Debug for compile file:'}))
-  .pipe(sourcemaps.init({ loadMaps: true }))
-  .pipe(rollup({
-    plugins: [
-      commonjs(),
-      resolve(),
-      rollupBabel({
-        runtimeHelpers: true
-      })
-    ]
-  },{
-    format: 'iife'
-  }))
-  .pipe(rename({ extname: '.js' }))
-  .pipe(dest('dist/js'))
-  .pipe(uglify())
-  .pipe(rename({ suffix: '.min' }))
-  .pipe(sourcemaps.write('maps', {
-    sourceRoot: function(file) {
-      var filePathSplit = file.sourceMap.file.split('/');
-      var backTrack = '../'.repeat(filePathSplit.length-1) || '../' ;
-      var filePath = backTrack+ 'src/';
-      return filePath;
-    }}
-  ))
-  .pipe(dest('dist/js'))
-  .pipe(notify({
-    onLast: true,
-    message: 'JS Module Task Complete!'
-  }));
-}
-
-function jsVendorModule() {
-  return src([
-    'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.mjs',
-    '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.mjs',
-  ])
-  .pipe(
-    plumber(function(error) {
-      console.log(error.message);
-      errorMsgDisplay(error)
-      this.emit('end');
-    })
-  )
-  .pipe(cached('mjsVendor'))
-  .pipe(debug({title: 'Debug for compile file:'}))
-  .pipe(rollup({
-    plugins: [
-      commonjs(),
-      resolve(),
-      rollupBabel({
-        runtimeHelpers: true
-      }),
-      rollupUglify.uglify()
-    ]
-  },{
-    format: 'iife'
-  }))
-  .pipe(rename({ suffix: '.min', extname: '.js' }))
-  .pipe(dest('dist/js'))
-  .pipe(notify({
-    onLast: true,
-    message: 'JS Module Vendor Task Complete!'
-  }));
 }
 
 // JSON File
@@ -499,7 +408,6 @@ function json() {
       '!src/json/**/_*.json'
     ])
     .pipe(plumber())
-    // .pipe(changed('dist/json', { extension: '.json' }))
     .pipe(cached('json'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist/json'))
@@ -530,9 +438,6 @@ function pagePugNormal() {
       pretty: true,
       compileDebug: true
     }))
-    .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -584,9 +489,6 @@ function pagePugLayoutBuild() {
       pretty: true,
       compileDebug: true
     }))
-    .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
     .pipe(dest('dist'))
     .pipe(notify({
       onLast: true,
@@ -595,34 +497,8 @@ function pagePugLayoutBuild() {
 }
 
 // 為了監聽*--.js更改而設置的
-function pagePugForUseref() {
-  return src(['src/index.pug'])
-    .pipe(
-      plumber( function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
-        this.emit('end');
-      })
-    )
-    // .pipe(cached('pugUseref'))
-    .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(pug({
-      pretty: true,
-      compileDebug: true
-    }))
-    .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
-    .pipe(gulpif( '*.js', pipe(babel(), uglify(), sourcemaps.write('js/maps')) ))
-    .pipe(gulpif( '*.css', pipe(cleancss({ rebase: false }), sourcemaps.write('css/maps')) ))
-    .pipe(dest('dist'))
-    .pipe(notify({
-      onLast: true,
-      message: 'Pug Useref Task Complete!'
-    }));
-}
-
 function pageHtml() {
   return src(['src/**/*.html', '!src/**/_*.html'])
-    // .pipe(changed('dist', { extension: '.html' }))
     .pipe(cached('html'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
@@ -637,7 +513,6 @@ function fontFile() {
   return src([
       'src/fonts/**/*',
     ])
-    // .pipe(changed('dist/fonts/'))
     .pipe(cached('font'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist/fonts'))
@@ -656,7 +531,6 @@ function otherFile() {
     './src/download/**/*.*',
     './src/pdf/**/*.*'
   ], {base: './src/'})
-    // .pipe(changed('dist'))
     .pipe(cached('other'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
@@ -732,21 +606,6 @@ function watchFiles() {
     ],
     series(jsVendorMin, browsersyncReload)
   );
-  watch(
-    [
-      'src/js/*.mjs',
-      '!src/js/**/_*.mjs',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
-    ],
-    series(jsModule, browsersyncReload)
-  );
-  watch(
-    [
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.mjs',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.mjs',
-    ],
-    series(jsVendorModule, browsersyncReload)
-  );
   watch(['src/json/**/*.json', '!src/json/**/_*.json'], series( json, browsersyncReload ));
   watch('src/images/**/*', image);
   watch('src/*.ico', imageIco);
@@ -763,7 +622,6 @@ function watchFiles() {
   
   watch(['src/**/*.pug', '!src/**/_*.pug'], series(errorMsgRemove, pagePugNormal, browsersyncReload));
   watch(['src/**/_*.pug'], series(errorMsgRemove, pagePugLayoutCheck, browsersyncReload));
-  watch(['src/js/*--.js'], series(errorMsgRemove, pagePugForUseref, browsersyncReload) ); // 僅提供給Useref使用
   watch(
     ['src/**/*.html', '!src/**/_*.html'] ,
     series(pageHtml, browsersyncReload)
@@ -771,7 +629,7 @@ function watchFiles() {
 }
 
 // define complex tasks
-const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, jsModule, jsVendorModule, json);
+const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, json);
 const cssTask = series(errorMsgRemove, sassExportVendor, sassCompile);
 const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);

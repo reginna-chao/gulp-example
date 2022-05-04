@@ -1,24 +1,25 @@
 {
 	"presets": [
 		[
-			"@babel/env",
+			"@babel/preset-env",
 			{
-				"targets":{
-					"browsers": "last 2 versions, > 1%, ie >= 11"
-				},
-				"modules": false
+				// [START] 生成 Polyfill 在每個 js 文件中，會很肥，斟酌使用
+				// "targets": {
+				// 	"browsers": "last 2 versions and > 0.05%",
+				// 	// "ie": 11
+				// },
+				// "modules": false,
+				// "useBuiltIns": "usage",
+				// "corejs": 3.6,
+				// "debug": true
+				// [END] 生成 Polyfill 在每個 js 文件中，會很肥，斟酌使用
 			}
 		]
 	],
 	"plugins": [
-		[
-			"@babel/plugin-transform-runtime", {
-				"corejs": 2
-			}
-		],
 		"transform-class-properties",
 		"transform-es2015-object-super"
 	],
-	"sourceType": "script", // 取消use strict 模式
+	"sourceType": "module", // 取消use strict 模式
 	"retainLines": true // 保留原本的程式排版（因為編譯後的註解會被換行或更改，沒有其他替代方案先使用這個）
 }

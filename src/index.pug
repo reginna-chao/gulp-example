@@ -7,7 +7,7 @@ block style
 	link(rel="stylesheet", href="css/index.min.css")
 	
 block script
-	//- script(src="js/index.min.js" defer)
+	script(src="js/index.min.js" defer)
 
 //- -------------------------------------------
 //- [START] Mixin區塊
@@ -23,3 +23,14 @@ block script
 
 block content
 	p 內容
+
+	-
+		var breadcrumb = [
+			{ title: "第一層頁面標題1", href: "無連結使用#字號" },
+			{ title: "第二層頁面標題2", href: "頁面連結" }
+		]
+	+buildBreadcrumbs(breadcrumb)
+
+
+
+
