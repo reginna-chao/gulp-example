@@ -496,7 +496,6 @@ function pagePugLayoutBuild() {
     }));
 }
 
-// 為了監聽*--.js更改而設置的
 function pageHtml() {
   return src(['src/**/*.html', '!src/**/_*.html'])
     .pipe(cached('html'))
