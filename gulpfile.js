@@ -38,7 +38,6 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   imageminJpegRecompress = require('imagemin-jpeg-recompress'), // [IMG] JPG壓縮
   // HTML
   pug = require('gulp-pug'), // [HTML / PUG] 編譯 PUG（PUG模板）
-  // useref = require('gulp-useref'), // [HTML] 合併檔案（需指定於html）
   // Icon(Icon Font)
   iconfont = require('gulp-iconfont'), // [ICON FONT] 編譯font檔案
   consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
@@ -255,7 +254,7 @@ function image(){
     .pipe(gulpIgnore.exclude('**--nocopy.*'))
     .pipe(
       gulpif('!**/*--uc.*', imagemin([
-        imagemin.gifsicle({interlaced: true}),
+        imageminGifsicle({interlaced: true}),
   
         // [jpg] quality setting
         // 原設定數字：Max: 75, min: 60
@@ -456,10 +455,10 @@ function pagePugLayoutCheck() {
       })
     )
     .pipe(cached('pugLayout'))
-      .pipe(through.obj(function (file, enc, cb) {
-          fileList.push(file.path);
-          cb(null);
-      }))
+    .pipe(through.obj(function (file, enc, cb) {
+        fileList.push(file.path);
+        cb(null);
+    }))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(notify({
       onLast: true,
