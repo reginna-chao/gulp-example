@@ -54,11 +54,21 @@ function iconFontCreateEmptyFile(cb) {
     cb();
   } else {
     // 生成空的 @mixin
-    let str = '/* Empty */ @mixin font-icon() {}; @mixin font-icon-style() {};';
+    let str = `
+      /* Empty */
+      @mixin font-icon() {};
+      @mixin font-icon-style() {};
+      @mixin font-icon-add($icon, $style: false) {
+          content: #{$icon};
+          @if ($style) {
+            color: #000;
+          }
+      };
+    `;
 
     // 依照 font_icon 內的檔案生成假的 @mixin
     fs.readdirSync('src/images/font_svg/').forEach( file => {
-      str = str + ` @mixin font-icon-add($icon: '', $extendStyle: true){font-family:'icon'}`
+      str = str + ` @mixin font-icon-${file.replace(/\.svg/g, '')}() {};`
     });
 
     fs.writeFile('src/sass/vendor/font/_icons.scss', str, cb);
@@ -178,9 +188,9 @@ function errorMsgDisplay(error){
   '\n\n=======================================\n';
   var error_msg =
   "<!--removeIf(production)-->\
-  <div class='_error-msg_' style='position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;font-size:18px;white-space: pre;font-family: monospace;padding:20px;overflow: auto;background: rgba(0,0,0,0.8);color: white;'>\
+  <div class='_error-msg_' style='position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;font-size:18px;white-space:pre-line;font-family: monospace;padding:20px;overflow: auto;background: rgba(0,0,0,0.8);color: white;'>\
     <div class='_error-msg__text-box_' style='display:flex;justify-content:center;padding:20px;'>\
-      <div class='_error-msg__text_'>"
+    <div class='_error-msg__text_' style='max-width: 100%;'>"
         + String(last_error_str) +
       "</div>\
     </div>\

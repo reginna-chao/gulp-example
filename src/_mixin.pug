@@ -4,6 +4,7 @@
 mixin tag(tag)
 	case tag
 		when 'a': a&attributes(attributes): block
+		when 'button': button&attributes(attributes): block
 		when 'ul': ul&attributes(attributes): block
 		when 'ol': ol&attributes(attributes): block
 		when 'li': li&attributes(attributes): block
@@ -26,7 +27,7 @@ mixin tag(tag)
 	img(src=imgRender(寬, 高))
 -
 	function imgRender(width, height, color) {
-		return `https://via.placeholder.com/${width}x${height}/${color||'333'}`
+		return `https://via.placeholder.com/${width}x${height}/${color||'ccc'}`
 	}
 //- ---------------------------------------- [END] 生成顯示幾乘幾的灰色圖
 

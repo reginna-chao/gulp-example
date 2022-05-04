@@ -11,6 +11,11 @@
 		unicode-range: U+<%= glyphs[0].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>-<%= glyphs[glyphs.length-1].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>;
 	}
 
+	.<%= cssClass%> {
+		font-family: sans-serif;
+		line-height: 1;
+	}
+
 	.<%= cssClass%>:before {
 		@include font-icon-style;
 	}
