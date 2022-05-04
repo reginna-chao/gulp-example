@@ -19,7 +19,7 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   cached = require('gulp-cached'), // [快取機制] 只傳遞修改過的文件
   sourcemaps = require('gulp-sourcemaps'), // [檔案追蹤] 來源編譯
   // css
-  sass = require('gulp-sass'), // [css] Sass 編譯
+  sass = require('gulp-sass')(require('node-sass')), // [css] Sass 編譯
   autoprefixer = require('gulp-autoprefixer'), // [css] CSS自動前綴
   cleancss = require('gulp-clean-css'), // [css] CSS壓縮
   inject = require('gulp-inject-string'), // HTML 插入 code (為了顯示Error)
@@ -199,7 +199,6 @@ function errorMsgDisplay(error){
 }
 // sass compiler
 let sassReload = false;
-sass.compiler = require('node-sass');
 function sassCompile(useCached){
   return src('src/sass/**/*.+(scss|sass)')
     .pipe(plumber())
