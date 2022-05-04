@@ -1,0 +1,3 @@
+// 專案主要的套件合併，合併頁面上的套件再另外開檔案 lib-{{page}}.js
+import './lazyload.js'
+import './javascript.easeScroll.min.js'
