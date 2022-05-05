@@ -24,6 +24,7 @@ block script
 block content
 	p 內容
 
+	//- 麵包屑
 	-
 		var breadcrumb = [
 			{ title: "第一層頁面標題1", href: "無連結使用#字號" },
@@ -31,6 +32,13 @@ block content
 		]
 	+buildBreadcrumbs(breadcrumb)
 
+	//- Lazyload Test
+	img(alt="A lazy image"
+		class="lazy"
+		data-src="images/favicon.png"
+		data-srcset="images/touch-icon.png 400w, images/og-img.png 800w"
+		sizes="(max-width: 600px) 480px, 800px"
+	)
 
-
-
+	//- 撐高
+	section(style="height: 200vh")

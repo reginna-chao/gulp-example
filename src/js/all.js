@@ -157,19 +157,21 @@ if (!('remove' in Element.prototype)) {
 
 	/* ---------------------------------------- [START] Lazyload */
 	/*
-	 * 使用：https://github.com/tuupola/lazyload
-	 * 尋找頁面上的 .lazyload 為執行 lazy load 物件
+	 * 使用：https://github.com/verlok/vanilla-lazyload
+	 * 尋找頁面上的 .lazy 為執行 Lazy Load 物件
 	 */
 	var lazyloadTimer = 0;
 	function buildLazyLoad() {
-		if (lazyloadTimer < 5 && window.lazyload === undefined) {
+		if (lazyloadTimer < 5 && window.LazyLoad === undefined) {
 			return setTimeout(function () {
 				lazyloadTimer++;
 				buildLazyLoad();
 			}, 500);
 		}
 
-		lazyload();
+		var lazyLoadInstance = new LazyLoad({
+			// Your custom settings go here
+		});
 	}
 	on(window, 'load', buildLazyLoad);
 	/* ---------------------------------------- [END] Lazyload */

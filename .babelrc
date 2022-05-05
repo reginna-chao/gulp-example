@@ -1,14 +1,15 @@
 {
+	"ignore": ["node_modules/**"],
 	"presets": [
 		[
-			"@babel/preset-env",
+			"@babel/env",
 			{
+				"modules": false,
 				// [START] 生成 Polyfill 在每個 js 文件中，會很肥，斟酌使用
 				// "targets": {
 				// 	"browsers": "last 2 versions and > 0.05%",
 				// 	// "ie": 11
 				// },
-				// "modules": false,
 				// "useBuiltIns": "usage",
 				// "corejs": 3.6,
 				// "debug": true
@@ -17,9 +18,10 @@
 		]
 	],
 	"plugins": [
+		"@babel/plugin-transform-object-assign",
 		"transform-class-properties",
 		"transform-es2015-object-super"
 	],
-	"sourceType": "module", // 取消use strict 模式
+	"sourceType": "module",
 	"retainLines": true // 保留原本的程式排版（因為編譯後的註解會被換行或更改，沒有其他替代方案先使用這個）
 }
