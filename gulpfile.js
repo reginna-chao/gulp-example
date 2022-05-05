@@ -29,6 +29,7 @@ const browserSync = require('browser-sync').create(), // 建立同步虛擬伺�
   // babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
   rollup = require('gulp-better-rollup'), // [JS] 
   rollupBabel = require('rollup-plugin-babel'), // [JS] 
+  rollupTerser = require('rollup-plugin-terser'), // [JS] 用來壓縮rollup 的套件，取代 rollup-plugin-uglify 無法轉換 ES6 的問題
   resolve = require('rollup-plugin-node-resolve'), // [JS] 
   commonjs = require('rollup-plugin-commonjs'), // [JS] 
   // Image
@@ -298,7 +299,7 @@ function jsFile(){
   return src([
       'src/js/**/*.js',
       '!src/js/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
     ])
     .pipe(
       plumber(function(error) {
@@ -319,7 +320,8 @@ function jsFile(){
         resolve(),
         rollupBabel({
           runtimeHelpers: true
-        })
+        }),
+        // rollupTerser.terser()
       ]
     },{
       format: 'iife'
@@ -346,10 +348,10 @@ function jsFile(){
 // JS vendor compile
 function jsVendor(){
   return src([
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
       '!src/js/**/{i18n,l10n}/**/*.js',
     ])
     .pipe(
@@ -367,13 +369,14 @@ function jsVendor(){
         resolve(),
         rollupBabel({
           runtimeHelpers: true
-        })
+        }),
+        rollupTerser.terser()
       ]
     },{
       format: 'iife'
     }))
     // .pipe(babel())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(dest('dist/js'))
     .pipe(notify({
@@ -384,9 +387,9 @@ function jsVendor(){
 // JS Vendor Min compile
 function jsVendorMin(){
   return src([
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
       'src/js/**/{i18n,l10n}/**/*.js',
     ])
     .pipe(plumber())
@@ -580,25 +583,25 @@ function watchFiles() {
     [
       'src/js/**/*.js',
       '!src/js/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.*',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
     ],
     series(errorMsgRemove, jsFile, browsersyncReload)
   );
   watch(
     [
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
       '!src/js/**/{i18n,l10n}/**/*.js',
     ],
     series(jsVendor, browsersyncReload)
   );
   watch(
     [
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation}/**/_*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
       'src/js/**/{i18n,l10n}/**/*.js',
     ],
     series(jsVendorMin, browsersyncReload)
