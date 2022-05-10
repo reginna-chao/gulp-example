@@ -1,0 +1,154 @@
+// Sass Mixins
+// ---------------------------------------- [START] Flex
+@mixin fc($justify, $align) {
+	display: flex;
+
+	@if $justify {
+		justify-content: $justify;
+	}
+
+	@if $align {
+		align-items: $align;
+	}
+}
+// ---------------------------------------- [END] Flex
+
+// ---------------------------------------- [START] BEM Mixin
+// 遵循BEM的規則，於class增加tag（僅限於單層方式，多層不適用）
+// 可使用（單層）： .component__link => a.component__link
+// 不適用（多層）： .component .component__link => .component a.component__link
+@mixin bem-tag($tag: 'a') {
+	$current: &;
+
+	@at-root #{$tag}#{$current} {
+		@content;
+	}
+}
+// ---------------------------------------- [END] BEM Mixin
+
+// ---------------------------------------- [START] before-img-size
+// 使用 ::before 的 padding-top 撐高度
+@mixin before-img-size($width: 1, $height: 1, $build-other: true) {
+	@if $build-other {
+		content: '';
+		display: block;
+	}
+
+	padding-top: percentage($height / $width);
+}
+// ---------------------------------------- [END] before-img-size
+
+// ---------------------------------------- [START] Media Query 相關
+// Hover Media Query (使用 Foundation Mixin)
+$project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @media hover
+
+@mixin breakpoint-hover($hover-enable: true) {
+	// 有 IE 專案
+	@if $project-has-ie {
+		@if $hover-enable {
+			@media screen and (min-width: 75rem) {
+				@content;
+			}
+		} @else {
+			@media screen and (max-width: 74.9375rem) {
+				@content;
+			}
+		}
+	}
+
+	// 無 IE 專案
+	@else {
+		@if $hover-enable {
+			@media (hover: hover) {
+				@content;
+			}
+		} @else {
+			@media (hover: none) {
+				@content;
+			}
+		}
+	}
+}
+
+// Breakpoint Between (使用 Foundation Mixin)
+@mixin breakpoint-between($start, $end) {
+	@media screen and (min-width: #{$start}px) and (max-width: #{$end}px) {
+		@content;
+	}
+}
+// ---------------------------------------- [END] Media Query 相關
+
+// ---------------------------------------- [START] Custom Scroll Bar
+$scrollbar-thumb-color: $primary-color; // 操作顏色
+$scrollbar-track-color: #eee; // 滾軸背景
+$scrollbar-width: 6px; // 寬度(瀏覽器預設為15px)
+$scrollbar-border-radius: 6px; // 圓角，Firefox不支援
+
+@mixin custom-scroll-bar($thumb-color: $scrollbar-thumb-color, $track-color: $scrollbar-track-color) {
+	// For Chrome, Opera, Safari, Android, iOS
+	&::-webkit-scrollbar {
+		width: $scrollbar-width;
+		height: $scrollbar-width;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: $track-color;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: $thumb-color;
+		border-radius: $scrollbar-border-radius;
+
+		&:hover {
+			background: darken($thumb-color, 10%);
+		}
+	}
+
+	@if & {
+		// For Firefox (版本必須64+)
+		// 如果是整頁<body>要使用，必須將Class增加於<html>標籤上
+		// Ref: https://stackoverflow.com/a/6165489/11240898
+		// 顏色：操作顏色(Thumb) 滾軸背景(Track)
+		scrollbar-color: $thumb-color $track-color;
+		// 寬度只有 auto | thin | none 選項
+		// auto為15px，thin為6px，none為不顯示
+		scrollbar-width: thin;
+	}
+}
+// ---------------------------------------- [END] Custom Scroll Bar
+
+// ---------------------------------------- [START] Animation Set
+@mixin set-animate($animateEl) {
+	@each $class in $animateEl {
+		$i: index($animateEl, $class);
+		$i: $i;
+
+		#{$class} {
+			opacity: 0;
+			transform: translateY(50px);
+			transition-duration: 1s;
+			transition-property: opacity, transform;
+			transition-delay: #{$i * 0.3s};
+		}
+	}
+}
+
+@mixin set-animated($animateEl) {
+	@each $class in $animateEl {
+		#{$class} {
+			opacity: 1;
+			transform: none;
+		}
+	}
+}
+
+@mixin set-animate-flow($animateEl) {
+	&.js-ani {
+		@include set-animate($animateEl);
+
+		&.is-animated {
+			@include set-animated($animateEl);
+		}
+	}
+}
+// ---------------------------------------- [END] Animation Set
