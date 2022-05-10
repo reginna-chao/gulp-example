@@ -16,7 +16,7 @@
 
 
 ### 特別注意事項 ###
-* 轉寫特別事項
+* 範例特別事項
 
 > 版控相關是否有應注意事項
 
@@ -52,8 +52,8 @@ $(document).foundation();
 ```diff
 // Node version v10.15.1
 // NPM version V6.4.1
-// Gulp version v2.2.0
-// Gulp CLI version v4.0.2
+// Gulp version v4.0.2
+// Gulp CLI version v2.3.0
 ```
 
 ##### 安裝與啟動
@@ -66,9 +66,9 @@ $(document).foundation();
 
 
 ### 使用外掛列表 ###
-* [JQuery 3.5.1](https://code.jquery.com/jquery/) - jQuery 版本
+* [JQuery 3.6.0](https://code.jquery.com/jquery/) - jQuery 版本
 * [easeScroll 改良版](https://github.com/ivmello/easeScroll) - 平滑滾動改良版（修正 Chrome passtive: true 錯誤、改為純 JavaScript） | by ivmello
-* [Lazy Load Remastered 2.0.0-rc.2](https://github.com/tuupola/lazyload), [Project home](https://appelsiini.net/projects/lazyload/) - 延遲載入圖片 | by Mika Tuupola
+* [Vanilla LazyLoad 17.8.1](https://github.com/verlok/vanilla-lazyload) - 延遲載入圖片 | by Verlok
 
 > 請將有使用的外掛套件撰寫於此
 
@@ -94,8 +94,8 @@ $(document).foundation();
 
 ### 檔案說明 ###
 
-##### --------------------  SCSS --------------------
-* 使用BEM命名方式，或是將選取器的層級數減少(EX: .el > ul > li > a => .el a)
+##### -------------------- SASS --------------------
+* 使用[BEM命名](http://getbem.com/)方式，或是將選取器的層級數減少(EX: .el > ul > li > a => .el a)
 * 檔案大致功能：
 	* 頁面分法與規則見 `src/sass/style.sass`
 	* 多頁共用樣式放置於 `src/sass/layout/_common.sass`
