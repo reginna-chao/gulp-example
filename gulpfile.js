@@ -4,44 +4,50 @@
 
 // init plugin
 const { src, dest, watch, series, parallel } = require('gulp');
-const browserSync = require('browser-sync').create(), // 建立同步虛擬伺服器
-  // Tool
-  fs = require('fs'),
-  del = require('del'), // 清除檔案
-  through = require('through2'), // 處理通過後的檔案
-  gulpif = require('gulp-if'), // 就是 if ಠ_ಠ
-  notify = require('gulp-notify'), // 通知訊息
-  debug = require('gulp-debug'), // debug 監控處理檔案
-  replace = require('gulp-replace'), // 取代文字
-  rename = require('gulp-rename'), // 檔案重新命名
-  gulpIgnore = require('gulp-ignore'), // [例外處理] 無視指定檔案
-  plumber = require('gulp-plumber'), // [例外處理] gulp發生編譯錯誤後仍然可以繼續執行，不會強迫中斷
-  cached = require('gulp-cached'), // [快取機制] 只傳遞修改過的文件
-  sourcemaps = require('gulp-sourcemaps'), // [檔案追蹤] 來源編譯
-  // css
-  sass = require('gulp-sass')(require('node-sass')), // [css] Sass 編譯
-  autoprefixer = require('gulp-autoprefixer'), // [css] CSS自動前綴
-  cleancss = require('gulp-clean-css'), // [css] CSS壓縮
-  inject = require('gulp-inject-string'), // HTML 插入 code (為了顯示Error)
-  removeCode = require('gulp-remove-code'), // gulp 移除code (為了顯示Error)
-  // JS
-  uglify = require('gulp-uglify'), // [JS] 壓縮JS
-  // babel = require('gulp-babel'), // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
-  rollup = require('gulp-better-rollup'), // [JS] 
-  rollupBabel = require('rollup-plugin-babel'), // [JS] 
-  rollupTerser = require('rollup-plugin-terser'), // [JS] 用來壓縮rollup 的套件，取代 rollup-plugin-uglify 無法轉換 ES6 的問題
-  resolve = require('rollup-plugin-node-resolve'), // [JS] 
-  commonjs = require('rollup-plugin-commonjs'), // [JS] 
-  // Image
-  imagemin = require('gulp-imagemin'), // [IMG] Image壓縮
-  imageminPngquant = require('imagemin-pngquant'), // [IMG] PNG壓縮
-  imageminGifsicle = require('imagemin-gifsicle'), // [IMG] GIF壓縮
-  imageminJpegRecompress = require('imagemin-jpeg-recompress'), // [IMG] JPG壓縮
-  // HTML
-  pug = require('gulp-pug'), // [HTML / PUG] 編譯 PUG（PUG模板）
-  // Icon(Icon Font)
-  iconfont = require('gulp-iconfont'), // [ICON FONT] 編譯font檔案
-  consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
+const browserSync = require('browser-sync').create(); // 建立同步虛擬伺服器
+
+// Tool
+const fs = require('fs');
+const del = require('del'); // 清除檔案
+const through = require('through2'); // 處理通過後的檔案
+const gulpif = require('gulp-if'); // 就是 if ಠ_ಠ
+const notify = require('gulp-notify'); // 通知訊息
+const debug = require('gulp-debug'); // debug 監控處理檔案
+const replace = require('gulp-replace'); // 取代文字
+const rename = require('gulp-rename'); // 檔案重新命名
+const gulpIgnore = require('gulp-ignore'); // [例外處理] 無視指定檔案
+const plumber = require('gulp-plumber'); // [例外處理] gulp發生編譯錯誤後仍然可以繼續執行，不會強迫中斷
+const cached = require('gulp-cached'); // [快取機制] 只傳遞修改過的文件
+const sourcemaps = require('gulp-sourcemaps'); // [檔案追蹤] 來源編譯
+
+// css
+const sass = require('gulp-sass')(require('node-sass')); // [css] Sass 編譯
+const autoprefixer = require('gulp-autoprefixer'); // [css] CSS自動前綴
+const cleancss = require('gulp-clean-css'); // [css] CSS壓縮
+const inject = require('gulp-inject-string'); // HTML 插入 code (為了顯示Error)
+const removeCode = require('gulp-remove-code'); // gulp 移除code (為了顯示Error)
+
+// JS
+const uglify = require('gulp-uglify'); // [JS] 壓縮JS
+// const babel = require('gulp-babel'); // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
+const rollup = require('gulp-better-rollup'); // [JS] 
+const rollupBabel = require('rollup-plugin-babel'); // [JS] 
+const resolve = require('rollup-plugin-node-resolve'); // [JS] 
+const commonjs = require('rollup-plugin-commonjs'); // [JS] 
+
+// Image(配合 gulp-imagemin 8.0.0 的寫法，延後再入套件)
+// const imagemin = import("gulp-imagemin"); // [IMG] Image壓縮
+let imagemin; // [IMG] Image壓縮
+let gifsicle; // [IMG] GIF壓縮
+let jpegRecompress;// [IMG] JPG壓縮
+let pngquant; // [IMG] PNG壓縮
+
+// HTML
+const pug = require('gulp-pug'); // [HTML / PUG] 編譯 PUG（PUG模板）
+
+// Icon(Icon Font)
+const iconfont = require('gulp-iconfont'); // [ICON FONT] 編譯font檔案
+const consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
 
 // [font icon] function
 const fontName = 'icon', fontClassName = 'be-icon';
@@ -80,7 +86,7 @@ function isDirEmpty(path) {
 }
 
 // [font icon] 建立
-function iconFont(done){
+function iconFont(done) {
   return src(['src/images/font_svg/*.svg'], {base: './src/'})
     // .pipe(cached('iconFont'))
     .pipe(iconfont({
@@ -144,7 +150,7 @@ function iconFont(done){
         .pipe(rename({basename: 'index'}))
         .pipe(dest('dist/fonts/icons'));
     })
-    .pipe(dest('dist/fonts/icons/'))              //生成的font檔案
+    .pipe(dest('dist/fonts/icons/')) // 生成的font檔案
     .pipe(notify({
       onLast: true,
       message: 'Font icon Task Complete!'
@@ -153,7 +159,7 @@ function iconFont(done){
 
 // node sass delete commend function
 let errorShow = false
-function errorMsgRemove(done){
+function errorMsgRemove(done) {
   if (errorShow) {
     errorShow = false;
     src('dist/*.html')
@@ -166,7 +172,7 @@ function errorMsgRemove(done){
 }
 
 // node sass display error
-function errorMsgDisplay(error){
+function errorMsgDisplay(error) {
   errorShow = true;
   console.log(error.message)
   var errorString = '[' + error.plugin + ']';
@@ -199,7 +205,7 @@ function errorMsgDisplay(error){
 }
 // sass compiler
 let sassReload = false;
-function sassCompile(useCached){
+function sassCompile(useCached) {
   return src('src/sass/**/*.+(scss|sass)')
     .pipe(plumber())
     .pipe(sourcemaps.init({ loadMaps: true }))
@@ -234,7 +240,7 @@ function sassCompile(useCached){
 }
 
 // sass export vendor
-function sassExportVendor(){
+function sassExportVendor() {
   return src('src/sass/vendor/**/*.css')
     .pipe(cached('sassVendor'))
     .pipe(dest('dist/css/vendor'));
@@ -247,7 +253,15 @@ function sassReloadHandler() {
 
 // image compile
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
-function image(){
+async function image() {
+  // 配合 gulp-imagemin 8.0.0 的寫法，延後再入套件
+  if (!imagemin) {
+    imagemin = (await import('gulp-imagemin')).default;
+    gifsicle = (await import('imagemin-gifsicle')).default;
+    jpegRecompress = (await import('imagemin-jpeg-recompress')).default;
+    pngquant = (await import('imagemin-pngquant')).default;
+  }
+
   return src('src/images/**/*')
     .pipe(plumber())
     .pipe(cached('image'))
@@ -255,11 +269,10 @@ function image(){
     .pipe(gulpIgnore.exclude('**--nocopy.*'))
     .pipe(
       gulpif('!**/*--uc.*', imagemin([
-        imageminGifsicle({interlaced: true}),
+        gifsicle({interlaced: true}),
   
         // [jpg] quality setting
-        // 原設定數字：Max: 75, min: 60
-        imageminJpegRecompress({
+        jpegRecompress({
           quality: 'veryhigh',
           progressive: true,
           max: 75,/* 符合google speed 範疇 */
@@ -269,13 +282,13 @@ function image(){
         // [png] quality setting
         // Type: Array<min: number, max: number>
         // 原設定數字：[0.8, 0.9]
-        imageminPngquant({quality: [0.8, 0.9]})
+        pngquant({quality: [0.8, 0.9]})
   
         // [svg] quality setting
         // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
         // 目前需自行壓縮整理處理svg檔案
         // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
-        // imagemin.svgo({plugins: [{removeViewBox: false}]}) 
+        // svgo({plugins: [{removeViewBox: false}]}) 
       ]))
     )
     .pipe(dest('dist/images'))
@@ -295,7 +308,7 @@ function imageIco() {
 }
 
 // JS compile
-function jsFile(){
+function jsFile() {
   return src([
       'src/js/**/*.js',
       '!src/js/**/_*.js',
@@ -320,8 +333,7 @@ function jsFile(){
         resolve(),
         rollupBabel({
           runtimeHelpers: true
-        }),
-        // rollupTerser.terser()
+        })
       ]
     },{
       format: 'iife'
@@ -346,7 +358,7 @@ function jsFile(){
 }
 
 // JS vendor compile
-function jsVendor(){
+function jsVendor() {
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
@@ -369,8 +381,7 @@ function jsVendor(){
         resolve(),
         rollupBabel({
           runtimeHelpers: true
-        }),
-        rollupTerser.terser()
+        })
       ]
     },{
       format: 'iife'
@@ -385,7 +396,7 @@ function jsVendor(){
     }));
 }
 // JS Vendor Min compile
-function jsVendorMin(){
+function jsVendorMin() {
   return src([
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
@@ -541,7 +552,7 @@ function otherFile() {
 }
 
 // clean file
-function clean(){
+function clean() {
   return del(['dist']);
 }
 
