@@ -133,13 +133,16 @@ function iconFont(done) {
           cssClass: fontClassName
         }))
         .pipe(replace(/\/\/ @include/g, '@include')) // 開啟@include
-        .pipe(rename({basename: "icons"}))
+        .pipe(rename({basename: 'icons'}))
         .pipe(sass({outputStyle: 'expanded'}))
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(cleancss({ rebase: false }))
         .pipe(dest('dist/fonts/icons'));
 
       // 生成 Demo CSS (Demo HTML使用)
       src('src/sass/vendor/font/templates/_iconfont-demo.scss')
-        .pipe(rename({basename: "iconfont-demo", extname: '.css'}))
+        .pipe(rename({basename: 'iconfont-demo', suffix: '.min', extname: '.css'}))
+        .pipe(cleancss({ rebase: false }))
         .pipe(dest('dist/fonts/icons'));
 
       // 複製 Demo 使用的 JS Plugin (Demo HTML使用)

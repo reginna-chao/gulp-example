@@ -30,6 +30,7 @@ code {
 a {
 	color: #fc812f;
 }
+
 a:hover {
 	color: #f46404;
 }
@@ -88,11 +89,13 @@ a:hover {
 	margin-top: 31px;
 	margin-bottom: 40px;
 }
+
 .hd-center .title {
 	margin: 0;
 	font-size: 64px;
 	font-weight: normal;
 }
+
 .hd-center .title small {
 	font-size: 37.5%;
 	margin-left: 5px;
@@ -105,14 +108,17 @@ a:hover {
 	min-width: 250px;
 	font-size: 14px;
 }
+
 .hd-gulptip ul {
 	margin: 0 0 4px;
 	padding: 0;
 	list-style: none;
 }
+
 .hd-gulptip p {
 	margin: 0;
 }
+
 .hd-gulptip .t-tip {
 	text-align: right;
 }
@@ -127,12 +133,14 @@ a:hover {
 	font-size: 12px;
 	text-align: center;
 	color: #ccc;
-	background: #333;
+	background: #000;
 }
+
 #footer a {
 	color: #ccc;
 	text-decoration: none;
 }
+
 #footer a:hover {
 	color: #fc812f;
 	text-decoration: underline;
@@ -154,6 +162,7 @@ a:hover {
 	-ms-flex: 0 0 50px;
 	flex: 0 0 50px;
 }
+
 .btn:hover {
 	background: #e6e6e6;
 	border-color: #c3c3c3;
@@ -164,12 +173,14 @@ a:hover {
 	padding: 0 0 40px;
 	list-style: none;
 }
+
 .glyphs-list:before,
 .glyphs-list:after {
 	content: '';
 	clear: both;
 	display: table;
 }
+
 .glyphs-list li {
 	float: left;
 	width: 25%;
@@ -177,25 +188,30 @@ a:hover {
 	margin-bottom: 40px;
 	text-align: center;
 }
+
 .glyphs-list li:hover {
 	cursor: default;
 	background: #fafafa;
 }
+
 .glyphs-list i {
 	font-size: 48px;
 	line-height: 1;
 }
+
 .glyphs-list h4 {
 	margin: 8px 0 12px;
 	font-size: 20px;
 	font-weight: normal;
 }
+
 .glyphs-list .input-item {
 	margin-bottom: 10px;
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
 }
+
 .glyphs-list input {
 	display: block;
 	margin-right: 3px;
@@ -205,6 +221,7 @@ a:hover {
 	color: #a2a2a2;
 	font-size: 12px;
 }
+
 .glyphs-list button {
 	width: 50px;
 	font-size: 14px;
@@ -216,21 +233,26 @@ a:hover {
 	-ms-flex: 0 0 50px;
 	flex: 0 0 50px;
 }
+
 .glyphs-list button:hover {
 	background: #e6e6e6;
 	border-color: #c3c3c3;
 }
+
 .glyphs-list .text-code {
 	text-align: left;
 	font-size: 12px;
 }
+
 .glyphs-list .text-code .t-title {
 	margin-right: 10px;
 }
+
 .glyphs-list code {
 	margin: 16px 0 0;
 	cursor: pointer;
 }
+
 .glyphs-list code:hover {
 	color: #fc812f;
 }
@@ -257,10 +279,12 @@ a:hover {
 }
 
 @-webkit-keyframes copysuctip_show {
+
 	0%,
 	100% {
 		opacity: 0;
 	}
+
 	25%,
 	75% {
 		opacity: 1;
@@ -268,18 +292,22 @@ a:hover {
 }
 
 @keyframes copysuctip_show {
+
 	0%,
 	100% {
 		opacity: 0;
 	}
+
 	25%,
 	75% {
 		opacity: 1;
 	}
 }
+
 .tooltip {
 	position: relative;
 }
+
 .tooltip:before,
 .tooltip:after {
 	position: absolute;
@@ -288,6 +316,7 @@ a:hover {
 	pointer-events: none;
 	opacity: 0;
 }
+
 .tooltip:before {
 	content: attr(data-title);
 	bottom: -40px;
@@ -301,6 +330,7 @@ a:hover {
 	border-radius: 5px;
 	text-decoration: none;
 }
+
 .tooltip:after {
 	content: '';
 	bottom: -11px;
@@ -311,6 +341,7 @@ a:hover {
 	border-bottom-color: #333333;
 	border-top-width: 0;
 }
+
 .tooltip:hover:before,
 .tooltip:hover:after {
 	opacity: 1;
@@ -322,7 +353,8 @@ a:hover {
 	opacity: 0;
 	cursor: pointer;
 }
-.checkbox + label {
+
+.checkbox+label {
 	position: relative;
 	margin-left: 0;
 	padding-left: 30px;
@@ -330,7 +362,8 @@ a:hover {
 	color: #a2a2a2;
 	cursor: pointer;
 }
-.checkbox + label:before {
+
+.checkbox+label:before {
 	content: '';
 	position: absolute;
 	left: 0;
@@ -346,7 +379,8 @@ a:hover {
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
-.checkbox + label:after {
+
+.checkbox+label:after {
 	content: '';
 	position: absolute;
 	left: 3px;
@@ -361,19 +395,23 @@ a:hover {
 	-webkit-transform-origin: left top;
 	transform-origin: left top;
 }
-.checkbox:checked + label::before {
+
+.checkbox:checked+label::before {
 	background: #ffffff;
 	border-color: #cccccc;
 }
-.checkbox:checked + label:after {
+
+.checkbox:checked+label:after {
 	border-width: 2px;
 	-webkit-animation: checkboxChecked 0.5s forwards;
 	animation: checkboxChecked 0.5s forwards;
 }
-.checkbox:checked + label:hover:before {
+
+.checkbox:checked+label:hover:before {
 	border-color: #fc812f;
 }
-.checkbox:not(:checked) + label:hover:before {
+
+.checkbox:not(:checked)+label:hover:before {
 	border-color: #fc812f;
 }
 
@@ -382,34 +420,40 @@ a:hover {
 		width: 0;
 		height: 4px;
 	}
+
 	100% {
 		width: 8px;
 		height: 4px;
 	}
 }
+
 @keyframes checkboxChecked {
 	50% {
 		width: 0;
 		height: 4px;
 	}
+
 	100% {
 		width: 8px;
 		height: 4px;
 	}
 }
+
 .radiobox {
 	position: absolute;
 	opacity: 0;
 	cursor: pointer;
 }
-.radiobox + label {
+
+.radiobox+label {
 	position: relative;
 	margin-left: 0;
 	padding-left: 30px;
 	font-size: 1rem;
 	color: #a2a2a2;
 }
-.radiobox + label:before {
+
+.radiobox+label:before {
 	content: '';
 	position: absolute;
 	left: 0;
@@ -425,7 +469,8 @@ a:hover {
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
-.radiobox + label:after {
+
+.radiobox+label:after {
 	content: '';
 	position: absolute;
 	left: 4px;
@@ -441,27 +486,33 @@ a:hover {
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
-.radiobox ~ .checked-info {
+
+.radiobox~.checked-info {
 	display: none;
 }
-.radiobox:checked + label {
+
+.radiobox:checked+label {
 	cursor: default !important;
 }
-.radiobox:checked + label:after {
+
+.radiobox:checked+label:after {
 	opacity: 1;
 	-webkit-transform: scale(1);
 	transform: scale(1);
 	-webkit-transition-timing-function: cubic-bezier(0.52, -0.5, 0.5, 2);
 	transition-timing-function: cubic-bezier(0.52, -0.5, 0.5, 2);
 }
-.radiobox:checked ~ .checked-info {
+
+.radiobox:checked~.checked-info {
 	display: block;
 }
-.radiobox:not(:checked) + label:hover:before {
+
+.radiobox:not(:checked)+label:hover:before {
 	background: white;
 	border-color: #fc812f;
 }
-.radiobox:not(:checked) + label:hover:after {
+
+.radiobox:not(:checked)+label:hover:after {
 	opacity: 0.5;
 	-webkit-transform: scale(0.5);
 	transform: scale(0.5);
@@ -474,40 +525,48 @@ a:hover {
 	list-style: none;
 	text-align: right;
 }
+
 .list-type:before,
 .list-type:after {
 	content: '';
 	display: table;
 	clear: both;
 }
+
 .list-type li {
 	display: inline-block;
 	margin-left: 20px;
 }
+
 .list-type label {
 	font-size: 14px;
 	line-height: 1.8;
 }
+
 .list-type input {
 	padding-top: 4px;
 	padding-bottom: 4px;
 	height: 37px;
 	margin-bottom: 0;
 }
-.list-type .radiobox + label:before,
-.list-type .radiobox + label:after {
+
+.list-type .radiobox+label:before,
+.list-type .radiobox+label:after {
 	top: 0.6em;
 }
-.list-type .radiobox:checked + label {
+
+.list-type .radiobox:checked+label {
 	color: #fc812f;
 }
-.list-type .radiobox:not(:checked) + label {
+
+.list-type .radiobox:not(:checked)+label {
 	cursor: pointer;
 }
 
 .list-type-wrapper.is-fixed {
 	padding-top: 65px;
 }
+
 .list-type-wrapper.is-fixed .list-type {
 	position: fixed;
 	top: 0;
@@ -522,9 +581,11 @@ a:hover {
 .list-type-wrapper {
 	position: relative;
 }
+
 .list-type-wrapper.is-fixed {
 	padding-top: 65px;
 }
+
 .list-type-wrapper.is-fixed [data-fixed-panel] {
 	position: fixed;
 	z-index: 5;
@@ -536,6 +597,7 @@ a:hover {
 	-webkit-transform: translateX(-50%);
 	transform: translateX(-50%);
 }
+
 .list-type-wrapper.is-fixed .list-type {
 	margin-bottom: 0;
 }
@@ -549,6 +611,7 @@ a:hover {
 	height: 100%;
 	background: #fff;
 }
+
 .ie-tip span {
 	position: absolute;
 	top: 50%;
@@ -558,6 +621,7 @@ a:hover {
 	text-align: center;
 	line-height: 1.5;
 }
+
 .ie-tip small {
 	color: #999;
 }
@@ -568,6 +632,7 @@ a:hover {
 	font-size: 14px;
 	color: #a2a2a2;
 }
+
 .amount .num {
 	color: #fc812f;
 }
@@ -580,6 +645,7 @@ a:hover {
 		-ms-flex-direction: column;
 		flex-direction: column;
 	}
+
 	.hd-center .title {
 		margin-bottom: 20px;
 		font-size: 40px;
@@ -589,6 +655,7 @@ a:hover {
 		width: 50%;
 	}
 }
+
 .text-tip {
 	color: #ccc;
 }
