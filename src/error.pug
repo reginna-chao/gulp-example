@@ -1,7 +1,7 @@
 extends _layout
 block append vars
-	- title= '找不到頁面 | '
-	//- - description= ''
+	- var title= '找不到頁面 | '
+	//- - var description= ''
 
 block style
 	style.
@@ -130,7 +130,7 @@ block script
 block content
 	section.error-page
 		.text-box
-			h1.title
+			h1.title(aria-label='404')
 				span
 					svg(xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 204')
 						title OOPS!
@@ -144,4 +144,3 @@ block content
 			h2.sub-title 找不到頁面
 			p.desc 可能網址錯誤或頁面發生問題，無法找到！
 			a.btn(href='/') 回到首頁
-

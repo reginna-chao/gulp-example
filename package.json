@@ -75,6 +75,7 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-order": "^4.1.0",
     "stylelint-scss": "^3.21.0",
-    "through2": "^4.0.2"
+    "through2": "^4.0.2",
+    "underscore": "^1.13.6"
   }
 }

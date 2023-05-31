@@ -5,7 +5,7 @@
 
 ### 日期紀錄 ###
 ```
-2021/03/03 by Reginna - 重新用和泰英文版本建立新的範本
+2021/XX/XX by Reginna - 工作內容
 ```
 
 
@@ -52,8 +52,8 @@ $(document).foundation();
 ```diff
 // Node version v10.15.1
 // NPM version V6.4.1
-// Gulp version v4.0.2
-// Gulp CLI version v2.3.0
+// Gulp version v2.2.0
+// Gulp CLI version v4.0.2
 ```
 
 ##### 安裝與啟動
