@@ -53,6 +53,13 @@ const consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html 
 const fontName = 'icon', fontClassName = 'be-icon';
 const runTimestamp = Math.round(Date.now()/1000);
 
+// 是否是產品（只輸出壓縮CSS、JS）
+let isProduct = false;
+function setProduct(done) {
+  isProduct = true;
+  done();
+}
+
 // [font icon] 先建立空值檔案，避免一開始有錯誤，之後會被蓋過
 function iconFontCreateEmptyFile(cb) {
   if (isDirEmpty('src/images/font_svg')) {
@@ -219,7 +226,7 @@ function sassCompile(useCached) {
     .pipe(autoprefixer()) // 不需要符合 IE11，二擇一
     .pipe(cached('sass'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(dest('dist/css'))
+    .pipe(gulpif(!isProduct, dest('dist/css')))
     .pipe(rename({ suffix: '.min' }))
     .pipe(cleancss({ rebase: false }))
     .pipe(sourcemaps.write('maps', {
@@ -339,7 +346,7 @@ function jsFile() {
       format: 'iife'
     }))
     // .pipe(babel())
-    .pipe(dest('dist/js'))
+    .pipe(gulpif(!isProduct, dest('dist/js')))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
     .pipe(sourcemaps.write('maps', {
@@ -646,7 +653,16 @@ const imgTask = series(image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
 const watchTask = parallel(watchFiles, browsersyncInit);
-const buildTask = series(clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
 
-// export tasks
-exports.default = buildTask;
+// ===================== Export ========================
+
+const buildUncompressTask = series(clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
+const buildCompressTask = series(setProduct, clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
+
+// Export tasks
+exports.buildProd = buildCompressTask;
+exports.buildDev = buildUncompressTask;
+
+// 有需要自行更換 default 值
+// 需要更換為壓縮版本情況：上傳FTP時僅提供壓縮檔給客戶（以防忘記）
+exports.default = buildUncompressTask;

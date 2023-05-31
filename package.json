@@ -4,6 +4,9 @@
   "description": "建立此環境所需套件",
   "author": "Begonia Design",
   "scripts": {
+    "start": "gulp",
+    "build:dev": "gulp buildDev",
+    "build:prod": "gulp buildProd",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "stylelint src/sass/**/*.scss --syntax scss",
     "lint:fix": "stylelint src/sass/**/*.scss --syntax scss --fix",
