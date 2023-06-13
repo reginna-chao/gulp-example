@@ -1,8 +1,8 @@
 {
-  "name": "begonia-project",
+  "name": "project",
   "version": "1.0.0",
   "description": "建立此環境所需套件",
-  "author": "Begonia Design",
+  "author": "Reginna Chao",
   "scripts": {
     "start": "gulp",
     "build:dev": "gulp buildDev",
@@ -12,7 +12,9 @@
     "lint:fix": "stylelint src/sass/**/*.scss --syntax scss --fix",
     "lint-sass": "sass-lint src/**/*.sass -v -q"
   },
-  "dependencies": {},
+  "dependencies": {
+    "underscore": "^1.13.6"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/plugin-transform-object-assign": "^7.16.7",
@@ -78,7 +80,6 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-order": "^4.1.0",
     "stylelint-scss": "^3.21.0",
-    "through2": "^4.0.2",
-    "underscore": "^1.13.6"
+    "through2": "^4.0.2"
   }
 }
