@@ -1,6 +1,6 @@
 // Import polyfill from node_modules
-import 'core-js/modules/es6.set.js'
-import 'core-js/modules/es6.array.find-index.js'
+import 'core-js/modules/es6.set.js';
+import 'core-js/modules/es6.array.find-index.js';
 
 (function() {
     console.log('test normal console 123');
@@ -9,7 +9,7 @@ import 'core-js/modules/es6.array.find-index.js'
     class Test {
 		constructor() {
 			this.width = 123;
-			console.log('test class 1')
+			console.log('test class 1');
 		}
 	}
 
@@ -18,13 +18,13 @@ import 'core-js/modules/es6.array.find-index.js'
 			super()
 
 			this.height = 456;
-			console.log('test extends class')
+			console.log('test extends class');
 		}
 	}
 
-	const test = new TestA()
+	const test = new TestA();
 
-	console.log('test class result', test)
+	console.log('test class result', test);
 
 	// ==========
 
@@ -33,12 +33,12 @@ import 'core-js/modules/es6.array.find-index.js'
 	const array = ['a', 'b', 'c'];
 	const array2 = [...array, 'a', 'b', 'c'];
 
-	console.log('test array concat', array2)
+	console.log('test array concat', array2);
 
 	const array3 = [1, 2, 3, 4];
 	const array3Include = array3.includes((item) => item > 2);
 
-	console.log('test array includes', array3Include)
+	console.log('test array includes', array3Include);
 
 	// ==========
 

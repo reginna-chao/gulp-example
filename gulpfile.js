@@ -397,7 +397,7 @@ function jsVendor() {
       format: 'iife'
     }))
     // .pipe(babel())
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(dest('dist/js'))
     .pipe(notify({
