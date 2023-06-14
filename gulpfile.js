@@ -219,7 +219,10 @@ function sassCompile(useCached) {
   return src('src/sass/**/*.+(scss|sass)')
     .pipe(plumber())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(sass({outputStyle: 'expanded'}).on('error', function(err){
+    .pipe(sass({
+      outputStyle: 'expanded', 
+      includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
+    }).on('error', function(err){
       errorMsgDisplay(err);
       this.emit('end');
       sassReload = true;
