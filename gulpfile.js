@@ -265,16 +265,16 @@ function sassReloadHandler() {
 }
 
 // image compile
-// 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
-async function image() {
-  // 配合 gulp-imagemin 8.0.0 的寫法，延後再入套件
-  if (!imagemin) {
-    imagemin = (await import('gulp-imagemin')).default;
-    gifsicle = (await import('imagemin-gifsicle')).default;
-    jpegRecompress = (await import('imagemin-jpeg-recompress')).default;
-    pngquant = (await import('imagemin-pngquant')).default;
-  }
+// 配合 gulp-imagemin 8.0.0 的寫法，延後再入套件
+const imagePluginStartup = async () => {
+  imagemin = (await import('gulp-imagemin')).default;
+  gifsicle = (await import('imagemin-gifsicle')).default;
+  jpegRecompress = (await import('imagemin-jpeg-recompress')).default;
+  pngquant = (await import('imagemin-pngquant')).default;
+}
 
+// 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
+function image() {
   return src('src/images/**/*')
     .pipe(plumber())
     .pipe(cached('image'))
@@ -291,12 +291,12 @@ async function image() {
           max: 75,/* 符合google speed 範疇 */
           min: 60
         }),
-  
+
         // [png] quality setting
         // Type: Array<min: number, max: number>
         // 原設定數字：[0.8, 0.9]
         pngquant({quality: [0.8, 0.9]})
-  
+
         // [svg] quality setting
         // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
         // 目前需自行壓縮整理處理svg檔案
@@ -655,7 +655,7 @@ function watchFiles() {
 // define complex tasks
 const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, json);
 const cssTask = series(errorMsgRemove, sassExportVendor, sassCompile);
-const imgTask = series(image, imageIco);
+const imgTask = series(imagePluginStartup, image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
 const watchTask = parallel(watchFiles, browsersyncInit);
