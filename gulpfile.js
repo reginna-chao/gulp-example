@@ -24,12 +24,9 @@ const sourcemaps = require('gulp-sourcemaps'); // [檔案追蹤] 來源編譯
 const sass = require('gulp-sass')(require('node-sass')); // [css] Sass 編譯
 const autoprefixer = require('gulp-autoprefixer'); // [css] CSS自動前綴
 const cleancss = require('gulp-clean-css'); // [css] CSS壓縮
-const inject = require('gulp-inject-string'); // HTML 插入 code (為了顯示Error)
-const removeCode = require('gulp-remove-code'); // gulp 移除code (為了顯示Error)
 
 // JS
 const uglify = require('gulp-uglify'); // [JS] 壓縮JS
-// const babel = require('gulp-babel'); // [JS] 轉換ES6為ES5，將ES6語法轉換成瀏覽器能讀的ES5
 const rollup = require('gulp-better-rollup'); // [JS] 
 const rollupBabel = require('rollup-plugin-babel'); // [JS] 
 const resolve = require('rollup-plugin-node-resolve'); // [JS] 
@@ -119,7 +116,7 @@ function iconFont(done) {
         .pipe(dest('src/sass/vendor/font')) // 生成SCSS位置
         .on ('end', async() => {
           // sassCompile(useCached===false) => 不使用Cache功能
-          errorMsgRemove();
+          errorRemoveHandler();
           await sassCompile(false);
           done();
         });
@@ -167,66 +164,82 @@ function iconFont(done) {
     }));
 }
 
-// node sass delete commend function
-let errorShow = false
-function errorMsgRemove(done) {
-  if (errorShow) {
-    errorShow = false;
-    src('dist/*.html')
-    .pipe(removeCode({ production: true }))
-    .pipe(dest('dist'));
-  }
-  if(typeof done === 'function' ) {
-    done();
-  }
-}
-
 // node sass display error
-function errorMsgDisplay(error) {
-  errorShow = true;
-  console.log(error.message)
-  var errorString = '[' + error.plugin + ']';
-  errorString += ' ' + error.message.replace("\n",'\n')
+function errorShowHandler(error) {
+  const errorMessageParam = error.messageFormatted || error.message;
+  console.log(errorMessageParam);
+
+  // Error Message
+  let errorString = '<strong style="color: #f4ff00;">[' + error.plugin + ']</strong>\n';
+  errorString += ' ' + errorMessageParam;
+  // [START] 檔案名稱顏色更改
+  errorString = errorString.replace(/\[4m/g, '<span style="color: #00fbff;">');
+  errorString = errorString.replace(/\[24m/g, '</span>');
+  // [END] 檔案名稱顏色更改
   // [START] JS Babel 會出現的錯誤有命令提示字元的格式
   errorString = errorString.replace(//g, '');
   errorString = errorString.replace(/\[0m|\[33m|\[36m/g, '');
-  errorString = errorString.replace(/\[90m/g, '<span style="color:gray;">');
-  errorString = errorString.replace(/\[31m\[1m/g, '<span style="color:red;">');
+  errorString = errorString.replace(/\[90m/g, '<span style="color: gray;">');
+  errorString = errorString.replace(/\[31m\[1m/g, '<span style="color: red;">');
   errorString = errorString.replace(/\[22m|\[39m/g, '</span>');
   // [END] JS Babel 會出現的錯誤有命令提示字元的格式
-  var last_error_str =
+  var errorMessage =
   '\n============[Error Message]============\n\n' +
   errorString +
   '\n\n=======================================\n';
-  var error_msg =
-  "<!--removeIf(production)-->\
-  <div class='_error-msg_' style='position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;font-size:18px;white-space:pre-line;font-family: monospace;padding:20px;overflow: auto;background: rgba(0,0,0,0.8);color: white;'>\
-    <div class='_error-msg__text-box_' style='display:flex;justify-content:center;padding:20px;'>\
-    <div class='_error-msg__text_' style='max-width: 100%;'>"
-        + String(last_error_str) +
-      "</div>\
-    </div>\
-  </div>\
-  <!--endRemoveIf(production)-->\
-  "
-  src('dist/*.html')
-    .pipe(inject.after('</head>', error_msg))
+
+  // Error HTML
+  const errorHTML = `
+    <!-- START: DEVELOP ERROR MESSAGE -->
+    <div class="_GULP_ERROR_MESSAGE_" style="position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100vh; padding: 20px; background-color: #000000cc; color: white; font-family: Arial, sans-serif; font-size: 18px; overflow: auto; white-space: pre-line;">
+    <div style="display: flex; justify-content: center; padding: 20px;">
+    <div style="max-width: 100%;">
+      ${errorMessage}
+    </div>
+    </div>
+    </div>
+    <!-- END: DEVELOP ERROR MESSAGE -->
+  `;
+  return src('dist/*.html')
+    .pipe(replace('</body>', `${errorHTML}</body>`))
     .pipe(dest('dist'));
 }
+
+// node sass delete commend function
+function errorRemoveHandler() {
+  console.log('Removing error from html files.');
+  const errorHTML = `
+    <!-- START: DEVELOP ERROR MESSAGE -->
+    <div class="_GULP_ERROR_MESSAGE_" style="position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100vh; padding: 20px; background-color: #000000cc; color: white; font-family: Arial, sans-serif; font-size: 18px; overflow: auto; white-space: pre-line;">
+    <div style="display: flex; justify-content: center; padding: 20px;">
+    <div style="max-width: 100%;">
+      .*
+    </div>
+    </div>
+    </div>
+    <!-- END: DEVELOP ERROR MESSAGE -->
+  `;
+  return src('dist/*.html')
+    .pipe(replace(new RegExp(errorHTML, 's'), ''))
+    .pipe(dest('dist'));
+}
+
 // sass compiler
 let sassReload = false;
 function sassCompile(useCached) {
   return src('src/sass/**/*.+(scss|sass)')
-    .pipe(plumber())
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
+        this.emit('end');
+        sassReload = true;
+        browserSync.reload();
+      }
+    }))
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(sass({
       outputStyle: 'expanded', 
       includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
-    }).on('error', function(err){
-      errorMsgDisplay(err);
-      this.emit('end');
-      sassReload = true;
-      browserSync.reload();
     }))
     // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一
     .pipe(autoprefixer()) // 不需要符合 IE11，二擇一
@@ -265,6 +278,7 @@ function sassReloadHandler() {
 }
 
 // image compile
+
 // 配合 gulp-imagemin 8.0.0 的寫法，延後再入套件
 const imagePluginStartup = async () => {
   imagemin = (await import('gulp-imagemin')).default;
@@ -327,13 +341,12 @@ function jsFile() {
       '!src/js/**/_*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
     ])
-    .pipe(
-      plumber(function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
         this.emit('end');
-      })
-    )
+      }
+    }))
     .pipe(cached('js'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(sourcemaps.init({ loadMaps: true }))
@@ -379,13 +392,12 @@ function jsVendor() {
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
       '!src/js/**/{i18n,l10n}/**/*.js',
     ])
-    .pipe(
-      plumber(function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
         this.emit('end');
-      })
-    )
+      }
+    }))
     .pipe(cached('jsVendor'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(rollup({
@@ -450,13 +462,12 @@ function json() {
 // 一般非layout（非底線開頭檔案） => 看watch才能看的出來
 function pagePugNormal() {
   return src(['src/**/*.pug', '!src/**/_*.pug'])
-    .pipe(
-      plumber( function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
         this.emit('end');
-      })
-    )
+      }
+    }))
     .pipe(cached('pug'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(pug({
@@ -474,13 +485,12 @@ function pagePugNormal() {
 function pagePugLayoutCheck() {
   var fileList = [];
   return src(['src/**/_*.pug'])
-    .pipe(
-      plumber( function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
         this.emit('end');
-      })
-    )
+      }
+    }))
     .pipe(cached('pugLayout'))
     .pipe(through.obj(function (file, enc, cb) {
         fileList.push(file.path);
@@ -502,13 +512,12 @@ function pagePugLayoutCheck() {
 // const timestamp = (new Date()).getTime();
 function pagePugLayoutBuild() {
   return src(['src/**/*.pug', '!src/**/_*.pug'])
-    .pipe(
-      plumber( function(error) {
-        console.log(error.message);
-        errorMsgDisplay(error)
+    .pipe(plumber({
+      errorHandler: function(error) {
+        errorShowHandler(error);
         this.emit('end');
-      })
-    )
+      }
+    }))
     .pipe(debug({title: '__Build all page file:'}))
     .pipe(pug({
       pretty: true,
@@ -590,18 +599,20 @@ function browsersyncInit(done) {
     //   cert: "localhost+3.pem"
     // }
   });
-  done();
 }
+
 // BrowserSync Reload
 function browsersyncReload(done) {
   browserSync.reload();
   done();
 }
+
 // watch file
 function watchFiles() {
   watch(
     'src/sass/**/*.+(scss|sass)', 
-    series(errorMsgRemove, sassExportVendor, sassCompile)
+    { delay: 500 },
+    series(errorRemoveHandler, parallel(sassExportVendor, sassCompile))
   );
   watch(
     [
@@ -609,7 +620,7 @@ function watchFiles() {
       '!src/js/**/_*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
     ],
-    series(errorMsgRemove, jsFile, browsersyncReload)
+    series(errorRemoveHandler, jsFile, browsersyncReload)
   );
   watch(
     [
@@ -619,7 +630,7 @@ function watchFiles() {
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
       '!src/js/**/{i18n,l10n}/**/*.js',
     ],
-    series(jsVendor, browsersyncReload)
+    series(errorRemoveHandler, jsVendor, browsersyncReload)
   );
   watch(
     [
@@ -633,7 +644,7 @@ function watchFiles() {
   watch(['src/json/**/*.json', '!src/json/**/_*.json'], series( json, browsersyncReload ));
   watch('src/images/**/*', image);
   watch('src/*.ico', imageIco);
-  watch('src/images/font_svg/*.svg', series(iconFont, browsersyncReload));
+  watch('src/images/font_svg/*.svg', { delay: 500 }, series(iconFont, browsersyncReload));
   watch('src/sass/vendor/font/templates/*.*', series(iconFont, browsersyncReload));
   watch([
     './src/*.md',
@@ -644,8 +655,8 @@ function watchFiles() {
   ], otherFile);
   watch('src/fonts/**/*', fontFile);
   
-  watch(['src/**/*.pug', '!src/**/_*.pug'], series(errorMsgRemove, pagePugNormal, browsersyncReload));
-  watch(['src/**/_*.pug'], series(errorMsgRemove, pagePugLayoutCheck, browsersyncReload));
+  watch(['src/**/*.pug', '!src/**/_*.pug'], { delay: 500 }, series(errorRemoveHandler, pagePugNormal, browsersyncReload));
+  watch(['src/**/_*.pug'], { delay: 500 }, series(errorRemoveHandler, pagePugLayoutCheck, browsersyncReload));
   watch(
     ['src/**/*.html', '!src/**/_*.html'] ,
     series(pageHtml, browsersyncReload)
@@ -653,12 +664,12 @@ function watchFiles() {
 }
 
 // define complex tasks
-const jsTask = series(errorMsgRemove, jsFile, jsVendor, jsVendorMin, json);
-const cssTask = series(errorMsgRemove, sassExportVendor, sassCompile);
+const jsTask = series(errorRemoveHandler, jsFile, jsVendor, jsVendorMin, json);
+const cssTask = series(errorRemoveHandler, sassExportVendor, sassCompile);
 const imgTask = series(imagePluginStartup, image, imageIco);
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
-const watchTask = parallel(watchFiles, browsersyncInit);
+const watchTask = parallel(browsersyncInit, watchFiles);
 
 // ===================== Export ========================
 
