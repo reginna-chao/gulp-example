@@ -2,7 +2,7 @@
 
 'use strict';
 
-import { on, off, throttle, isInViewport } from './modules/_fn';
+import { on, off, throttle, isInViewport } from './utils/_fn';
 
 /* ---------------------------------------- [START] IE Global Setting */
 // 舊IE提醒

@@ -1,22 +1,14 @@
 /* ---------------------------------------- [START] Window EventListener */
 export function on(target, event, func, option) {
 	target = target || window;
-	if (window.addEventListener) {
-		var opt = option || false;
-		target.addEventListener(event, func, opt);
-	} else {
-		target.attachEvent('on' + event, func);
-	}
+	var opt = option || false;
+	target.addEventListener(event, func, opt);
 }
 
 export function off(target, event, func, option) {
 	target = target || window;
-	if (window.addEventListener) {
-		var opt = option || false;
-		target.addEventListener(event, func, opt);
-	} else {
-		target.attachEvent('on' + event, func);
-	}
+	var opt = option || false;
+	target.removeEventListener(event, func, opt);
 }
 /* ---------------------------------------- [END] Window EventListener */
 
