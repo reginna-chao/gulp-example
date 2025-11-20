@@ -12,6 +12,11 @@
     "lint:fix": "stylelint src/sass/**/*.scss --syntax scss --fix",
     "lint-sass": "sass-lint src/**/*.sass -v -q"
   },
+  "browserslist": [
+    "last 2 versions",
+    "> 0.5%",
+    "not dead"
+  ],
   "dependencies": {
     "underscore": "^1.13.6"
   },

@@ -112,6 +112,17 @@ function setProduct(done) {
   done();
 }
 
+// [Sourcemap 配置] 通用的 sourcemap 寫入配置
+function getSourcemapWriteConfig() {
+  return {
+    sourceRoot: function(file) {
+      const filePathSplit = file.sourceMap.file.split('/');
+      const backTrack = '../'.repeat(filePathSplit.length - 1) || '../';
+      return backTrack + 'src/';
+    }
+  };
+}
+
 // [font icon] 先建立空值檔案，避免一開始有錯誤，之後會被蓋過
 function iconFontCreateEmptyFile(cb) {
   if (isDirEmpty('src/images/font_svg')) {
@@ -303,14 +314,7 @@ function sassCompile(useCached) {
     .pipe(gulpif(!isProduct, dest('dist/css')))
     .pipe(rename({ suffix: '.min' }))
     .pipe(cleancss({ rebase: false }))
-    .pipe(sourcemaps.write('maps', {
-      sourceRoot: function(file) {
-        var filePathSplit = file.sourceMap.file.split('/');
-        var backTrack = '../'.repeat(filePathSplit.length-1) || '../' ;
-        var filePath = backTrack+ 'src/';
-        return filePath;
-      }
-    }))
+    .pipe(sourcemaps.write('maps', getSourcemapWriteConfig()))
     .pipe(dest('dist/css'))
     // .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(sassReload ? sassReloadHandler() : browserSync.stream({match: '**/*.css'}))
@@ -384,7 +388,8 @@ function image() {
 // ICO(Favicon)※位於第一層的ico
 function imageIco() {
   return src(PATHS.images.ico)
-  .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(cached('imageIco'))
+    .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
     .pipe(browserSync.stream());
 }
@@ -403,7 +408,7 @@ function jsFile() {
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(rollup({
       output: {
-        strick: false
+        strict: false
       },
       plugins: [
         commonjs(),
@@ -419,14 +424,7 @@ function jsFile() {
     .pipe(gulpif(!isProduct, dest('dist/js')))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
-    .pipe(sourcemaps.write('maps', {
-      sourceRoot: function(file) {
-        var filePathSplit = file.sourceMap.file.split('/');
-        var backTrack = '../'.repeat(filePathSplit.length-1) || '../' ;
-        var filePath = backTrack+ 'src/';
-        return filePath;
-      }}
-    ))
+    .pipe(sourcemaps.write('maps', getSourcemapWriteConfig()))
     .pipe(dest('dist/js'))
     .pipe(notify({
       onLast: true,
@@ -610,7 +608,8 @@ function clean() {
 // browserSync
 function browsersyncInit(done) {
   browserSync.init({
-    open: false, // 自動開啟
+    open: false, // 自動開啟瀏覽器
+    notify: false, // 關閉瀏覽器右上角的通知
     ghostMode: false, // 是否同步各裝置瀏覽器滑動
     server: {
       baseDir: "./dist",
@@ -628,6 +627,7 @@ function browsersyncInit(done) {
     //   cert: "localhost+3.pem"
     // }
   });
+  done();
 }
 
 // BrowserSync Reload
