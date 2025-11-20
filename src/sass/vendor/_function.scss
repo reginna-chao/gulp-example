@@ -21,7 +21,7 @@
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
   @if meta.type-of($number) == 'number' and not math.is-unitless($number) {
-    @return $number / ($number * 0 + 1);
+    @return math.div($number, ($number * 0 + 1));
   }
   @return $number;
 }
@@ -32,7 +32,7 @@
 /// Transform unit from px to rem
 @function rem-calc($size) {
   $size-number: strip-unit($size);
-  $rem-size: $size-number / 16;
+  $rem-size: math.div($size-number, 16);
   @return #{$rem-size}rem;
 }
 
