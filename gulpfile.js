@@ -27,10 +27,10 @@ const cleancss = require('gulp-clean-css'); // [css] CSS壓縮
 
 // JS
 const uglify = require('gulp-uglify'); // [JS] 壓縮JS
-const rollup = require('gulp-better-rollup'); // [JS] 
-const rollupBabel = require('rollup-plugin-babel'); // [JS] 
-const resolve = require('rollup-plugin-node-resolve'); // [JS] 
-const commonjs = require('rollup-plugin-commonjs'); // [JS] 
+const { rollup: rollupAPI } = require('rollup'); // [JS] Rollup 原生 API
+const { babel } = require('@rollup/plugin-babel'); // [JS] Babel plugin
+const { nodeResolve } = require('@rollup/plugin-node-resolve'); // [JS] Node resolve
+const commonjs = require('@rollup/plugin-commonjs'); // [JS] CommonJS plugin 
 
 // Image(配合 gulp-imagemin 8.0.0 的寫法，延後再入套件)
 // const imagemin = import("gulp-imagemin"); // [IMG] Image壓縮
@@ -121,6 +121,66 @@ function getSourcemapWriteConfig() {
       return backTrack + 'src/';
     }
   };
+}
+
+// [Rollup 包裝器] 自定義 Gulp plugin 包裝 Rollup API
+function gulpRollup(options = {}) {
+  return through.obj(async function(file, enc, cb) {
+    if (file.isNull()) {
+      return cb(null, file);
+    }
+
+    if (file.isStream()) {
+      return cb(new Error('Streaming not supported'));
+    }
+
+    try {
+      // Rollup 編譯配置
+      const inputOptions = {
+        input: file.path,
+        plugins: [
+          nodeResolve(),
+          commonjs(),
+          babel({
+            babelHelpers: 'runtime',
+            exclude: 'node_modules/**'
+          })
+        ],
+        onwarn: (warning) => {
+          // 忽略某些警告
+          if (warning.code === 'THIS_IS_UNDEFINED') return;
+          console.warn(warning.message);
+        }
+      };
+
+      const outputOptions = {
+        format: options.format || 'iife',
+        strict: false,
+        sourcemap: true
+      };
+
+      // 執行 Rollup 編譯
+      const bundle = await rollupAPI(inputOptions);
+      const { output } = await bundle.generate(outputOptions);
+
+      // 取得編譯結果
+      const result = output[0];
+
+      // 更新檔案內容
+      file.contents = Buffer.from(result.code);
+
+      // 處理 sourcemap
+      if (result.map) {
+        file.sourceMap = result.map;
+      }
+
+      cb(null, file);
+    } catch (error) {
+      // 錯誤處理
+      console.error('Rollup compilation error:', error.message);
+      cb(error);
+    }
+  });
 }
 
 // [font icon] 先建立空值檔案，避免一開始有錯誤，之後會被蓋過
@@ -406,21 +466,7 @@ function jsFile() {
     .pipe(cached('js'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(rollup({
-      output: {
-        strict: false
-      },
-      plugins: [
-        commonjs(),
-        resolve(),
-        rollupBabel({
-          runtimeHelpers: true
-        })
-      ]
-    },{
-      format: 'iife'
-    }))
-    // .pipe(babel())
+    .pipe(gulpRollup({ format: 'iife' }))
     .pipe(gulpif(!isProduct, dest('dist/js')))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
@@ -443,18 +489,7 @@ function jsVendor() {
     }))
     .pipe(cached('jsVendor'))
     .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(rollup({
-      plugins: [
-        commonjs(),
-        resolve(),
-        rollupBabel({
-          runtimeHelpers: true
-        })
-      ]
-    },{
-      format: 'iife'
-    }))
-    // .pipe(babel())
+    .pipe(gulpRollup({ format: 'iife' }))
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(dest('dist/js'))
