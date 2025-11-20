@@ -20,10 +20,10 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.8",
+    "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.28.5",
-    "@babel/plugin-transform-object-assign": "^7.16.7",
-    "@babel/preset-env": "^7.15.8",
+    "@babel/plugin-transform-object-assign": "^7.27.1",
+    "@babel/preset-env": "^7.28.5",
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
