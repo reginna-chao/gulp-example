@@ -133,7 +133,7 @@ function gulpRollup(options = {}) {
           nodeResolve(),
           commonjs(),
           babel({
-            babelHelpers: 'runtime',
+            babelHelpers: 'bundled',
             exclude: 'node_modules/**',
           }),
         ],
