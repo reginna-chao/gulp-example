@@ -6,7 +6,7 @@ module.exports = {
     jest: true,
     node: true,
   },
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   extends: ['standard', 'plugin:prettier/recommended'],
   // add your custom rules here
   rules: {
