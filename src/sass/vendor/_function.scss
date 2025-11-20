@@ -1,18 +1,18 @@
-@use "sass:color";
-@use "sass:list";
-@use "sass:math";
-@use "sass:meta";
-@use "sass:string";
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:math';
+@use 'sass:meta';
+@use 'sass:string';
 // -------------------------------------------------------- [START] String
 // [String] 取代文字
 @function str-replace($string, $search, $replace: '') {
-	$index: string.index($string, $search);
-	@if ($index) {
-		@return string.slice($string, 1, $index - 1) + $replace + str-replace(string.slice($string, $index + string.length($search)), $search, $replace);
-	}
-	@return $string;
+  $index: string.index($string, $search);
+  @if ($index) {
+    @return string.slice($string, 1, $index - 1) + $replace +
+      str-replace(string.slice($string, $index + string.length($search)), $search, $replace);
+  }
+  @return $string;
 }
-
 
 // [String] 移除單位
 // Reference:  https://css-tricks.com/snippets/sass/strip-unit-function/
@@ -20,65 +20,55 @@
 /// @param {Number} $number - Number to remove unit from
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
-	@if meta.type-of($number) == 'number' and not math.is-unitless($number) {
-		@return $number / ($number * 0 + 1);
-	}
-	@return $number;
+  @if meta.type-of($number) == 'number' and not math.is-unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
 }
 // -------------------------------------------------------- [END] String
-
-
 
 // -------------------------------------------------------- [START] rem / em
 // Reference: http://www.stubbornella.org/content/2013/07/01/easy-peasy-rem-conversion-with-sass/
 /// Transform unit from px to rem
 @function rem-calc($size) {
-	$size-number: strip-unit($size);
-	$rem-size: $size-number / 16;
-	@return #{$rem-size}rem;
+  $size-number: strip-unit($size);
+  $rem-size: $size-number / 16;
+  @return #{$rem-size}rem;
 }
-
 
 // 計算 em 為單位
 /// @param {number} $num - 傳入數字 = 需計算的大小 / 文字大小
 // 如375寬，文字距離下方21px，字型大小24px => em-calc(21 / 24)
 @function em-calc($num) {
-	@return $num * 1em;
+  @return $num * 1em;
 }
 // -------------------------------------------------------- [END] rem / em
-
-
-
 
 // -------------------------------------------------------- [START] Math
 // [Math] 開根號: Ref: https://www.antimath.info/css/sass-sqrt-function/
 @function sqrt($r) {
-	$x-0: 1;
-	$x-1: $x-0;
-	@for $i from 1 through 10 {
-		$x-1: $x-0 - ($x-0 * $x-0 - math.abs($r)) / (2 * $x-0);
-		$x-0: $x-1;
-	}
-	@return $x-1;
+  $x-0: 1;
+  $x-1: $x-0;
+  @for $i from 1 through 10 {
+    $x-1: $x-0 - ($x-0 * $x-0 - math.abs($r)) / (2 * $x-0);
+    $x-0: $x-1;
+  }
+  @return $x-1;
 }
 // -------------------------------------------------------- [END] Math
-
-
 
 // -------------------------------------------------------- [START] Color
 // [Color] 轉換 HEX 色碼為 RGB
 @function hex-to-rgb($hex) {
-	@return color.red($hex), color.green($hex), color.blue($hex);
+  @return color.red($hex), color.green($hex), color.blue($hex);
 }
-
 
 // [Color] HEX 顏色是否接近白色/黑色：true === 接近白色；false === 接近黑色
 // 概念：https://stackoverflow.com/a/9780689/11240898
 @function color-close-white($hex) {
-	$y: 0.2126 * color.red($hex) + 0.7152 * color.green($hex) + 0.0722 * color.blue($hex);
-	@return $y >= 128;
+  $y: 0.2126 * color.red($hex) + 0.7152 * color.green($hex) + 0.0722 * color.blue($hex);
+  @return $y >= 128;
 }
-
 
 // [Color] 取得顏色1(C1)與顏色2(C2)中間的顏色
 // 使用時機：視覺稿漸層調整中間的顏色位置時。
@@ -89,15 +79,15 @@
 // 1. 如何判定誰減誰
 // 2. 出現負數的情況怎麼辦等
 @function calc-center-color($fade, $color1, $color2) {
-	$target-rgb: ();
-	$color1-rgb: color.red($color1), color.green($color1), color.blue($color1);
-	$color2-rgb: color.red($color2), color.green($color2), color.blue($color2);
+  $target-rgb: ();
+  $color1-rgb: color.red($color1), color.green($color1), color.blue($color1);
+  $color2-rgb: color.red($color2), color.green($color2), color.blue($color2);
 
-	@for $i from 1 through 3 {
-		$color1-current: list.nth($color1-rgb, $i);
-		$color2-current: list.nth($color2-rgb, $i);
-		$target-rgb: list.append($target-rgb, ( $color1-current + math.floor(($color2-current - $color1-current) * $fade) ));
-	}
-	@return rgb(list.nth($target-rgb, 1), list.nth($target-rgb, 2), list.nth($target-rgb, 3));
+  @for $i from 1 through 3 {
+    $color1-current: list.nth($color1-rgb, $i);
+    $color2-current: list.nth($color2-rgb, $i);
+    $target-rgb: list.append($target-rgb, ($color1-current + math.floor(($color2-current - $color1-current) * $fade)));
+  }
+  @return rgb(list.nth($target-rgb, 1), list.nth($target-rgb, 2), list.nth($target-rgb, 3));
 }
 // -------------------------------------------------------- [END] Color

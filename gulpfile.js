@@ -30,13 +30,13 @@ const uglify = require('gulp-uglify'); // [JS] 壓縮JS
 const { rollup: rollupAPI } = require('rollup'); // [JS] Rollup 原生 API
 const { babel } = require('@rollup/plugin-babel'); // [JS] Babel plugin
 const { nodeResolve } = require('@rollup/plugin-node-resolve'); // [JS] Node resolve
-const commonjs = require('@rollup/plugin-commonjs'); // [JS] CommonJS plugin 
+const commonjs = require('@rollup/plugin-commonjs'); // [JS] CommonJS plugin
 
 // Image(配合 gulp-imagemin 8.0.0 的寫法，延後再入套件)
 // const imagemin = import("gulp-imagemin"); // [IMG] Image壓縮
 let imagemin; // [IMG] Image壓縮
 let gifsicle; // [IMG] GIF壓縮
-let jpegRecompress;// [IMG] JPG壓縮
+let jpegRecompress; // [IMG] JPG壓縮
 let pngquant; // [IMG] PNG壓縮
 
 // HTML
@@ -47,17 +47,14 @@ const iconfont = require('gulp-iconfont'); // [ICON FONT] 編譯font檔案
 const consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
 
 // [font icon] function
-const fontName = 'icon', fontClassName = 'be-icon';
-const runTimestamp = Math.round(Date.now()/1000);
+const fontName = 'icon',
+  fontClassName = 'be-icon';
+const runTimestamp = Math.round(Date.now() / 1000);
 
 // [路徑配置] 統一管理所有檔案路徑
 const PATHS = {
   js: {
-    src: [
-      'src/js/**/*.js',
-      '!src/js/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
-    ],
+    src: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*'],
     vendor: [
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
@@ -70,39 +67,33 @@ const PATHS = {
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
       'src/js/**/{i18n,l10n}/**/*.js',
-    ]
+    ],
   },
   sass: {
     src: 'src/sass/**/*.+(scss|sass)',
-    vendor: 'src/sass/vendor/**/*.css'
+    vendor: 'src/sass/vendor/**/*.css',
   },
   pug: {
     src: ['src/**/*.pug', '!src/**/_*.pug'],
-    layout: ['src/**/_*.pug']
+    layout: ['src/**/_*.pug'],
   },
   html: {
-    src: ['src/**/*.html', '!src/**/_*.html']
+    src: ['src/**/*.html', '!src/**/_*.html'],
   },
   images: {
     src: 'src/images/**/*',
     ico: 'src/*.ico',
-    fontSvg: 'src/images/font_svg/*.svg'
+    fontSvg: 'src/images/font_svg/*.svg',
   },
   json: {
-    src: ['src/json/**/*.json', '!src/json/**/_*.json']
+    src: ['src/json/**/*.json', '!src/json/**/_*.json'],
   },
   fonts: {
-    src: 'src/fonts/**/*'
+    src: 'src/fonts/**/*',
   },
   other: {
-    src: [
-      './src/*.md',
-      './src/.htaccess',
-      './src/**/*.txt',
-      './src/download/**/*.*',
-      './src/pdf/**/*.*'
-    ]
-  }
+    src: ['./src/*.md', './src/.htaccess', './src/**/*.txt', './src/download/**/*.*', './src/pdf/**/*.*'],
+  },
 };
 
 // 是否是產品（只輸出壓縮CSS、JS）
@@ -115,17 +106,17 @@ function setProduct(done) {
 // [Sourcemap 配置] 通用的 sourcemap 寫入配置
 function getSourcemapWriteConfig() {
   return {
-    sourceRoot: function(file) {
+    sourceRoot: function (file) {
       const filePathSplit = file.sourceMap.file.split('/');
       const backTrack = '../'.repeat(filePathSplit.length - 1) || '../';
       return backTrack + 'src/';
-    }
+    },
   };
 }
 
 // [Rollup 包裝器] 自定義 Gulp plugin 包裝 Rollup API
 function gulpRollup(options = {}) {
-  return through.obj(async function(file, enc, cb) {
+  return through.obj(async function (file, enc, cb) {
     if (file.isNull()) {
       return cb(null, file);
     }
@@ -143,20 +134,20 @@ function gulpRollup(options = {}) {
           commonjs(),
           babel({
             babelHelpers: 'runtime',
-            exclude: 'node_modules/**'
-          })
+            exclude: 'node_modules/**',
+          }),
         ],
         onwarn: (warning) => {
           // 忽略某些警告
           if (warning.code === 'THIS_IS_UNDEFINED') return;
           console.warn(warning.message);
-        }
+        },
       };
 
       const outputOptions = {
         format: options.format || 'iife',
         strict: false,
-        sourcemap: true
+        sourcemap: true,
       };
 
       // 執行 Rollup 編譯
@@ -203,8 +194,8 @@ function iconFontCreateEmptyFile(cb) {
     `;
 
     // 依照 font_icon 內的檔案生成假的 @mixin
-    fs.readdirSync('src/images/font_svg/').forEach( file => {
-      str = str + ` @mixin font-icon-${file.replace(/\.svg/g, '')}() {};`
+    fs.readdirSync('src/images/font_svg/').forEach((file) => {
+      str = str + ` @mixin font-icon-${file.replace(/\.svg/g, '')}() {};`;
     });
 
     fs.writeFile('src/sass/vendor/font/_icons.scss', str, cb);
@@ -217,77 +208,88 @@ function isDirEmpty(path) {
 
 // [font icon] 建立
 function iconFont(done) {
-  return src(['src/images/font_svg/*.svg'], {base: './src/'})
-    // .pipe(cached('iconFont'))
-    .pipe(iconfont({
-      fontName: fontName,
-      formats: ['svg', 'ttf', 'eot', 'woff', 'woff2'],
-      appendCodepoints: true,
-      appendUnicode: false,
-      normalize: true,
-      centerHorizontally: true,
-      fontHeight: 1001,
-      descent: 143,
-      timestamp: runTimestamp // 官方提供的 API ，避免有快取
-    }))
-    .on('glyphs', function (glyphs, options) {
-      // 生成 ICON SCSS
-      src('src/sass/vendor/font/templates/_icons.scss')
-        .pipe(consolidate('underscore', {
-          glyphs: glyphs,
-          fontName: options.fontName, // 使用的font-family
-          fontPath: '../fonts/icons/', // 生成的SCSS讀取font檔案讀取位置
-          cssClass: fontClassName // 使用的class名稱: <i class="{{fontClassName}} {{fontClassName}}-{{svg file name}}"></i>
-        }))
-        .pipe(dest('src/sass/vendor/font')) // 生成SCSS位置
-        .on ('end', async() => {
-          // sassCompile(useCached===false) => 不使用Cache功能
-          errorRemoveHandler();
-          await sassCompile(false);
-          done();
-        });
+  return (
+    src(['src/images/font_svg/*.svg'], { base: './src/' })
+      // .pipe(cached('iconFont'))
+      .pipe(
+        iconfont({
+          fontName: fontName,
+          formats: ['svg', 'ttf', 'eot', 'woff', 'woff2'],
+          appendCodepoints: true,
+          appendUnicode: false,
+          normalize: true,
+          centerHorizontally: true,
+          fontHeight: 1001,
+          descent: 143,
+          timestamp: runTimestamp, // 官方提供的 API ，避免有快取
+        })
+      )
+      .on('glyphs', function (glyphs, options) {
+        // 生成 ICON SCSS
+        src('src/sass/vendor/font/templates/_icons.scss')
+          .pipe(
+            consolidate('underscore', {
+              glyphs: glyphs,
+              fontName: options.fontName, // 使用的font-family
+              fontPath: '../fonts/icons/', // 生成的SCSS讀取font檔案讀取位置
+              cssClass: fontClassName, // 使用的class名稱: <i class="{{fontClassName}} {{fontClassName}}-{{svg file name}}"></i>
+            })
+          )
+          .pipe(dest('src/sass/vendor/font')) // 生成SCSS位置
+          .on('end', async () => {
+            // sassCompile(useCached===false) => 不使用Cache功能
+            errorRemoveHandler();
+            await sassCompile(false);
+            done();
+          });
 
-      // 生成 ICON CSS (Demo HTML使用)
-      src('src/sass/vendor/font/templates/_icons.scss')
-        .pipe(consolidate('underscore', {
-          glyphs: glyphs,
-          fontName: options.fontName,
-          fontPath: '',
-          cssClass: fontClassName
-        }))
-        .pipe(replace(/\/\/ @include/g, '@include')) // 開啟@include
-        .pipe(rename({basename: 'icons'}))
-        .pipe(sass({outputStyle: 'expanded'}))
-        .pipe(rename({ suffix: '.min' }))
-        .pipe(cleancss({ rebase: false }))
-        .pipe(dest('dist/fonts/icons'));
+        // 生成 ICON CSS (Demo HTML使用)
+        src('src/sass/vendor/font/templates/_icons.scss')
+          .pipe(
+            consolidate('underscore', {
+              glyphs: glyphs,
+              fontName: options.fontName,
+              fontPath: '',
+              cssClass: fontClassName,
+            })
+          )
+          .pipe(replace(/\/\/ @include/g, '@include')) // 開啟@include
+          .pipe(rename({ basename: 'icons' }))
+          .pipe(sass({ outputStyle: 'expanded' }))
+          .pipe(rename({ suffix: '.min' }))
+          .pipe(cleancss({ rebase: false }))
+          .pipe(dest('dist/fonts/icons'));
 
-      // 生成 Demo CSS (Demo HTML使用)
-      src('src/sass/vendor/font/templates/_iconfont-demo.scss')
-        .pipe(rename({basename: 'iconfont-demo', suffix: '.min', extname: '.css'}))
-        .pipe(cleancss({ rebase: false }))
-        .pipe(dest('dist/fonts/icons'));
+        // 生成 Demo CSS (Demo HTML使用)
+        src('src/sass/vendor/font/templates/_iconfont-demo.scss')
+          .pipe(rename({ basename: 'iconfont-demo', suffix: '.min', extname: '.css' }))
+          .pipe(cleancss({ rebase: false }))
+          .pipe(dest('dist/fonts/icons'));
 
-      // 複製 Demo 使用的 JS Plugin (Demo HTML使用)
-      src('src/sass/vendor/font/templates/*.js')
-        .pipe(dest('dist/fonts/icons'));
+        // 複製 Demo 使用的 JS Plugin (Demo HTML使用)
+        src('src/sass/vendor/font/templates/*.js').pipe(dest('dist/fonts/icons'));
 
-      // 生成Demo HTML
-      src('src/sass/vendor/font/templates/_index.html')
-        .pipe(consolidate('underscore', {
-          glyphs: glyphs,
-          fontName: options.fontName,
-          cssClass: fontClassName,
-          fontYYYY: new Date().getYear() + 1900
-        }))
-        .pipe(rename({basename: 'index'}))
-        .pipe(dest('dist/fonts/icons'));
-    })
-    .pipe(dest('dist/fonts/icons/')) // 生成的font檔案
-    .pipe(notify({
-      onLast: true,
-      message: 'Font icon Task Complete!'
-    }));
+        // 生成Demo HTML
+        src('src/sass/vendor/font/templates/_index.html')
+          .pipe(
+            consolidate('underscore', {
+              glyphs: glyphs,
+              fontName: options.fontName,
+              cssClass: fontClassName,
+              fontYYYY: new Date().getYear() + 1900,
+            })
+          )
+          .pipe(rename({ basename: 'index' }))
+          .pipe(dest('dist/fonts/icons'));
+      })
+      .pipe(dest('dist/fonts/icons/')) // 生成的font檔案
+      .pipe(
+        notify({
+          onLast: true,
+          message: 'Font icon Task Complete!',
+        })
+      )
+  );
 }
 
 // node sass display error
@@ -310,9 +312,7 @@ function errorShowHandler(error) {
   errorString = errorString.replace(/\[22m|\[39m/g, '</span>');
   // [END] JS Babel 會出現的錯誤有命令提示字元的格式
   var errorMessage =
-  '\n============[Error Message]============\n\n' +
-  errorString +
-  '\n\n=======================================\n';
+    '\n============[Error Message]============\n\n' + errorString + '\n\n=======================================\n';
 
   // Error HTML
   const errorHTML = `
@@ -353,42 +353,48 @@ function errorRemoveHandler() {
 // sass compiler
 let sassReload = false;
 function sassCompile(useCached) {
-  return src(PATHS.sass.src)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-        sassReload = true;
-        browserSync.reload();
-      }
-    }))
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(sass({
-      outputStyle: 'expanded', 
-      includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
-    }))
-    // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一
-    .pipe(autoprefixer()) // 不需要符合 IE11，二擇一
-    .pipe(cached('sass'))
-    .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(gulpif(!isProduct, dest('dist/css')))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(cleancss({ rebase: false }))
-    .pipe(sourcemaps.write('maps', getSourcemapWriteConfig()))
-    .pipe(dest('dist/css'))
-    // .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(sassReload ? sassReloadHandler() : browserSync.stream({match: '**/*.css'}))
-    .pipe(notify({
-      onLast: true,
-      message: 'CSS Task Complete!'
-    }));
+  return (
+    src(PATHS.sass.src)
+      .pipe(
+        plumber({
+          errorHandler: function (error) {
+            errorShowHandler(error);
+            this.emit('end');
+            sassReload = true;
+            browserSync.reload();
+          },
+        })
+      )
+      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(
+        sass({
+          outputStyle: 'expanded',
+          includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
+        })
+      )
+      // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一
+      .pipe(autoprefixer()) // 不需要符合 IE11，二擇一
+      .pipe(cached('sass'))
+      .pipe(debug({ title: 'Debug for compile file:' }))
+      .pipe(gulpif(!isProduct, dest('dist/css')))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(cleancss({ rebase: false }))
+      .pipe(sourcemaps.write('maps', getSourcemapWriteConfig()))
+      .pipe(dest('dist/css'))
+      // .pipe(debug({title: 'Debug for compile file:'}))
+      .pipe(sassReload ? sassReloadHandler() : browserSync.stream({ match: '**/*.css' }))
+      .pipe(
+        notify({
+          onLast: true,
+          message: 'CSS Task Complete!',
+        })
+      )
+  );
 }
 
 // sass export vendor
 function sassExportVendor() {
-  return src(PATHS.sass.vendor)
-    .pipe(cached('sassVendor'))
-    .pipe(dest('dist/css/vendor'));
+  return src(PATHS.sass.vendor).pipe(cached('sassVendor')).pipe(dest('dist/css/vendor'));
 }
 
 function sassReloadHandler() {
@@ -404,52 +410,57 @@ const imagePluginStartup = async () => {
   gifsicle = (await import('imagemin-gifsicle')).default;
   jpegRecompress = (await import('imagemin-jpeg-recompress')).default;
   pngquant = (await import('imagemin-pngquant')).default;
-}
+};
 
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 function image() {
   return src(PATHS.images.src)
     .pipe(plumber())
     .pipe(cached('image'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(gulpIgnore.exclude('**--nocopy.*'))
     .pipe(
-      gulpif('!**/*--uc.*', imagemin([
-        gifsicle({interlaced: true}),
-  
-        // [jpg] quality setting
-        jpegRecompress({
-          quality: 'veryhigh',
-          progressive: true,
-          max: 75,/* 符合google speed 範疇 */
-          min: 60
-        }),
+      gulpif(
+        '!**/*--uc.*',
+        imagemin([
+          gifsicle({ interlaced: true }),
 
-        // [png] quality setting
-        // Type: Array<min: number, max: number>
-        // 原設定數字：[0.8, 0.9]
-        pngquant({quality: [0.8, 0.9]})
+          // [jpg] quality setting
+          jpegRecompress({
+            quality: 'veryhigh',
+            progressive: true,
+            max: 75 /* 符合google speed 範疇 */,
+            min: 60,
+          }),
 
-        // [svg] quality setting
-        // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
-        // 目前需自行壓縮整理處理svg檔案
-        // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
-        // svgo({plugins: [{removeViewBox: false}]}) 
-      ]))
+          // [png] quality setting
+          // Type: Array<min: number, max: number>
+          // 原設定數字：[0.8, 0.9]
+          pngquant({ quality: [0.8, 0.9] }),
+
+          // [svg] quality setting
+          // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
+          // 目前需自行壓縮整理處理svg檔案
+          // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
+          // svgo({plugins: [{removeViewBox: false}]})
+        ])
+      )
     )
     .pipe(dest('dist/images'))
     .pipe(browserSync.stream())
-    .pipe(notify({
-      onLast: true,
-      message: 'Pic task Compressed!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Pic task Compressed!',
+      })
+    );
 }
 
 // ICO(Favicon)※位於第一層的ico
 function imageIco() {
   return src(PATHS.images.ico)
     .pipe(cached('imageIco'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
     .pipe(browserSync.stream());
 }
@@ -457,14 +468,16 @@ function imageIco() {
 // JS compile
 function jsFile() {
   return src(PATHS.js.src)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-      }
-    }))
+    .pipe(
+      plumber({
+        errorHandler: function (error) {
+          errorShowHandler(error);
+          this.emit('end');
+        },
+      })
+    )
     .pipe(cached('js'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(gulpRollup({ format: 'iife' }))
     .pipe(gulpif(!isProduct, dest('dist/js')))
@@ -472,109 +485,133 @@ function jsFile() {
     .pipe(uglify())
     .pipe(sourcemaps.write('maps', getSourcemapWriteConfig()))
     .pipe(dest('dist/js'))
-    .pipe(notify({
-      onLast: true,
-      message: 'JS Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'JS Task Complete!',
+      })
+    );
 }
 
 // JS vendor compile
 function jsVendor() {
   return src(PATHS.js.vendor)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-      }
-    }))
+    .pipe(
+      plumber({
+        errorHandler: function (error) {
+          errorShowHandler(error);
+          this.emit('end');
+        },
+      })
+    )
     .pipe(cached('jsVendor'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(gulpRollup({ format: 'iife' }))
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(dest('dist/js'))
-    .pipe(notify({
-      onLast: true,
-      message: 'JS Plugin Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'JS Plugin Task Complete!',
+      })
+    );
 }
 // JS Vendor Min compile
 function jsVendorMin() {
   return src(PATHS.js.vendorMin)
     .pipe(plumber())
     .pipe(cached('jsVendorMin'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist/js'))
-    .pipe(notify({
-      onLast: true,
-      message: 'JS Plugin Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'JS Plugin Task Complete!',
+      })
+    );
 }
 
 // JSON File
 function json() {
-  return src(PATHS.json.src)
-    .pipe(plumber())
-    .pipe(cached('json'))
-    .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(dest('dist/json'))
-    // Minify
-    // .pipe(rename({suffix: '.min'}))
-    // .pipe(jsonminify())
-    // .pipe(dest('dist/json'))
-    .pipe(notify({
-      onLast: true,
-      message: 'JSON File Task Complete!'
-    }));
+  return (
+    src(PATHS.json.src)
+      .pipe(plumber())
+      .pipe(cached('json'))
+      .pipe(debug({ title: 'Debug for compile file:' }))
+      .pipe(dest('dist/json'))
+      // Minify
+      // .pipe(rename({suffix: '.min'}))
+      // .pipe(jsonminify())
+      // .pipe(dest('dist/json'))
+      .pipe(
+        notify({
+          onLast: true,
+          message: 'JSON File Task Complete!',
+        })
+      )
+  );
 }
 
 // Pug
 // 一般非layout（非底線開頭檔案） => 看watch才能看的出來
 function pagePugNormal() {
   return src(PATHS.pug.src)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-      }
-    }))
+    .pipe(
+      plumber({
+        errorHandler: function (error) {
+          errorShowHandler(error);
+          this.emit('end');
+        },
+      })
+    )
     .pipe(cached('pug'))
-    .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(pug({
-      pretty: true,
-      compileDebug: true
-    }))
+    .pipe(debug({ title: 'Debug for compile file:' }))
+    .pipe(
+      pug({
+        pretty: true,
+        compileDebug: true,
+      })
+    )
     .pipe(dest('dist'))
-    .pipe(notify({
-      onLast: true,
-      message: 'Pug Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Pug Task Complete!',
+      })
+    );
 }
 
 // 用於layout（底線開頭檔案）：確認檔案是否有更改
 function pagePugLayoutCheck() {
   var fileList = [];
   return src(PATHS.pug.layout)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-      }
-    }))
+    .pipe(
+      plumber({
+        errorHandler: function (error) {
+          errorShowHandler(error);
+          this.emit('end');
+        },
+      })
+    )
     .pipe(cached('pugLayout'))
-    .pipe(through.obj(function (file, enc, cb) {
+    .pipe(
+      through.obj(function (file, enc, cb) {
         fileList.push(file.path);
         cb(null);
-    }))
-    .pipe(debug({title: 'Debug for compile file:'}))
-    .pipe(notify({
-      onLast: true,
-      message: 'Pug Layout Check Task Complete!'
-    }))
-    .on ('end', function () {
-        if (fileList.length > 0) {
-          pagePugLayoutBuild()
-        }
+      })
+    )
+    .pipe(debug({ title: 'Debug for compile file:' }))
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Pug Layout Check Task Complete!',
+      })
+    )
+    .on('end', function () {
+      if (fileList.length > 0) {
+        pagePugLayoutBuild();
+      }
     });
 }
 
@@ -582,57 +619,69 @@ function pagePugLayoutCheck() {
 // const timestamp = (new Date()).getTime();
 function pagePugLayoutBuild() {
   return src(PATHS.pug.src)
-    .pipe(plumber({
-      errorHandler: function(error) {
-        errorShowHandler(error);
-        this.emit('end');
-      }
-    }))
-    .pipe(debug({title: '__Build all page file:'}))
-    .pipe(pug({
-      pretty: true,
-      compileDebug: true
-    }))
+    .pipe(
+      plumber({
+        errorHandler: function (error) {
+          errorShowHandler(error);
+          this.emit('end');
+        },
+      })
+    )
+    .pipe(debug({ title: '__Build all page file:' }))
+    .pipe(
+      pug({
+        pretty: true,
+        compileDebug: true,
+      })
+    )
     .pipe(dest('dist'))
-    .pipe(notify({
-      onLast: true,
-      message: 'Pug Layout Build Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Pug Layout Build Task Complete!',
+      })
+    );
 }
 
 function pageHtml() {
   return src(PATHS.html.src)
     .pipe(cached('html'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
-    .pipe(notify({
-      onLast: true,
-      message: 'HTML File Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'HTML File Task Complete!',
+      })
+    );
 }
 
 // Font File
 function fontFile() {
   return src(PATHS.fonts.src)
     .pipe(cached('font'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist/fonts'))
-    .pipe(notify({
-      onLast: true,
-      message: 'Font File Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Font File Task Complete!',
+      })
+    );
 }
 
 // Other File(EX. robots.txt)
 function otherFile() {
-  return src(PATHS.other.src, {base: './src/'})
+  return src(PATHS.other.src, { base: './src/' })
     .pipe(cached('other'))
-    .pipe(debug({title: 'Debug for compile file:'}))
+    .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
-    .pipe(notify({
-      onLast: true,
-      message: 'TXT File Task Complete!'
-    }));
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'TXT File Task Complete!',
+      })
+    );
 }
 
 // clean file
@@ -647,8 +696,8 @@ function browsersyncInit(done) {
     notify: false, // 關閉瀏覽器右上角的通知
     ghostMode: false, // 是否同步各裝置瀏覽器滑動
     server: {
-      baseDir: "./dist",
-      online: false
+      baseDir: './dist',
+      online: false,
     },
     // 使用 https 開發
     // Ref: https://ithelp.ithome.com.tw/articles/10230052
@@ -699,8 +748,19 @@ const watchTask = parallel(browsersyncInit, watchFiles);
 
 // ===================== Export ========================
 
-const buildUncompressTask = series(clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
-const buildCompressTask = series(setProduct, clean, iconFontCreateEmptyFile, parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask) ,watchTask);
+const buildUncompressTask = series(
+  clean,
+  iconFontCreateEmptyFile,
+  parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask),
+  watchTask
+);
+const buildCompressTask = series(
+  setProduct,
+  clean,
+  iconFontCreateEmptyFile,
+  parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask),
+  watchTask
+);
 
 // Export tasks
 exports.buildProd = buildCompressTask;

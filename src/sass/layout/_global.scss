@@ -1,7 +1,7 @@
-@use "sass:color";
-@use "../utils/mixins";
-@use "../utils/variables";
-@use "../vendor/function";
+@use 'sass:color';
+@use '../utils/mixins';
+@use '../utils/variables';
+@use '../vendor/function';
 
 // ★內頁 不需要 @include style.sass(layout)已經有
 // 說明 (完整說明見) src/sass/style.sass
@@ -17,26 +17,26 @@
 
 html,
 body {
-	overflow-x: hidden;
-	overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 img {
-	pointer-events: none;
+  pointer-events: none;
 }
 
 a {
-	.be-icon {
-		color: variables.$primary-color;
-	}
+  .be-icon {
+    color: variables.$primary-color;
+  }
 }
 
 a,
 button,
 .button {
-	&:focus {
-		outline: none;
-	}
+  &:focus {
+    outline: none;
+  }
 }
 
 // --------------------------------------------------------
@@ -46,33 +46,33 @@ $selection-text-color: variables.$white; // 反選的文字顏色
 $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); // 反選的背景顏色
 
 @mixin selection-color($text-color, $bg-color) {
-	::selection {
-		color: $text-color;
-		background: $bg-color;
+  ::selection {
+    color: $text-color;
+    background: $bg-color;
 
-		// 當瀏覽器Tab非Focus狀態
-		&:window-inactive {
-			color: #323232;
-			background: #c5c5c5;
-		}
-	}
+    // 當瀏覽器Tab非Focus狀態
+    &:window-inactive {
+      color: #323232;
+      background: #c5c5c5;
+    }
+  }
 
-	// Firefox版本: https://css-tricks.com/window-inactive-styling/#comment-92675
-	// 但因為gulp-ruby-sass看不懂導致編譯錯誤(Invalid CSS)，所以無法使用
-	// :-moz-window-inactive ::-moz-selection
-	// 	color: #323232
-	// 	background: #C5C5C5
+  // Firefox版本: https://css-tricks.com/window-inactive-styling/#comment-92675
+  // 但因為gulp-ruby-sass看不懂導致編譯錯誤(Invalid CSS)，所以無法使用
+  // :-moz-window-inactive ::-moz-selection
+  // 	color: #323232
+  // 	background: #C5C5C5
 }
 
 // No Selection | 無法反選
 // https://stackoverflow.com/a/4407335/11240898
 @mixin user-select($val: none) {
-	-webkit-touch-callout: $val; // iOS Safari
-	-webkit-user-select: $val; // Safari
-	-khtml-user-select: $val; // Konqueror HTML
-	-moz-user-select: $val; // Firefox
-	-ms-user-select: $val; // Internet Explorer/Edge
-	user-select: $val; // Non-prefixed version, currently, supported by Chrome and Opera
+  -webkit-touch-callout: $val; // iOS Safari
+  -webkit-user-select: $val; // Safari
+  -khtml-user-select: $val; // Konqueror HTML
+  -moz-user-select: $val; // Firefox
+  -ms-user-select: $val; // Internet Explorer/Edge
+  user-select: $val; // Non-prefixed version, currently, supported by Chrome and Opera
 }
 
 // +selection-color(反選的文字顏色, 反選的背景顏色)
@@ -80,7 +80,7 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 
 // 無法反選 | No Selection
 .no-selection {
-	@include user-select(none);
+  @include user-select(none);
 }
 
 // --------------------------------------------------------
@@ -89,14 +89,14 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 // Mixin 移動到　src\sass\layout\_variable_mixin_function.scss
 // 需使用則開啟下列樣式
 @include mixins.breakpoint-hover {
-	html,
-	body {
-		@include mixins.custom-scroll-bar;
-	}
+  html,
+  body {
+    @include mixins.custom-scroll-bar;
+  }
 
-	.custom-scrollbar {
-		@include mixins.custom-scroll-bar;
-	}
+  .custom-scrollbar {
+    @include mixins.custom-scroll-bar;
+  }
 }
 
 // --------------------------------------------------------
@@ -104,22 +104,22 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 /* Text */
 
 .text-em {
-	&,
-	a {
-		color: variables.$primary-color;
-	}
+  &,
+  a {
+    color: variables.$primary-color;
+  }
 }
 
 .text-thin {
-	font-weight: 300;
+  font-weight: 300;
 }
 
 .text-bold {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .text-underline {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 // --------------------------------------------------------
@@ -127,21 +127,21 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 /* Image */
 
 .img-absolute {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .img-rel {
-	position: relative;
+  position: relative;
 }
 
 .img-deco {
-	position: absolute;
-	top: 0;
-	left: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* object-fit */
@@ -154,76 +154,76 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 // .object-fit:before{padding-top: round($imgHeight / $imgWidth * 100%)}
 // round: round the number rounding
 %object-fit-standard {
-	position: relative;
-	display: block; // Fixed <picture> bug
-	overflow: hidden;
+  position: relative;
+  display: block; // Fixed <picture> bug
+  overflow: hidden;
 
-	&::before {
-		content: '';
-		display: block;
-		padding-top: 100%;
-	}
+  &::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
 
-	img {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100% !important;
-		height: 100%;
-		object-position: center center;
-		background-position: center center;
-	}
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100%;
+    object-position: center center;
+    background-position: center center;
+  }
 }
 
 %object-fit-cover {
-	img {
-		object-fit: cover;
-		background-size: cover;
-	}
+  img {
+    object-fit: cover;
+    background-size: cover;
+  }
 }
 
 %object-fit-contain {
-	background-position: center center;
-	background-size: contain;
+  background-position: center center;
+  background-size: contain;
 
-	img {
-		object-fit: contain;
-		background-size: contain;
-	}
+  img {
+    object-fit: contain;
+    background-size: contain;
+  }
 }
 
 .object-fit {
-	@extend %object-fit-standard;
-	@extend %object-fit-cover;
+  @extend %object-fit-standard;
+  @extend %object-fit-cover;
 
-	// 沒有內層(before)
-	// &--wrap {
-	// 	@extend %object-fit-standard;
-	// 	@extend %object-fit-cover;
+  // 沒有內層(before)
+  // &--wrap {
+  // 	@extend %object-fit-standard;
+  // 	@extend %object-fit-cover;
 
-	// 	&::before {
-	// 		display: none;
-	// 	}
-	// }
+  // 	&::before {
+  // 		display: none;
+  // 	}
+  // }
 
-	// 應對不同比例的照片
-	&--contain {
-		@extend %object-fit-standard;
-		@extend %object-fit-contain;
-	}
+  // 應對不同比例的照片
+  &--contain {
+    @extend %object-fit-standard;
+    @extend %object-fit-contain;
+  }
 }
 
 // --------------------------------------------------------
 
 /* Section */
 .main-wrapper {
-	position: relative;
+  position: relative;
 }
 
 // 區塊內容
 .sec {
-	padding-top: function.rem-calc(40);
-	padding-bottom: function.rem-calc(40);
+  padding-top: function.rem-calc(40);
+  padding-bottom: function.rem-calc(40);
 }
 
 // --------------------------------------------------------
@@ -231,30 +231,30 @@ $selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); //
 /* Help */
 
 .mt-0 {
-	margin-top: 0;
+  margin-top: 0;
 }
 
 .mb-0 {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .pt-0 {
-	padding-top: 0;
+  padding-top: 0;
 }
 
 .pb-0 {
-	padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 // 定義 SVG 隱藏於頁面使用
 .svg-def {
-	position: absolute;
-	top: -9999px;
-	left: -9999px;
-	overflow: hidden;
-	width: 0;
-	height: 0;
-	opacity: 0;
-	pointer-events: none;
-	speak: never;
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  speak: never;
 }

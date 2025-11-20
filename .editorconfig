@@ -10,13 +10,8 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# 使用 Tab 縮排的檔案
-[*.{js,jsx,ts,tsx,scss,sass,css,pug,html}]
-indent_style = tab
-indent_size = 4
-
-# JSON 和 YAML 使用空格
-[*.{json,yml,yaml}]
+# 所有程式碼檔案使用 2 空格縮排
+[*.{js,jsx,ts,tsx,scss,sass,css,pug,html,json,yml,yaml}]
 indent_style = space
 indent_size = 2
 
