@@ -1,6 +1,6 @@
 module.exports = {
-  extends: ['stylelint-config-standard', 'stylelint-config-prettier', 'stylelint-config-sass-guidelines'],
-  plugins: ['stylelint-scss', 'stylelint-order'],
+  extends: ['stylelint-config-standard-scss', 'stylelint-config-prettier'],
+  plugins: ['stylelint-order'],
   ignoreFiles: [
     'dist/',
     '**/*.js',
@@ -16,7 +16,6 @@ module.exports = {
     'order/properties-alphabetical-order': null,
     'property-no-vendor-prefix': null,
     'selector-max-compound-selectors': null,
-    'scss/at-import-partial-extension-blacklist': null,
     'value-no-vendor-prefix': null,
     indentation: 'tab',
     'selector-pseudo-class-no-unknown': [

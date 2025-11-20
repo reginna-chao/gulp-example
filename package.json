@@ -30,7 +30,7 @@
     "browser-sync": "^3.0.4",
     "core-js": "^3.22.4",
     "del": "^6.1.1",
-    "eslint": "^7.32.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.25.2",
@@ -61,15 +61,13 @@
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-pngquant": "^9.0.2",
     "pre-commit": "^1.2.2",
-    "prettier": "^2.4.1",
+    "prettier": "^3.6.2",
     "rollup": "^4.53.3",
     "sass": "^1.94.2",
-    "stylelint": "^13.13.1",
+    "stylelint": "^16.25.0",
     "stylelint-config-prettier": "^8.0.2",
-    "stylelint-config-sass-guidelines": "^7.1.0",
-    "stylelint-config-standard": "^20.0.0",
-    "stylelint-order": "^4.1.0",
-    "stylelint-scss": "^3.21.0",
+    "stylelint-config-standard-scss": "^16.0.0",
+    "stylelint-order": "^7.0.0",
     "through2": "^4.0.2"
   }
 }
