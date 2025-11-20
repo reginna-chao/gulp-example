@@ -62,7 +62,7 @@
     "imagemin-pngquant": "^9.0.2",
     "pre-commit": "^1.2.2",
     "prettier": "^2.4.1",
-    "rollup": "^2.58.0",
+    "rollup": "^4.53.3",
     "sass": "^1.94.2",
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",
