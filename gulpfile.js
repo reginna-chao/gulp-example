@@ -21,7 +21,7 @@ const cached = require('gulp-cached'); // [快取機制] 只傳遞修改過的�
 const sourcemaps = require('gulp-sourcemaps'); // [檔案追蹤] 來源編譯
 
 // css
-const sass = require('gulp-sass')(require('node-sass')); // [css] Sass 編譯
+const sass = require('gulp-sass')(require('sass')); // [css] Sass 編譯 (使用 dart-sass)
 const autoprefixer = require('gulp-autoprefixer'); // [css] CSS自動前綴
 const cleancss = require('gulp-clean-css'); // [css] CSS壓縮
 
