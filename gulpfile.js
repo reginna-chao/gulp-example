@@ -50,6 +50,61 @@ const consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html 
 const fontName = 'icon', fontClassName = 'be-icon';
 const runTimestamp = Math.round(Date.now()/1000);
 
+// [路徑配置] 統一管理所有檔案路徑
+const PATHS = {
+  js: {
+    src: [
+      'src/js/**/*.js',
+      '!src/js/**/_*.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
+    ],
+    vendor: [
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
+      '!src/js/**/{i18n,l10n}/**/*.js',
+    ],
+    vendorMin: [
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
+      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
+      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
+      'src/js/**/{i18n,l10n}/**/*.js',
+    ]
+  },
+  sass: {
+    src: 'src/sass/**/*.+(scss|sass)',
+    vendor: 'src/sass/vendor/**/*.css'
+  },
+  pug: {
+    src: ['src/**/*.pug', '!src/**/_*.pug'],
+    layout: ['src/**/_*.pug']
+  },
+  html: {
+    src: ['src/**/*.html', '!src/**/_*.html']
+  },
+  images: {
+    src: 'src/images/**/*',
+    ico: 'src/*.ico',
+    fontSvg: 'src/images/font_svg/*.svg'
+  },
+  json: {
+    src: ['src/json/**/*.json', '!src/json/**/_*.json']
+  },
+  fonts: {
+    src: 'src/fonts/**/*'
+  },
+  other: {
+    src: [
+      './src/*.md',
+      './src/.htaccess',
+      './src/**/*.txt',
+      './src/download/**/*.*',
+      './src/pdf/**/*.*'
+    ]
+  }
+};
+
 // 是否是產品（只輸出壓縮CSS、JS）
 let isProduct = false;
 function setProduct(done) {
@@ -227,7 +282,7 @@ function errorRemoveHandler() {
 // sass compiler
 let sassReload = false;
 function sassCompile(useCached) {
-  return src('src/sass/**/*.+(scss|sass)')
+  return src(PATHS.sass.src)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -267,7 +322,7 @@ function sassCompile(useCached) {
 
 // sass export vendor
 function sassExportVendor() {
-  return src('src/sass/vendor/**/*.css')
+  return src(PATHS.sass.vendor)
     .pipe(cached('sassVendor'))
     .pipe(dest('dist/css/vendor'));
 }
@@ -289,7 +344,7 @@ const imagePluginStartup = async () => {
 
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 function image() {
-  return src('src/images/**/*')
+  return src(PATHS.images.src)
     .pipe(plumber())
     .pipe(cached('image'))
     .pipe(debug({title: 'Debug for compile file:'}))
@@ -328,7 +383,7 @@ function image() {
 
 // ICO(Favicon)※位於第一層的ico
 function imageIco() {
-  return src('src/*.ico')
+  return src(PATHS.images.ico)
   .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
     .pipe(browserSync.stream());
@@ -336,11 +391,7 @@ function imageIco() {
 
 // JS compile
 function jsFile() {
-  return src([
-      'src/js/**/*.js',
-      '!src/js/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
-    ])
+  return src(PATHS.js.src)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -385,13 +436,7 @@ function jsFile() {
 
 // JS vendor compile
 function jsVendor() {
-  return src([
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
-      '!src/js/**/{i18n,l10n}/**/*.js',
-    ])
+  return src(PATHS.js.vendor)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -422,12 +467,7 @@ function jsVendor() {
 }
 // JS Vendor Min compile
 function jsVendorMin() {
-  return src([
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
-      'src/js/**/{i18n,l10n}/**/*.js',
-    ])
+  return src(PATHS.js.vendorMin)
     .pipe(plumber())
     .pipe(cached('jsVendorMin'))
     .pipe(debug({title: 'Debug for compile file:'}))
@@ -440,10 +480,7 @@ function jsVendorMin() {
 
 // JSON File
 function json() {
-  return src([
-      'src/json/**/*.json',
-      '!src/json/**/_*.json'
-    ])
+  return src(PATHS.json.src)
     .pipe(plumber())
     .pipe(cached('json'))
     .pipe(debug({title: 'Debug for compile file:'}))
@@ -461,7 +498,7 @@ function json() {
 // Pug
 // 一般非layout（非底線開頭檔案） => 看watch才能看的出來
 function pagePugNormal() {
-  return src(['src/**/*.pug', '!src/**/_*.pug'])
+  return src(PATHS.pug.src)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -484,7 +521,7 @@ function pagePugNormal() {
 // 用於layout（底線開頭檔案）：確認檔案是否有更改
 function pagePugLayoutCheck() {
   var fileList = [];
-  return src(['src/**/_*.pug'])
+  return src(PATHS.pug.layout)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -511,7 +548,7 @@ function pagePugLayoutCheck() {
 // 用於layout（底線開頭檔案）：生成所有頁面檔案
 // const timestamp = (new Date()).getTime();
 function pagePugLayoutBuild() {
-  return src(['src/**/*.pug', '!src/**/_*.pug'])
+  return src(PATHS.pug.src)
     .pipe(plumber({
       errorHandler: function(error) {
         errorShowHandler(error);
@@ -531,7 +568,7 @@ function pagePugLayoutBuild() {
 }
 
 function pageHtml() {
-  return src(['src/**/*.html', '!src/**/_*.html'])
+  return src(PATHS.html.src)
     .pipe(cached('html'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
@@ -543,9 +580,7 @@ function pageHtml() {
 
 // Font File
 function fontFile() {
-  return src([
-      'src/fonts/**/*',
-    ])
+  return src(PATHS.fonts.src)
     .pipe(cached('font'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist/fonts'))
@@ -555,15 +590,9 @@ function fontFile() {
     }));
 }
 
-// Other File(EX. robots.txt)f
+// Other File(EX. robots.txt)
 function otherFile() {
-  return src([
-    './src/*.md',
-    './src/.htaccess',
-    './src/**/*.txt',
-    './src/download/**/*.*',
-    './src/pdf/**/*.*'
-  ], {base: './src/'})
+  return src(PATHS.other.src, {base: './src/'})
     .pipe(cached('other'))
     .pipe(debug({title: 'Debug for compile file:'}))
     .pipe(dest('dist'))
@@ -609,58 +638,20 @@ function browsersyncReload(done) {
 
 // watch file
 function watchFiles() {
-  watch(
-    'src/sass/**/*.+(scss|sass)', 
-    { delay: 500 },
-    series(errorRemoveHandler, parallel(sassExportVendor, sassCompile))
-  );
-  watch(
-    [
-      'src/js/**/*.js',
-      '!src/js/**/_*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*',
-    ],
-    series(errorRemoveHandler, jsFile, browsersyncReload)
-  );
-  watch(
-    [
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.js',
-      '!src/js/**/{i18n,l10n}/**/*.js',
-    ],
-    series(errorRemoveHandler, jsVendor, browsersyncReload)
-  );
-  watch(
-    [
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
-      'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*-min.js',
-      '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
-      'src/js/**/{i18n,l10n}/**/*.js',
-    ],
-    series(jsVendorMin, browsersyncReload)
-  );
-  watch(['src/json/**/*.json', '!src/json/**/_*.json'], series( json, browsersyncReload ));
-  watch('src/images/**/*', image);
-  watch('src/*.ico', imageIco);
-  watch('src/images/font_svg/*.svg', { delay: 500 }, series(iconFont, browsersyncReload));
+  watch(PATHS.sass.src, { delay: 500 }, series(errorRemoveHandler, parallel(sassExportVendor, sassCompile)));
+  watch(PATHS.js.src, series(errorRemoveHandler, jsFile, browsersyncReload));
+  watch(PATHS.js.vendor, series(errorRemoveHandler, jsVendor, browsersyncReload));
+  watch(PATHS.js.vendorMin, series(jsVendorMin, browsersyncReload));
+  watch(PATHS.json.src, series(json, browsersyncReload));
+  watch(PATHS.images.src, image);
+  watch(PATHS.images.ico, imageIco);
+  watch(PATHS.images.fontSvg, { delay: 500 }, series(iconFont, browsersyncReload));
   watch('src/sass/vendor/font/templates/*.*', series(iconFont, browsersyncReload));
-  watch([
-    './src/*.md',
-    './src/.htaccess',
-    'src/**/*.txt',
-    'src/download/**/*.*',
-    'src/pdf/**/*.*'
-  ], otherFile);
-  watch('src/fonts/**/*', fontFile);
-  
-  watch(['src/**/*.pug', '!src/**/_*.pug'], { delay: 500 }, series(errorRemoveHandler, pagePugNormal, browsersyncReload));
-  watch(['src/**/_*.pug'], { delay: 500 }, series(errorRemoveHandler, pagePugLayoutCheck, browsersyncReload));
-  watch(
-    ['src/**/*.html', '!src/**/_*.html'] ,
-    series(pageHtml, browsersyncReload)
-  );
+  watch(PATHS.other.src, otherFile);
+  watch(PATHS.fonts.src, fontFile);
+  watch(PATHS.pug.src, { delay: 500 }, series(errorRemoveHandler, pagePugNormal, browsersyncReload));
+  watch(PATHS.pug.layout, { delay: 500 }, series(errorRemoveHandler, pagePugLayoutCheck, browsersyncReload));
+  watch(PATHS.html.src, series(pageHtml, browsersyncReload));
 }
 
 // define complex tasks
