@@ -1,3 +1,8 @@
+@use "sass:color";
+@use "sass:list";
+@use "sass:math";
+@use "variables";
+
 // Sass Mixins
 // ---------------------------------------- [START] Flex
 @mixin fc($justify, $align) {
@@ -34,7 +39,7 @@
 		display: block;
 	}
 
-	padding-top: percentage($height / $width);
+	padding-top: math.percentage($height / $width);
 }
 // ---------------------------------------- [END] before-img-size
 
@@ -79,7 +84,7 @@ $project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @medi
 // ---------------------------------------- [END] Media Query 相關
 
 // ---------------------------------------- [START] Custom Scroll Bar
-$scrollbar-thumb-color: $primary-color; // 操作顏色
+$scrollbar-thumb-color: variables.$primary-color; // 操作顏色
 $scrollbar-track-color: #eee; // 滾軸背景
 $scrollbar-width: 6px; // 寬度(瀏覽器預設為15px)
 $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
@@ -100,7 +105,7 @@ $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
 		border-radius: $scrollbar-border-radius;
 
 		&:hover {
-			background: darken($thumb-color, 10%);
+			background: color.adjust($thumb-color, $lightness: -10%);
 		}
 	}
 
@@ -120,7 +125,7 @@ $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
 // ---------------------------------------- [START] Animation Set
 @mixin set-animate($animateEl) {
 	@each $class in $animateEl {
-		$i: index($animateEl, $class);
+		$i: list.index($animateEl, $class);
 		$i: $i;
 
 		#{$class} {

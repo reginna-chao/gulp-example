@@ -1,3 +1,8 @@
+@use "sass:color";
+@use "../utils/mixins";
+@use "../utils/variables";
+@use "../vendor/function";
+
 // ★內頁 不需要 @include style.sass(layout)已經有
 // 說明 (完整說明見) src/sass/style.sass
 //	* 此檔案包含：內頁共用元件
@@ -22,7 +27,7 @@ img {
 
 a {
 	.be-icon {
-		color: $primary-color;
+		color: variables.$primary-color;
 	}
 }
 
@@ -37,8 +42,8 @@ button,
 // --------------------------------------------------------
 
 /* 反選顏色 | Selection */
-$selection-text-color: $white; // 反選的文字顏色
-$selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
+$selection-text-color: variables.$white; // 反選的文字顏色
+$selection-bg-color: color.adjust(variables.$primary-color, $lightness: -5%); // 反選的背景顏色
 
 @mixin selection-color($text-color, $bg-color) {
 	::selection {
@@ -83,11 +88,14 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 // Custom Scroll Bar
 // Mixin 移動到　src\sass\layout\_variable_mixin_function.scss
 // 需使用則開啟下列樣式
-@include breakpoint-hover {
-	@include custom-scroll-bar;
+@include mixins.breakpoint-hover {
+	html,
+	body {
+		@include mixins.custom-scroll-bar;
+	}
 
 	.custom-scrollbar {
-		@include custom-scroll-bar;
+		@include mixins.custom-scroll-bar;
 	}
 }
 
@@ -98,7 +106,7 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 .text-em {
 	&,
 	a {
-		color: $primary-color;
+		color: variables.$primary-color;
 	}
 }
 
@@ -214,8 +222,8 @@ $selection-bg-color: darken($primary-color, 5%); // 反選的背景顏色
 
 // 區塊內容
 .sec {
-	padding-top: rem-calc(40);
-	padding-bottom: rem-calc(40);
+	padding-top: function.rem-calc(40);
+	padding-bottom: function.rem-calc(40);
 }
 
 // --------------------------------------------------------

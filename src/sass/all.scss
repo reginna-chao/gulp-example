@@ -24,19 +24,22 @@
 // --------------------------------------------------------
 
 // Main Style
-@import './layout/common';
+@use "sass:meta";
+@use 'layout/common';
 
 // --------------------------------------------------------
 
 /* Font */
-@import './layout/font';
+@use 'layout/font';
+@use "vendor/font/icons";
+
 
 // --------------------------------------------------------
 
 /* Icon */
 // "layout/main_style" 已 import "../vendor/font/icons";
 // @import "vendor/font/icons"; // 載入Icon Font 變數
-@include font-icon;
+@include icons.font-icon;
 
 // --------------------------------------------------------
 
@@ -49,15 +52,15 @@
 // --------------------------------------------------------
 
 /* Global */
-@import './layout/global';
+@include meta.load-css('layout/global');
 
 /* Layout */
-@import './layout/layout';
+@include meta.load-css('layout/layout');
 
 /* Components */
-@import './components/flex';
-@import './components/btn';
-@import './components/form';
-@import './components/table';
-@import './components/modal';
-@import './components/keyframes';
+@include meta.load-css('components/flex');
+@include meta.load-css('components/btn');
+@include meta.load-css('components/form');
+@include meta.load-css('components/table');
+@include meta.load-css('components/modal');
+@include meta.load-css('components/keyframes');

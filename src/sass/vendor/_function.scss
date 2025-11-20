@@ -1,9 +1,14 @@
+@use "sass:color";
+@use "sass:list";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
 // -------------------------------------------------------- [START] String
 // [String] 取代文字
 @function str-replace($string, $search, $replace: '') {
-	$index: str-index($string, $search);
+	$index: string.index($string, $search);
 	@if ($index) {
-		@return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+		@return string.slice($string, 1, $index - 1) + $replace + str-replace(string.slice($string, $index + string.length($search)), $search, $replace);
 	}
 	@return $string;
 }
@@ -15,7 +20,7 @@
 /// @param {Number} $number - Number to remove unit from
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
-	@if type-of($number) == 'number' and not unitless($number) {
+	@if meta.type-of($number) == 'number' and not math.is-unitless($number) {
 		@return $number / ($number * 0 + 1);
 	}
 	@return $number;
@@ -51,7 +56,7 @@
 	$x-0: 1;
 	$x-1: $x-0;
 	@for $i from 1 through 10 {
-		$x-1: $x-0 - ($x-0 * $x-0 - abs($r)) / (2 * $x-0);
+		$x-1: $x-0 - ($x-0 * $x-0 - math.abs($r)) / (2 * $x-0);
 		$x-0: $x-1;
 	}
 	@return $x-1;
@@ -63,14 +68,14 @@
 // -------------------------------------------------------- [START] Color
 // [Color] 轉換 HEX 色碼為 RGB
 @function hex-to-rgb($hex) {
-	@return red($hex), green($hex), blue($hex);
+	@return color.red($hex), color.green($hex), color.blue($hex);
 }
 
 
 // [Color] HEX 顏色是否接近白色/黑色：true === 接近白色；false === 接近黑色
 // 概念：https://stackoverflow.com/a/9780689/11240898
 @function color-close-white($hex) {
-	$y: 0.2126 * red($hex) + 0.7152 * green($hex) + 0.0722 * blue($hex);
+	$y: 0.2126 * color.red($hex) + 0.7152 * color.green($hex) + 0.0722 * color.blue($hex);
 	@return $y >= 128;
 }
 
@@ -85,14 +90,14 @@
 // 2. 出現負數的情況怎麼辦等
 @function calc-center-color($fade, $color1, $color2) {
 	$target-rgb: ();
-	$color1-rgb: red($color1), green($color1), blue($color1);
-	$color2-rgb: red($color2), green($color2), blue($color2);
+	$color1-rgb: color.red($color1), color.green($color1), color.blue($color1);
+	$color2-rgb: color.red($color2), color.green($color2), color.blue($color2);
 
 	@for $i from 1 through 3 {
-		$color1-current: nth($color1-rgb, $i);
-		$color2-current: nth($color2-rgb, $i);
-		$target-rgb: append($target-rgb, ( $color1-current + floor(($color2-current - $color1-current) * $fade) ));
+		$color1-current: list.nth($color1-rgb, $i);
+		$color2-current: list.nth($color2-rgb, $i);
+		$target-rgb: list.append($target-rgb, ( $color1-current + math.floor(($color2-current - $color1-current) * $fade) ));
 	}
-	@return rgb(nth($target-rgb, 1), nth($target-rgb, 2), nth($target-rgb, 3));
+	@return rgb(list.nth($target-rgb, 1), list.nth($target-rgb, 2), list.nth($target-rgb, 3));
 }
 // -------------------------------------------------------- [END] Color

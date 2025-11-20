@@ -1,3 +1,4 @@
+@use "sass:math";
 // SASS計算三角函數
 // Ref: https://gist.github.com/kamikat/c4d472ce3c61feec6376
 // https://www.unindented.org/blog/trigonometry-in-sass/
@@ -35,7 +36,7 @@ $pi: 3.14159265359;
 
 
 @function rad($angle) {
-	$unit: unit($angle);
+	$unit: math.unit($angle);
 	$unitless: $angle / ($angle * 0 + 1);
 	// If the angle has 'deg' as unit, convert to radians.
 	@if $unit == deg {

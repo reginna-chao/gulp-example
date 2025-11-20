@@ -15,14 +15,14 @@
 // Vendor
 
 // Icon Font
-@import '../vendor/font/icons'; // 載入Icon Font 變數
+@use '../vendor/font/icons'; // 載入Icon Font 變數
 
 // Function
-@import '../vendor/trig'; // 三角函數
-@import '../vendor/photoshop-function'; // Photoshop 效果轉換
-@import '../vendor/function'; // 常用的 Function
+@use '../vendor/trig'; // 三角函數
+@use '../vendor/photoshop-function'; // Photoshop 效果轉換
+@use '../vendor/function'; // 常用的 Function
 
 // Utils
-@import '../utils/variables';
-@import '../utils/functions';
-@import '../utils/mixins';
+@use '../utils/variables';
+@use '../utils/functions';
+@use '../utils/mixins';
