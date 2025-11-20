@@ -1,0 +1,25 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# 頂層配置文件
+root = true
+
+# 所有檔案的預設設定
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 使用 Tab 縮排的檔案
+[*.{js,jsx,ts,tsx,scss,sass,css,pug,html}]
+indent_style = tab
+indent_size = 4
+
+# JSON 和 YAML 使用空格
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Markdown 保留尾隨空格（用於換行）
+[*.md]
+trim_trailing_whitespace = false
