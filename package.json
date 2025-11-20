@@ -9,8 +9,7 @@
     "build:prod": "gulp buildProd",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "stylelint src/sass/**/*.scss --syntax scss",
-    "lint:fix": "stylelint src/sass/**/*.scss --syntax scss --fix",
-    "lint-sass": "sass-lint src/**/*.sass -v -q"
+    "lint:fix": "stylelint src/sass/**/*.scss --syntax scss --fix"
   },
   "browserslist": [
     "last 2 versions",
@@ -24,10 +23,7 @@
     "@babel/core": "^7.15.8",
     "@babel/eslint-parser": "^7.28.5",
     "@babel/plugin-transform-object-assign": "^7.16.7",
-    "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
-    "@babel/runtime": "^7.17.9",
-    "@babel/runtime-corejs3": "^7.17.9",
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -50,7 +46,6 @@
     "gulp-consolidate": "^0.2.0",
     "gulp-debug": "^4.0.0",
     "gulp-iconfont": "^10.0.3",
-    "gulp-iconfont-css": "^3.0.0",
     "gulp-if": "^3.0.0",
     "gulp-ignore": "^2.0.2",
     "gulp-imagemin": "^8.0.0",
