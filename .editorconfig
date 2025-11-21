@@ -15,10 +15,10 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-# Pug 檔案使用 4 空格縮排
+# Pug 檔案使用 2 空格縮排
 [*.pug]
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 # Markdown 保留尾隨空格（用於換行）
 [*.md]

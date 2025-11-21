@@ -1,363 +1,372 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-	<meta name="robots" content="noindex, nofollow,noarchive,nosnippet,noimageindex,noodp">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-	<!-- <link rel="icon" type="image/ico" href=""> -->
-	<title>Icon Font - glyphs list</title>
+  <meta name="robots" content="noindex, nofollow,noarchive,nosnippet,noimageindex,noodp">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <!-- <link rel="icon" type="image/ico" href=""> -->
+  <title>Icon Font - glyphs list</title>
 
-	<!-- CSS -->
-	<link rel="stylesheet" href="icons.min.css">
-	<link rel="stylesheet" href="iconfont-demo.min.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="icons.min.css">
+  <link rel="stylesheet" href="iconfont-demo.min.css">
 </head>
+
 <body>
-<div class="wrapper" id="app">
+  <div class="wrapper" id="app">
 
-	<header id="header">
-		<div class="container">
-			<!-- <div class="hd-top">
-				<span class="t-title">使用說明文件：</span>
-				<a href="暫無" target="_blank" class="tooltip" data-title="限合作夥伴讀取">gulp-iconfont 使用方式</a>
-			</div> -->
-			<div class="hd-center">
-				<h1 class="title">Icon Font<small class="t-tip"> - glyphs list</small></h1>
-				<div class="hd-gulptip">
-					<ul>
-						<li><span class="t-title">font-family:</span> "<%= fontName %>";</li>
-						<li><span class="t-title">Font class:</span> .<%= cssClass %></li>
-					</ul>
-					<p class="t-tip"><small>（於gulpfile.js調整設定）</small></p>
-				</div>
-			</div>
-		</div>
-	</header>
+    <header id="header">
+      <div class="container">
+        <!-- <div class="hd-top">
+        <span class="t-title">使用說明文件：</span>
+        <a href="暫無" target="_blank" class="tooltip" data-title="限合作夥伴讀取">gulp-iconfont 使用方式</a>
+      </div> -->
+        <div class="hd-center">
+          <h1 class="title">Icon Font<small class="t-tip"> - glyphs list</small></h1>
+          <div class="hd-gulptip">
+            <ul>
+              <li><span class="t-title">font-family:</span> "<%= fontName %>";</li>
+              <li><span class="t-title">Font class:</span> .<%= cssClass %>
+              </li>
+            </ul>
+            <p class="t-tip"><small>（於gulpfile.js調整設定）</small></p>
+          </div>
+        </div>
+      </div>
+    </header>
 
-	<!-- Main Container -->
-	<main class="container" id="main">
-		<!-- Show Type -->
-		<div class="list-type-wrapper" id="list-type-wrapper">
-			<div data-fixed-panel>
-				<div class="amount">總計 <span class="num" ref="amountNum">(ﾟ∀ﾟ)</span> 個</div>
-				<ul class="list-type">
-					<li v-if="defaultShow">
-						<button class="btn" type="button" @click="defaultSet()">恢復預設</button>
-					</li>
-					<li v-if="svgIconShow === 'html' || svgIconShow === 'pug'">
-						<input type="radio" id="checkbox-hidden" name="checkbox-html" class="radiobox" value="ariaHidden" v-model="ariaHidden">
-						<label for="checkbox-hidden">使用 aria-hidden</label>
-					</li>
-					<li v-if="svgIconShow === 'html' || svgIconShow === 'pug'">
-						<input type="radio" id="checkbox-role" name="checkbox-html" class="radiobox" value="role" v-model="ariaHidden">
-						<label for="checkbox-role">使用 role</label>
-					</li>
-					<li v-if="svgIconShow === 'sass'">
-						<input type="checkbox" id="checkbox-scss" class="checkbox" v-model="showScss">
-						<label for="checkbox-scss">顯示 SCSS</label>
-					</li>
-					<li class="text-tip">|</li>
-					<li v-for="item in selectOptions">
-						<input type="radio" name="showtype" :id="'show-' + item.name" class="radiobox" :value="item.name" v-model="svgIconShow" checked>
-						<label :for="'show-' + item.name">顯示 {{item.text}}</label>
-					</li>
-				</ul>
-			</div>
-		</div>
+    <!-- Main Container -->
+    <main class="container" id="main">
+      <!-- Show Type -->
+      <div class="list-type-wrapper" id="list-type-wrapper">
+        <div data-fixed-panel>
+          <div class="amount">總計 <span class="num" ref="amountNum">(ﾟ∀ﾟ)</span> 個</div>
+          <ul class="list-type">
+            <li v-if="defaultShow">
+              <button class="btn" type="button" @click="defaultSet()">恢復預設</button>
+            </li>
+            <li v-if="svgIconShow === 'html' || svgIconShow === 'pug'">
+              <input type="radio" id="checkbox-hidden" name="checkbox-html" class="radiobox" value="ariaHidden"
+                v-model="ariaHidden">
+              <label for="checkbox-hidden">使用 aria-hidden</label>
+            </li>
+            <li v-if="svgIconShow === 'html' || svgIconShow === 'pug'">
+              <input type="radio" id="checkbox-role" name="checkbox-html" class="radiobox" value="role"
+                v-model="ariaHidden">
+              <label for="checkbox-role">使用 role</label>
+            </li>
+            <li v-if="svgIconShow === 'sass'">
+              <input type="checkbox" id="checkbox-scss" class="checkbox" v-model="showScss">
+              <label for="checkbox-scss">顯示 SCSS</label>
+            </li>
+            <li class="text-tip">|</li>
+            <li v-for="item in selectOptions">
+              <input type="radio" name="showtype" :id="'show-' + item.name" class="radiobox" :value="item.name"
+                v-model="svgIconShow" checked>
+              <label :for="'show-' + item.name">顯示 {{item.text}}</label>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-		<!-- List -->
-		<ul class="glyphs-list">
-			<% _.each(glyphs, function(icon){ %>
-			<li>
-				<i class="<%= cssClass %> <%= cssClass %>-<%= icon.name %>"></i>
-				<h4><%= icon.name %></h4>
-				<div class="input-item">
-					<input type="text" :value="svgIconInputVal('<%= icon.name %>')">
-					<button class="btn-copy">複製</button>
-				</div>
-				<!-- <div v-if="ariaHidden === 'role'"><label for="text">role</label><input type="text" value="<%= icon.name %>"></div> -->
-				<p class="text-code"><span class="t-title">Unicode</span><code class="copy-unicode tooltip" data-title="複製 Unicode">\<%= icon.unicode[0].charCodeAt(0).toString(16) %></code></p>
-			</li>
-			<% }) %>
-		</ul>
-		<!-- /.End List -->
-	</main>
+      <!-- List -->
+      <ul class="glyphs-list">
+        <% _.each(glyphs, function(icon){ %>
+          <li>
+            <i class="<%= cssClass %> <%= cssClass %>-<%= icon.name %>"></i>
+            <h4>
+              <%= icon.name %>
+            </h4>
+            <div class="input-item">
+              <input type="text" :value="svgIconInputVal('<%= icon.name %>')">
+              <button class="btn-copy">複製</button>
+            </div>
+            <!-- <div v-if="ariaHidden === 'role'"><label for="text">role</label><input type="text" value="<%= icon.name %>"></div> -->
+            <p class="text-code"><span class="t-title">Unicode</span><code class="copy-unicode tooltip"
+                data-title="複製 Unicode">\<%= icon.unicode[0].charCodeAt(0).toString(16) %></code></p>
+          </li>
+          <% }) %>
+      </ul>
+      <!-- /.End List -->
+    </main>
 
-	<footer id="footer">
-		© <%= fontYYYY %> <a href="https://github.com/reginna-chao" target="_blank">Reginna Chao</a> ALL RIGHTS RESERVED
-	</footer>
+    <footer id="footer">
+      © <%= fontYYYY %> <a href="https://github.com/reginna-chao" target="_blank">Reginna Chao</a> ALL RIGHTS RESERVED
+    </footer>
 
-</div>
-<!-- /.End .wrapper -->
+  </div>
+  <!-- /.End .wrapper -->
 
-<!-- JS -->
-<script src="clipboard.min.js"></script>
-<script src="vue.min.js"></script>
-<script>
-	(function(window, document){
-		
-		// Create Element.remove() function if not exist
-		if (!('remove' in Element.prototype)) {
-			Element.prototype.remove = function() {
-				if (this.parentNode) {
-					this.parentNode.removeChild(this);
-				}
-			};
-		}
+  <!-- JS -->
+  <script src="clipboard.min.js"></script>
+  <script src="vue.min.js"></script>
+  <script>
+    (function (window, document) {
 
-		// Copy to Clipboard
-		var successMsg, clipTimer;
+      // Create Element.remove() function if not exist
+      if (!('remove' in Element.prototype)) {
+        Element.prototype.remove = function () {
+          if (this.parentNode) {
+            this.parentNode.removeChild(this);
+          }
+        };
+      }
 
-		function addCopySuccess(){
-			if(successMsg == undefined){
-				successMsg = document.createElement('div');
-				successMsg.className = 'copysuctip';
-				successMsg.innerText = '複製成功';
-			}
-			document.body.appendChild(successMsg);
+      // Copy to Clipboard
+      var successMsg, clipTimer;
 
-			// Remove
-			clearTimeout(clipTimer);
-			clipTimer = null;
-			clipTimer = setTimeout(function(){
-				successMsg.remove();
-				clipTimer = null;
-			},3000);
-		}
+      function addCopySuccess() {
+        if (successMsg == undefined) {
+          successMsg = document.createElement('div');
+          successMsg.className = 'copysuctip';
+          successMsg.innerText = '複製成功';
+        }
+        document.body.appendChild(successMsg);
 
-		var clipboard = new ClipboardJS('.btn-copy',{
-			target: function(el) {
-				return el.parentElement.querySelector('input');
-			}
-		});
-		clipboard.on('success', addCopySuccess);
+        // Remove
+        clearTimeout(clipTimer);
+        clipTimer = null;
+        clipTimer = setTimeout(function () {
+          successMsg.remove();
+          clipTimer = null;
+        }, 3000);
+      }
 
-		var clipboard2 = new ClipboardJS('.copy-unicode',{
-			text: function(el) {
-				return el.innerText;
-			}
-		});
-		clipboard2.on('success', addCopySuccess);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function (el) {
+          return el.parentElement.querySelector('input');
+        }
+      });
+      clipboard.on('success', addCopySuccess);
+
+      var clipboard2 = new ClipboardJS('.copy-unicode', {
+        text: function (el) {
+          return el.innerText;
+        }
+      });
+      clipboard2.on('success', addCopySuccess);
 
 
-		// -----------------------------------
-		// Change Type (Vue)
-		var selectOptions = [
-			{
-				name: 'name', // radio value, vue判斷是否顯示該值基準(v-if="svgIconShow === 值")
-				text: 'File Name', // radio 顯示名稱
+      // -----------------------------------
+      // Change Type (Vue)
+      var selectOptions = [
+        {
+          name: 'name', // radio value, vue判斷是否顯示該值基準(v-if="svgIconShow === 值")
+          text: 'File Name', // radio 顯示名稱
 
-				// input value值
-				// * tag=要使用的HTML tag
-				// * key=屬性值(一般專案為class、前端框架(Vue)專案可能會是不同值)
-				// * name=檔案名稱
-				// * mainClass為[一般專案]需求的主要class(fontClassName)[要由模板帶入值]
-				code: '[name]'
-			},
-			{
-				name: 'class',
-				text: 'class',
-				code: '[mainClass] [mainClass]-[name]'
-			},
-			{
-				name: 'sass',
-				text: 'SASS Mixin',
-				code: '+font-icon-add([name])'
-			},
-			{
-				name: 'html',
-				text: 'HTML',
-				code: '<[tag] [key]="[mainClass] [mainClass]-[name]"></[tag]>'
-			},
-			{
-				name: 'pug',
-				text: 'Pug',
-				code: '[tag].[mainClass].[mainClass]-[name]()'
-			}
-		];
+          // input value值
+          // * tag=要使用的HTML tag
+          // * key=屬性值(一般專案為class、前端框架(Vue)專案可能會是不同值)
+          // * name=檔案名稱
+          // * mainClass為[一般專案]需求的主要class(fontClassName)[要由模板帶入值]
+          code: '[name]'
+        },
+        {
+          name: 'class',
+          text: 'class',
+          code: '[mainClass] [mainClass]-[name]'
+        },
+        {
+          name: 'sass',
+          text: 'SASS Mixin',
+          code: '+font-icon-add([name])'
+        },
+        {
+          name: 'html',
+          text: 'HTML',
+          code: '<[tag] [key]="[mainClass] [mainClass]-[name]"></[tag]>'
+        },
+        {
+          name: 'pug',
+          text: 'Pug',
+          code: '[tag].[mainClass].[mainClass]-[name]()'
+        }
+      ];
 
-		// 設定預設值
-		var defaultValue = {
-			svgIconShow: 'pug',
-			ariaHidden: 'ariaHidden',
-			showScss: true,
-		}
+      // 設定預設值
+      var defaultValue = {
+        svgIconShow: 'pug',
+        ariaHidden: 'ariaHidden',
+        showScss: true,
+      }
 
-		// Vue Start
-		new Vue({
-			el: '#app',
-			data: {
-				selectOptions: selectOptions,
-				svgIconShow: defaultValue.svgIconShow,
-				ariaHidden: defaultValue.ariaHidden,
-				showScss: defaultValue.showScss,
-				// Svg Icon 設定<tag key="icon值">
-				settings: {
-					tag: 'i',
-					key: 'class',
-					mainClass: '<%= cssClass %>',
-				},
-				iconLength: '<%= glyphs.length %>',
-				// 快取相關↓
-				cacheEnable: true, // 是啟用快取
-				cacheKey: '_ICON_DEMO_',
-				defaultShow: false // 是否顯示預設
-			},
-			computed: {
-				// 是否使用 Cache(Local Storage)（※只有 localhost 才有）
-				cacheUse: function() {
-					return location.hostname === 'localhost'
-				}
-			},
-			watch: {
-				svgIconShow: function() {
-					this.cacheSet();
-					this.defaultCheck();
-				},
-				ariaHidden: function() {
-					this.cacheSet();
-					this.defaultCheck();
-				},
-				showScss: function() {
-					this.cacheSet();
-					this.defaultCheck();
-				}
-			},
-			mounted: function() {
-				var vm = this;
-				setTimeout(function() {
-					vm.$refs.amountNum.innerHTML = vm.iconLength
-				}, 1000)
+      // Vue Start
+      new Vue({
+        el: '#app',
+        data: {
+          selectOptions: selectOptions,
+          svgIconShow: defaultValue.svgIconShow,
+          ariaHidden: defaultValue.ariaHidden,
+          showScss: defaultValue.showScss,
+          // Svg Icon 設定<tag key="icon值">
+          settings: {
+            tag: 'i',
+            key: 'class',
+            mainClass: '<%= cssClass %>',
+          },
+          iconLength: '<%= glyphs.length %>',
+          // 快取相關↓
+          cacheEnable: true, // 是啟用快取
+          cacheKey: '_ICON_DEMO_',
+          defaultShow: false // 是否顯示預設
+        },
+        computed: {
+          // 是否使用 Cache(Local Storage)（※只有 localhost 才有）
+          cacheUse: function () {
+            return location.hostname === 'localhost'
+          }
+        },
+        watch: {
+          svgIconShow: function () {
+            this.cacheSet();
+            this.defaultCheck();
+          },
+          ariaHidden: function () {
+            this.cacheSet();
+            this.defaultCheck();
+          },
+          showScss: function () {
+            this.cacheSet();
+            this.defaultCheck();
+          }
+        },
+        mounted: function () {
+          var vm = this;
+          setTimeout(function () {
+            vm.$refs.amountNum.innerHTML = vm.iconLength
+          }, 1000)
 
-				// Cache
-				if (vm.cacheEnable) {
-					vm.cacheLoad();
-					vm.defaultCheck();
-				} else {
-					vm.cacheDel();
-				}
+          // Cache
+          if (vm.cacheEnable) {
+            vm.cacheLoad();
+            vm.defaultCheck();
+          } else {
+            vm.cacheDel();
+          }
 
-			},
-			methods: {
-				// 輸出 input value 值
-				svgIconInputVal: function(icon) {
-					var vm = this;
-					var result = selectOptions.filter(function(val) { return val.name === vm.svgIconShow })[0];
-					var val = result.code;
-					val = val.replace(/\[name\]/gi, icon);
-					val = val.replace(/\[tag\]/gi, vm.settings.tag);
-					val = val.replace(/\[key\]=/gi, vm.settings.key + '=');
-					val = val.replace(/\[mainClass\]/gi, vm.settings.mainClass);
+        },
+        methods: {
+          // 輸出 input value 值
+          svgIconInputVal: function (icon) {
+            var vm = this;
+            var result = selectOptions.filter(function (val) { return val.name === vm.svgIconShow })[0];
+            var val = result.code;
+            val = val.replace(/\[name\]/gi, icon);
+            val = val.replace(/\[tag\]/gi, vm.settings.tag);
+            val = val.replace(/\[key\]=/gi, vm.settings.key + '=');
+            val = val.replace(/\[mainClass\]/gi, vm.settings.mainClass);
 
-					if(vm.svgIconShow === 'html' || vm.svgIconShow === 'pug') {
-						var regex = vm.svgIconShow === 'html' ? /></gi : /\(\)/gi;
-						var replaceStart = vm.svgIconShow === 'html' ? ' ' : '(';
-						var replaceEnd = vm.svgIconShow === 'html' ? '><' : ')';
+            if (vm.svgIconShow === 'html' || vm.svgIconShow === 'pug') {
+              var regex = vm.svgIconShow === 'html' ? /></gi : /\(\)/gi;
+              var replaceStart = vm.svgIconShow === 'html' ? ' ' : '(';
+              var replaceEnd = vm.svgIconShow === 'html' ? '><' : ')';
 
-						if (vm.ariaHidden === 'ariaHidden') {
-							// 增加 aria-hidden
-							val = val.replace(regex, `${replaceStart}aria-hidden="true"${replaceEnd}`);
-						} else if (vm.ariaHidden === 'role') {
-							// 增加 role="img" aria-label
-							val = val.replace(regex, `${replaceStart}role="img" aria-label="${icon}"${replaceEnd}`);
-						}
-					}
+              if (vm.ariaHidden === 'ariaHidden') {
+                // 增加 aria-hidden
+                val = val.replace(regex, `${replaceStart}aria-hidden="true"${replaceEnd}`);
+              } else if (vm.ariaHidden === 'role') {
+                // 增加 role="img" aria-label
+                val = val.replace(regex, `${replaceStart}role="img" aria-label="${icon}"${replaceEnd}`);
+              }
+            }
 
-					if(vm.svgIconShow === 'sass' && vm.showScss) {
-						val = val.replace(/\+/gi, '@include ') + ';';
-					}
+            if (vm.svgIconShow === 'sass' && vm.showScss) {
+              val = val.replace(/\+/gi, '@include ') + ';';
+            }
 
-					return val;
-				},
-				// 讀取 Cache(Local Storage)
-				cacheLoad: function() {
-					var vm = this;
-					// Get Cache(Local Storage)
-					var val = JSON.parse(localStorage.getItem(vm.cacheKey));
-					if (val !== null) {
-						vm.svgIconShow = val.svgIconShow;
-						vm.ariaHidden = val.ariaHidden;
-						vm.showScss = val.showScss;
-					}
-				},
-				// 設定 Cache(Local Storage)
-				cacheSet: function() {
-					if (this.cacheUse) {
-						var vm = this;
-						var val = {
-							svgIconShow: vm.svgIconShow,
-							ariaHidden: vm.ariaHidden,
-							showScss: vm.showScss,
-						}
-						localStorage.setItem(this.cacheKey, JSON.stringify(val));
-					}
-				},
-				cacheDel: function() {
-					localStorage.removeItem(this.cacheKey)
-				},
-				// 確認預設
-				defaultCheck: function() {
-					this.defaultShow = !(this.svgIconShow === defaultValue.svgIconShow
-						&& this.ariaHidden === defaultValue.ariaHidden
-						&& this.showScss === defaultValue.showScss)
-				},
-				// 恢復預設
-				defaultSet: function() {
-					this.svgIconShow = defaultValue.svgIconShow;
-					this.ariaHidden = defaultValue.ariaHidden;
-					this.showScss = defaultValue.showScss;
+            return val;
+          },
+          // 讀取 Cache(Local Storage)
+          cacheLoad: function () {
+            var vm = this;
+            // Get Cache(Local Storage)
+            var val = JSON.parse(localStorage.getItem(vm.cacheKey));
+            if (val !== null) {
+              vm.svgIconShow = val.svgIconShow;
+              vm.ariaHidden = val.ariaHidden;
+              vm.showScss = val.showScss;
+            }
+          },
+          // 設定 Cache(Local Storage)
+          cacheSet: function () {
+            if (this.cacheUse) {
+              var vm = this;
+              var val = {
+                svgIconShow: vm.svgIconShow,
+                ariaHidden: vm.ariaHidden,
+                showScss: vm.showScss,
+              }
+              localStorage.setItem(this.cacheKey, JSON.stringify(val));
+            }
+          },
+          cacheDel: function () {
+            localStorage.removeItem(this.cacheKey)
+          },
+          // 確認預設
+          defaultCheck: function () {
+            this.defaultShow = !(this.svgIconShow === defaultValue.svgIconShow
+              && this.ariaHidden === defaultValue.ariaHidden
+              && this.showScss === defaultValue.showScss)
+          },
+          // 恢復預設
+          defaultSet: function () {
+            this.svgIconShow = defaultValue.svgIconShow;
+            this.ariaHidden = defaultValue.ariaHidden;
+            this.showScss = defaultValue.showScss;
 
-					this.defaultShow = false;
-				}
-			}
-		});
+            this.defaultShow = false;
+          }
+        }
+      });
 
-		// -----------------------------------
-		// Scroll and fixed navigation
+      // -----------------------------------
+      // Scroll and fixed navigation
 
-		// Get Body Scroll Top (zh-Hant): http://www.eion.com.tw/Blogger/?Pid=1154
-		function getScrollTop(){
-			var bodyTop = 0;
-			if (typeof window.pageYOffset != "undefined") {
-				bodyTop = window.pageYOffset;
+      // Get Body Scroll Top (zh-Hant): http://www.eion.com.tw/Blogger/?Pid=1154
+      function getScrollTop() {
+        var bodyTop = 0;
+        if (typeof window.pageYOffset != "undefined") {
+          bodyTop = window.pageYOffset;
 
-			} else if (typeof document.compatMode != "undefined"
-						&& document.compatMode != "BackCompat") {
-				bodyTop = document.documentElement.scrollTop;
+        } else if (typeof document.compatMode != "undefined"
+          && document.compatMode != "BackCompat") {
+          bodyTop = document.documentElement.scrollTop;
 
-			} else if (typeof document.body != "undefined") {
-				bodyTop = document.body.scrollTop;
-			}
-			return bodyTop
-		};
+        } else if (typeof document.body != "undefined") {
+          bodyTop = document.body.scrollTop;
+        }
+        return bodyTop
+      };
 
-		var showTypeWrapper = document.querySelector('#list-type-wrapper');
-		var showTypeWrapperOffsetTop = showTypeWrapper.getBoundingClientRect().top + getScrollTop();
-		function scrollNav(){
-			var ws = getScrollTop();
-			if(ws > showTypeWrapperOffsetTop){
-				showTypeWrapper.classList.add('is-fixed');
-			}else{
-				showTypeWrapper.classList.remove('is-fixed');
-			}
-		};
-		window.addEventListener('scroll', scrollNav);
+      var showTypeWrapper = document.querySelector('#list-type-wrapper');
+      var showTypeWrapperOffsetTop = showTypeWrapper.getBoundingClientRect().top + getScrollTop();
+      function scrollNav() {
+        var ws = getScrollTop();
+        if (ws > showTypeWrapperOffsetTop) {
+          showTypeWrapper.classList.add('is-fixed');
+        } else {
+          showTypeWrapper.classList.remove('is-fixed');
+        }
+      };
+      window.addEventListener('scroll', scrollNav);
 
-		// -----------------------------------
-		//IE old version tip
-		var userAgent = window.navigator.userAgent;  
-		if (userAgent.indexOf("MSIE 7.0")>0 || userAgent.indexOf("MSIE 8.0")>0 || userAgent.indexOf("MSIE 9.0")>0 || userAgent.indexOf("MSIE 10.0")>0) {
-			var ieTip = document.createElement('div');
-			ieTip.className = "ie-tip";
+      // -----------------------------------
+      //IE old version tip
+      var userAgent = window.navigator.userAgent;
+      if (userAgent.indexOf("MSIE 7.0") > 0 || userAgent.indexOf("MSIE 8.0") > 0 || userAgent.indexOf("MSIE 9.0") > 0 || userAgent.indexOf("MSIE 10.0") > 0) {
+        var ieTip = document.createElement('div');
+        ieTip.className = "ie-tip";
 
-			var ieTipSpan = document.createElement('span');
-			ieTipSpan.innerHTML = "不支援此版本瀏覽器，請開發者更換支援度較高之瀏覽器。<br><small>（用IE開發是要毀滅世界嗎？ಠ_ಠ）</small>";
-			ieTip.appendChild(ieTipSpan);
+        var ieTipSpan = document.createElement('span');
+        ieTipSpan.innerHTML = "不支援此版本瀏覽器，請開發者更換支援度較高之瀏覽器。<br><small>（用IE開發是要毀滅世界嗎？ಠ_ಠ）</small>";
+        ieTip.appendChild(ieTipSpan);
 
-			document.body.appendChild(ieTip);
-		}
+        document.body.appendChild(ieTip);
+      }
 
-	})(window, document);
-</script>
+    })(window, document);
+  </script>
 
 </body>
 

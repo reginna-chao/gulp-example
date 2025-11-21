@@ -1,13 +1,13 @@
 extends _layout
 block append vars
-	- title= ''
-	//- - description= ''
+  - title= ''
+  //- - description= ''
 
 block style
-	link(rel="stylesheet", href="css/index.min.css")
-	
+  link(rel="stylesheet", href="css/index.min.css")
+  
 block script
-	script(src="js/index.min.js" defer)
+  script(src="js/index.min.js" defer)
 
 //- -------------------------------------------
 //- [START] Mixin區塊
@@ -18,27 +18,30 @@ block script
 //- mixin使用標題
 //- +conceptItem(標題, 圖)
 //- mixin conceptItem(title, img)
-//- [END] Mixin區塊	
+//- [END] Mixin區塊  
 //- -------------------------------------------
 
 block content
-	p 內容
+  p 內容
 
-	//- 麵包屑
-	-
-		var breadcrumb = [
-			{ title: "第一層頁面標題1", href: "無連結使用#字號" },
-			{ title: "第二層頁面標題2", href: "頁面連結" }
-		]
-	+buildBreadcrumbs(breadcrumb)
+  //- 麵包屑
+  -
+    var breadcrumb = [
+      { title: "第一層頁面標題1", href: "無連結使用#字號" },
+      { title: "第二層頁面標題2", href: "頁面連結" }
+    ]
+  +buildBreadcrumbs(breadcrumb)
 
-	//- Lazyload Test
-	img(alt="A lazy image"
-		class="lazy"
-		data-src="images/favicon.png"
-		data-srcset="images/touch-icon.png 400w, images/og-img.png 800w"
-		sizes="(max-width: 600px) 480px, 800px"
-	)
+  p Icon Test
+    i.be-icon.be-icon-email(aria-hidden="true")
 
-	//- 撐高
-	section(style="height: 200vh")
+  //- Lazyload Test
+  img(alt="A lazy image"
+    class="lazy"
+    data-src="images/favicon.png"
+    data-srcset="images/touch-icon.png 400w, images/og-img.png 800w"
+    sizes="(max-width: 600px) 480px, 800px"
+  )
+
+  //- 撐高
+  section(style="height: 200vh")

@@ -5,21 +5,21 @@
 // --------------------------------------------------------
 
 // 說明
-//	* sass/layout/_common.scss：通用於所有SCSS/SASS變數檔案
+//  * sass/layout/_common.scss：通用於所有SCSS/SASS變數檔案
 //      - variable（變數）、mixin、function
 //      - 所有頁面檔案都建議要載入該之檔案
 //      - 避免寫實際的樣式於該檔案內（包含檔案內 @import 的其它檔案）
-//	* sass/layout/_layout.sass：Layout樣式 Loader、Header、Footer
-//	* sass/layout/_global.sass：內頁基本元件
-//		- HTML Tag
-//		- 表單(Form)相關元件
-//		- 修改Foundation元件/修改套件
-//		- keyframes
-//		- 要跨單元使用的放在此檔案
-//	* 每個單元只開一個css(如果有sass、scss檔案綜合的單元)，需統一 import 到一個檔案上（要寫註解）
-//	* Foundation大部分的元件沒有載入
-//		- 請見sass/foundation/_foundation.scss 後半部 @mixin foundation-everything後
-//		- 需要載入請開啟註解的 @include
+//  * sass/layout/_layout.sass：Layout樣式 Loader、Header、Footer
+//  * sass/layout/_global.sass：內頁基本元件
+//    - HTML Tag
+//    - 表單(Form)相關元件
+//    - 修改Foundation元件/修改套件
+//    - keyframes
+//    - 要跨單元使用的放在此檔案
+//  * 每個單元只開一個css(如果有sass、scss檔案綜合的單元)，需統一 import 到一個檔案上（要寫註解）
+//  * Foundation大部分的元件沒有載入
+//    - 請見sass/foundation/_foundation.scss 後半部 @mixin foundation-everything後
+//    - 需要載入請開啟註解的 @include
 
 // --------------------------------------------------------
 

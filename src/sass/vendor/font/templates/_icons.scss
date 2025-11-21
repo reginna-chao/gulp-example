@@ -1,73 +1,75 @@
 @mixin font-icon {
-	@font-face {
-		font-family: "<%= fontName %>";
-		src: url('<%= fontPath %><%= fontName %>.eot');
-		src: url('<%= fontPath %><%= fontName %>.eot?#iefix') format('embedded-opentype'),
-		url('<%= fontPath %><%= fontName %>.woff2') format('woff2'),
-		url('<%= fontPath %><%= fontName %>.woff') format('woff'),
-		url('<%= fontPath %><%= fontName %>.ttf') format('truetype'),
-		url('<%= fontPath %><%= fontName %>.svg#<%= fontName %>') format('svg');
-		font-display: block;
-		unicode-range: U+<%= glyphs[0].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>-<%= glyphs[glyphs.length-1].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>;
-	}
+  @font-face {
+    font-family: "<%= fontName %>";
+    src: url('<%= fontPath %><%= fontName %>.eot');
+    src: url('<%= fontPath %><%= fontName %>.eot?#iefix') format('embedded-opentype'),
+      url('<%= fontPath %><%= fontName %>.woff2') format('woff2'),
+      url('<%= fontPath %><%= fontName %>.woff') format('woff'),
+      url('<%= fontPath %><%= fontName %>.ttf') format('truetype'),
+      url('<%= fontPath %><%= fontName %>.svg#<%= fontName %>') format('svg');
+    font-display: block;
+    unicode-range: U+<%=glyphs[0].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>-<%=glyphs[glyphs.length-1].unicode[0].charCodeAt(0).toString(16).toUpperCase() %>;
+  }
 
-	.<%= cssClass%> {
-		font-family: sans-serif;
-		line-height: 1;
-	}
+  .<%=cssClass%> {
+    font-family: sans-serif;
+    line-height: 1;
+  }
 
-	.<%= cssClass%>:before {
-		@include font-icon-style;
-	}
-	
-	/* Glyphs list */
-	<% _.each(glyphs, function(icon){ %>
-	.<%= cssClass%>-<%= icon.name %>:before {
-		content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
-	}
-	<% }) %>
+  .<%=cssClass%>:before {
+    @include font-icon-style;
+  }
+
+  /* Glyphs list */
+  <% _.each(glyphs, function(icon) {
+      %> .<%=cssClass%>-<%=icon.name %>:before {
+        content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+      }
+
+      <%
+    }) %>
 }
 
 // <i>:before Style
 @mixin font-icon-style {
-	font-family: "<%= fontName %>";
-	
-	// Font smoothing. That was taken from TWBS
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  font-family: "<%= fontName %>";
 
-	font-style: normal;
-	font-weight: normal;
+  // Font smoothing. That was taken from TWBS
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-	// For safety - reset parent styles, that can break glyph codes
-	font-variant: normal;
-	text-transform: none;
-	text-decoration: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  font-style: normal;
+  font-weight: normal;
 
-	// only necessary if not using the private unicode range (firstGlyph option)
-	speak: none;
+  // For safety - reset parent styles, that can break glyph codes
+  font-variant: normal;
+  text-transform: none;
+  text-decoration: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-	display: inline-block;
-	text-decoration: inherit;
-	width: 1em;
-	margin-right: .2em;
-	text-align: center;
+  // only necessary if not using the private unicode range (firstGlyph option)
+  speak: none;
 
-	// fix buttons height, for twitter bootstrap
-	line-height: 1em;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
 
-	// Animation center compensation - margins should be symmetric
-	// remove if not needed
-	margin-left: .2em;
+  // fix buttons height, for twitter bootstrap
+  line-height: 1em;
 
-	// you can be more comfortable with increased icons size
-	// font-size: 120%;
+  // Animation center compensation - margins should be symmetric
+  // remove if not needed
+  margin-left: .2em;
 
-	// Uncomment for 3D effect
-	// text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3);
+  // you can be more comfortable with increased icons size
+  // font-size: 120%;
+
+  // Uncomment for 3D effect
+  // text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3);
 }
 
 // @include font-icon;
@@ -75,32 +77,33 @@
 // SASS變數使用範例
 // .icon {
 //     &:before{
-// 		@include font-icon-add(SVG檔案名稱);
+//     @include font-icon-add(SVG檔案名稱);
 //     }
 // }
 
 // 內頁使用之Style
 %font-icon-style {
-	@include font-icon-style;
+  @include font-icon-style;
 }
 
-<% _.each(glyphs, function(icon){ %>
-$font-icon-<%= icon.name %>: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
-<% }) %>
+<% _.each(glyphs, function(icon) {
+    %> $font-icon-<%=icon.name %>: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+    <%
+  }) %> // 可以帶入變數
 
-// 可以帶入變數
 @mixin font-icon-add($icon: '', $extendStyle: true) {
-	<% _.each(glyphs, function(icon){ %>
-	@if $icon == <%= icon.name %> {
-		content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
-	}
-	<% }) %>
+  <% _.each(glyphs, function(icon) {
+      %> @if $icon ==<%=icon.name %> {
+        content: '\<%= icon.unicode[0].charCodeAt(0).toString(16) %>';
+      }
 
-	@if $extendStyle == true {
-		@extend %font-icon-style;
-	}
+      <%
 
-	@else {
-		font-family: "<%= fontName %>";
-	}
+    }) %>@if $extendStyle ==true {
+    @extend %font-icon-style;
+  }
+
+  @else {
+    font-family: "<%= fontName %>";
+  }
 }

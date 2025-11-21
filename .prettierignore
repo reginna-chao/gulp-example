@@ -5,6 +5,7 @@ dist/
 # Templates (contain template syntax)
 src/sass/vendor/font/templates/_icons.scss
 src/sass/vendor/font/templates/*.html
+src/sass/**/*.js
 
 # Minified files
 **/jquery-*.*.*.min.js

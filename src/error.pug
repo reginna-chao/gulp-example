@@ -1,119 +1,119 @@
 extends _layout
 block append vars
-	- title= '找不到頁面 | '
-	//- - description= ''
+  - title= '找不到頁面 | '
+  //- - description= ''
 
 block style
-	style.
-		/* 404 Page */
-		.error-page {
-			position: relative;
-			min-height: 100vh;
-			display: -webkit-box;
-			display: -ms-flexbox;
-			display: flex;
-			-webkit-box-pack: center;
-				-ms-flex-pack: center;
-					justify-content: center;
-			-webkit-box-align: center;
-				-ms-flex-align: center;
-					align-items: center;
-		}
+  style.
+    /* 404 Page */
+    .error-page {
+      position: relative;
+      min-height: 100vh;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+        -ms-flex-pack: center;
+          justify-content: center;
+      -webkit-box-align: center;
+        -ms-flex-align: center;
+          align-items: center;
+    }
 
-		/* 文字區塊 */
-		.error-page .text-box {
-			text-align: center;
-			position: relative;
-			z-index: 1;
-			max-width: 90vw;
-			animation: error-fade 1s;
-		}
+    /* 文字區塊 */
+    .error-page .text-box {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      max-width: 90vw;
+      animation: error-fade 1s;
+    }
 
-		@keyframes error-fade {
-			from {
-				opacity: 0;
-			}
-			to {
-				opacity: 1;
-			}
-		}
+    @keyframes error-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
 
-		/* 裝飾文字文字：404/OOPS! */
-		.error-page .title {
-			margin-bottom: -6%;
-			pointer-events: none;
-		}
-		.error-page .title span {
-			display: inline-block;
-			position: relative;
-			width: 600px;
-			max-width: 100%;
-		}
-		/* 404 文字空間*/
-		.error-page .title span::before {
-			content: "";
-			display: block;
-			padding-top: 50%;
-			padding-top: calc(240 / 560 * 100%);
-		}
-		.error-page svg {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+    /* 裝飾文字文字：404/OOPS! */
+    .error-page .title {
+      margin-bottom: -6%;
+      pointer-events: none;
+    }
+    .error-page .title span {
+      display: inline-block;
+      position: relative;
+      width: 600px;
+      max-width: 100%;
+    }
+    /* 404 文字空間*/
+    .error-page .title span::before {
+      content: "";
+      display: block;
+      padding-top: 50%;
+      padding-top: calc(240 / 560 * 100%);
+    }
+    .error-page svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
 
-			/* No Selection | 無法反選 */
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-				-khtml-user-select: none; /* Konqueror HTML */
-				-moz-user-select: none; /* Firefox */
-				-ms-user-select: none; /* Internet Explorer/Edge */
-					user-select: none; /* Non-prefixed version, currently, supported by Chrome and Opera */
-		}
-		.error-page svg text {
-			text-anchor: middle;
-		}
-		.error-page svg .break_line {
-			stroke-width: 0;
-			-webkit-animation: text_breaker 0.5s 3s forwards;
-					animation: text_breaker 0.5s 3s forwards;
-		}
-		.error-page svg .title-num {
-			font-size: 10rem;
-			font-weight: bold;
-			fill: #d80d18;
-		}
+      /* No Selection | 無法反選 */
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently, supported by Chrome and Opera */
+    }
+    .error-page svg text {
+      text-anchor: middle;
+    }
+    .error-page svg .break_line {
+      stroke-width: 0;
+      -webkit-animation: text_breaker 0.5s 3s forwards;
+          animation: text_breaker 0.5s 3s forwards;
+    }
+    .error-page svg .title-num {
+      font-size: 10rem;
+      font-weight: bold;
+      fill: #d80d18;
+    }
 
-		/* 標題文字：PAGE NOT FOUND */
-		.error-page .sub-title {
-			font-weight: bold;
-		}
-		@media print, screen and (min-width: 40em) {
-			.error-page {
-				padding-top: 6.25rem;
-			}
-		}
-		.ie .error-page {
-			height: 100vh;
-		}
-		.ie .error-page .title path {
-			stroke-width: 14;
-		}
-		@-webkit-keyframes text_breaker {
-			to {
-				stroke-width: 14;
-			}
-		}
+    /* 標題文字：PAGE NOT FOUND */
+    .error-page .sub-title {
+      font-weight: bold;
+    }
+    @media print, screen and (min-width: 40em) {
+      .error-page {
+        padding-top: 6.25rem;
+      }
+    }
+    .ie .error-page {
+      height: 100vh;
+    }
+    .ie .error-page .title path {
+      stroke-width: 14;
+    }
+    @-webkit-keyframes text_breaker {
+      to {
+        stroke-width: 14;
+      }
+    }
 
-		@keyframes text_breaker {
-			to {
-				stroke-width: 14;
-			}
-		}
-	
+    @keyframes text_breaker {
+      to {
+        stroke-width: 14;
+      }
+    }
+  
 block script
-	//- script(src="js/index.min.js" defer)
+  //- script(src="js/index.min.js" defer)
 
 //- -------------------------------------------
 //- [START] Mixin區塊
@@ -124,23 +124,23 @@ block script
 //- mixin使用標題
 //- +conceptItem(標題, 圖)
 //- mixin conceptItem(title, img)
-//- [END] Mixin區塊	
+//- [END] Mixin區塊  
 //- -------------------------------------------
 
 block content
-	section.error-page
-		.text-box
-			h1.title(aria-label='404')
-				span
-					svg(xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 204')
-						title OOPS!
-						defs
-							mask#mask(x='0' y='0' width='100%' height='100%')
-								rect(x='0' y='0' width='100%' height='100%' fill='#fff')
-								path.break_line(fill='none' stroke='#000' stroke-width='14' stroke-miterlimit='10' transform='translate(-338 -20)' d='M635.902,133.617L613.554,110.3 l-22.219,23.442l-22.35-23.319l-22.218,23.443l-22.353-23.318l-22.218,23.441l-22.351-23.32l-22.22,23.444l-22.112-23.543 l-22.22,23.442l-22.348-23.319l-22.219,23.442l-22.351-23.318l-22.22,23.441l-22.348-23.318l-22.222,23.443l-21.724-23.543 l-22.218,23.442L213.3,110.964l-22.22,23.441l-22.35-23.316l-22.219,23.44l-22.35-23.319l-22.221,23.444L79.83,111.111 l-22.22,23.442l-22.35-23.32l-22.22,23.445l-22.348-23.319l-22.219,23.442l-22.351-23.321l-22.22,23.446')
-						//- text.title-num(mask='url(#mask)' x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" area-hidden="true") OOPS!
-						text.title-num(mask='url(#mask)' x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" aria-hidden="true") OO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						text.title-num(x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" aria-hidden="true") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS!
-			h2.sub-title 找不到頁面
-			p.desc 可能網址錯誤或頁面發生問題，無法找到！
-			a.btn(href='/') 回到首頁
+  section.error-page
+    .text-box
+      h1.title(aria-label='404')
+        span
+          svg(xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 204')
+            title OOPS!
+            defs
+              mask#mask(x='0' y='0' width='100%' height='100%')
+                rect(x='0' y='0' width='100%' height='100%' fill='#fff')
+                path.break_line(fill='none' stroke='#000' stroke-width='14' stroke-miterlimit='10' transform='translate(-338 -20)' d='M635.902,133.617L613.554,110.3 l-22.219,23.442l-22.35-23.319l-22.218,23.443l-22.353-23.318l-22.218,23.441l-22.351-23.32l-22.22,23.444l-22.112-23.543 l-22.22,23.442l-22.348-23.319l-22.219,23.442l-22.351-23.318l-22.22,23.441l-22.348-23.318l-22.222,23.443l-21.724-23.543 l-22.218,23.442L213.3,110.964l-22.22,23.441l-22.35-23.316l-22.219,23.44l-22.35-23.319l-22.221,23.444L79.83,111.111 l-22.22,23.442l-22.35-23.32l-22.22,23.445l-22.348-23.319l-22.219,23.442l-22.351-23.321l-22.22,23.446')
+            //- text.title-num(mask='url(#mask)' x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" area-hidden="true") OOPS!
+            text.title-num(mask='url(#mask)' x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" aria-hidden="true") OO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            text.title-num(x='50%' y='0' dy='1em' font-size='10rem' font-family="'Arial'" aria-hidden="true") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS!
+      h2.sub-title 找不到頁面
+      p.desc 可能網址錯誤或頁面發生問題，無法找到！
+      a.btn(href='/') 回到首頁

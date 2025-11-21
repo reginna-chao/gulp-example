@@ -114,26 +114,26 @@ if (!('remove' in Element.prototype)) {
 
   /* ----------------------------------- [START] Loader 移除 */
   // var loaderRemove = function () {
-  // 	var loader = document.querySelector('#loader');
-  // 	window.loader = loader; // 加到 window 上
+  // var loader = document.querySelector('#loader');
+  // window.loader = loader; // 加到 window 上
 
-  // 	pageLoaded();
+  // pageLoaded();
   // };
   // on(window, 'load', loaderRemove);
 
   // /* 頁面可呼叫的 function -------- */
   // /* 開啟 Loading */
   // window.pageLoading = function() {
-  // 	loader.classList.remove('loaded');
-  // 	document.body.appendChild(loader);
+  // loader.classList.remove('loaded');
+  // document.body.appendChild(loader);
   // }
 
   // /* 關閉 Loading */
   // window.pageUnLoading = function() {
-  // 	loader.classList.add('loaded');
-  // 	setTimeout(function () {
-  // 		loader.remove();
-  // 	}, 2000);
+  // loader.classList.add('loaded');
+  // setTimeout(function () {
+  // loader.remove();
+  // }, 2000);
   // }
   /* ----------------------------------- [END] Loader 移除 */
 

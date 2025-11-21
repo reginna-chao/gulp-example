@@ -3,3 +3,4 @@ node_modules
 gulpfile*.js
 src/js/vendor
 src/js/foundation
+src/sass/**/*.js
