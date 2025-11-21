@@ -11,9 +11,14 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # 所有程式碼檔案使用 2 空格縮排
-[*.{js,jsx,ts,tsx,scss,sass,css,pug,html,json,yml,yaml}]
+[*.{js,jsx,ts,tsx,scss,sass,css,html,json,yml,yaml}]
 indent_style = space
 indent_size = 2
+
+# Pug 檔案使用 4 空格縮排
+[*.pug]
+indent_style = space
+indent_size = 4
 
 # Markdown 保留尾隨空格（用於換行）
 [*.md]

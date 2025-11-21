@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+dist/
+
+# Templates (contain template syntax)
+src/sass/vendor/font/templates/_icons.scss
+src/sass/vendor/font/templates/*.html
+
+# Minified files
+**/jquery-*.*.*.min.js
+
+# Vendor
+src/js/vendor/*

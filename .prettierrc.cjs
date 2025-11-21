@@ -11,7 +11,6 @@ module.exports = {
 
   // 檔案結尾設定
   endOfLine: 'auto', // 自動處理換行符號
-  insertFinalNewline: true, // 檔案最後留一空行（需要 EditorConfig 或編輯器支援）
 
   // 覆寫特定檔案類型的設定
   overrides: [
