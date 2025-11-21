@@ -1,50 +1,77 @@
 /*
- * Gulp 版本為 4+
+ * Gulp 版本為 5+ (ESM)
  */
 
 // init plugin
-const { src, dest, watch, series, parallel } = require('gulp');
-const browserSync = require('browser-sync').create(); // 建立同步虛擬伺服器
+import { src, dest, watch, series, parallel } from 'gulp';
+import { create as browserSyncCreate } from 'browser-sync';
+const browserSync = browserSyncCreate(); // 建立同步虛擬伺服器
 
 // Tool
-const fs = require('fs');
-const del = require('del'); // 清除檔案
-const through = require('through2'); // 處理通過後的檔案
-const gulpif = require('gulp-if'); // 就是 if ಠ_ಠ
-const notify = require('gulp-notify'); // 通知訊息
-const debug = require('gulp-debug'); // debug 監控處理檔案
-const replace = require('gulp-replace'); // 取代文字
-const rename = require('gulp-rename'); // 檔案重新命名
-const gulpIgnore = require('gulp-ignore'); // [例外處理] 無視指定檔案
-const plumber = require('gulp-plumber'); // [例外處理] gulp發生編譯錯誤後仍然可以繼續執行，不會強迫中斷
-const cached = require('gulp-cached'); // [快取機制] 只傳遞修改過的文件
-const sourcemaps = require('gulp-sourcemaps'); // [檔案追蹤] 來源編譯
+import fs from 'fs';
+import { deleteAsync } from 'del'; // 清除檔案
+import through from 'through2'; // 處理通過後的檔案
+import gulpif from 'gulp-if'; // 就是 if ಠ_ಠ
+import notify from 'gulp-notify'; // 通知訊息
+import debug from 'gulp-debug'; // debug 監控處理檔案
+import replace from 'gulp-replace'; // 取代文字
+import rename from 'gulp-rename'; // 檔案重新命名
+import gulpIgnore from 'gulp-ignore'; // [例外處理] 無視指定檔案
+import plumber from 'gulp-plumber'; // [例外處理] gulp發生編譯錯誤後仍然可以繼續執行，不會強迫中斷
+import cached from 'gulp-cached'; // [快取機制] 只傳遞修改過的文件
+import sourcemaps from 'gulp-sourcemaps'; // [檔案追蹤] 來源編譯
+
+// [Helper] Filter non-existent paths
+function filterExistPaths(paths) {
+  const pathsArr = Array.isArray(paths) ? paths : [paths];
+  const filteredPaths = pathsArr.filter((p) => {
+    if (p.startsWith('!')) return true; // Always keep exclusions
+
+    let checkPath = p;
+    const wildcardIndex = checkPath.indexOf('*');
+    if (wildcardIndex !== -1) {
+      checkPath = checkPath.substring(0, wildcardIndex);
+    }
+
+    // If empty, it implies current directory which exists
+    if (!checkPath) return true;
+
+    return fs.existsSync(checkPath);
+  });
+
+  // If all paths are filtered out, or only negative globs remain, return a non-matching glob
+  const hasPositive = filteredPaths.some(p => !p.startsWith('!'));
+  if (filteredPaths.length === 0 || !hasPositive) {
+    return ['non-existent-path-to-prevent-error'];
+  }
+  return filteredPaths;
+}
 
 // css
-const sass = require('gulp-sass')(require('sass')); // [css] Sass 編譯 (使用 dart-sass)
-const autoprefixer = require('gulp-autoprefixer'); // [css] CSS自動前綴
-const cleancss = require('gulp-clean-css'); // [css] CSS壓縮
+
+import * as dartSass from 'sass';
+import gulpSass from 'gulp-sass';
+const sass = gulpSass(dartSass); // [css] Sass 編譯 (使用 dart-sass)
+
+import autoprefixer from 'gulp-autoprefixer'; // [css] CSS自動前綴
+import cleancss from 'gulp-clean-css'; // [css] CSS壓縮
 
 // JS
-const uglify = require('gulp-uglify'); // [JS] 壓縮JS
-const { rollup: rollupAPI } = require('rollup'); // [JS] Rollup 原生 API
-const { babel } = require('@rollup/plugin-babel'); // [JS] Babel plugin
-const { nodeResolve } = require('@rollup/plugin-node-resolve'); // [JS] Node resolve
-const commonjs = require('@rollup/plugin-commonjs'); // [JS] CommonJS plugin
+import uglify from 'gulp-uglify'; // [JS] 壓縮JS
+import { rollup as rollupAPI } from 'rollup'; // [JS] Rollup 原生 API
+import { babel } from '@rollup/plugin-babel'; // [JS] Babel plugin
+import { nodeResolve } from '@rollup/plugin-node-resolve'; // [JS] Node resolve
+import commonjs from '@rollup/plugin-commonjs'; // [JS] CommonJS plugin
 
-// Image(配合 gulp-imagemin 8.0.0 的寫法，延後再入套件)
-// const imagemin = import("gulp-imagemin"); // [IMG] Image壓縮
-let imagemin; // [IMG] Image壓縮
-let gifsicle; // [IMG] GIF壓縮
-let jpegRecompress; // [IMG] JPG壓縮
-let pngquant; // [IMG] PNG壓縮
+// Image
+import imagemin, { mozjpeg } from 'gulp-imagemin'; // [IMG] Image壓縮
+import imageminPngquant from 'imagemin-pngquant'; // [IMG] PNG壓縮
 
 // HTML
-const pug = require('gulp-pug'); // [HTML / PUG] 編譯 PUG（PUG模板）
-
+import pug from 'gulp-pug'; // [HTML / PUG] 編譯 PUG（PUG模板）
 // Icon(Icon Font)
-const iconfont = require('gulp-iconfont'); // [ICON FONT] 編譯font檔案
-const consolidate = require('gulp-consolidate'); // [ICON FONT] 編譯Demo html + icon.scss
+import iconfont from 'gulp-iconfont'; // [ICON FONT] 編譯font檔案
+import consolidate from 'gulp-consolidate'; // [ICON FONT] 編譯Demo html + icon.scss
 
 // [font icon] function
 const fontName = 'icon',
@@ -203,13 +230,14 @@ function iconFontCreateEmptyFile(cb) {
 }
 // 確認該資料夾內是否有物件
 function isDirEmpty(path) {
+  if (!fs.existsSync(path)) return true;
   return fs.readdirSync(path).length === 0;
 }
 
 // [font icon] 建立
 function iconFont(done) {
   return (
-    src(['src/images/font_svg/*.svg'], { base: './src/' })
+    src(['src/images/font_svg/*.svg'], { base: './src/', allowEmpty: true })
       // .pipe(cached('iconFont'))
       .pipe(
         iconfont({
@@ -305,7 +333,7 @@ function errorShowHandler(error) {
   errorString = errorString.replace(/\[24m/g, '</span>');
   // [END] 檔案名稱顏色更改
   // [START] JS Babel 會出現的錯誤有命令提示字元的格式
-  errorString = errorString.replace(//g, '');
+  errorString = errorString.replace(/ /g, '');
   errorString = errorString.replace(/\[0m|\[33m|\[36m/g, '');
   errorString = errorString.replace(/\[90m/g, '<span style="color: gray;">');
   errorString = errorString.replace(/\[31m\[1m/g, '<span style="color: red;">');
@@ -326,13 +354,20 @@ function errorShowHandler(error) {
     </div>
     <!-- END: DEVELOP ERROR MESSAGE -->
   `;
-  return src('dist/*.html')
+  if (!fs.existsSync('dist')) {
+    return;
+  }
+  return src('dist/*.html', { allowEmpty: true })
     .pipe(replace('</body>', `${errorHTML}</body>`))
     .pipe(dest('dist'));
 }
 
 // node sass delete commend function
-function errorRemoveHandler() {
+function errorRemoveHandler(done) {
+  if (!fs.existsSync('dist')) {
+    done();
+    return;
+  }
   console.log('Removing error from html files.');
   const errorHTML = `
     <!-- START: DEVELOP ERROR MESSAGE -->
@@ -345,7 +380,7 @@ function errorRemoveHandler() {
     </div>
     <!-- END: DEVELOP ERROR MESSAGE -->
   `;
-  return src('dist/*.html')
+  return src('dist/*.html', { allowEmpty: true })
     .pipe(replace(new RegExp(errorHTML, 's'), ''))
     .pipe(dest('dist'));
 }
@@ -354,7 +389,7 @@ function errorRemoveHandler() {
 let sassReload = false;
 function sassCompile(useCached) {
   return (
-    src(PATHS.sass.src)
+    src(filterExistPaths(PATHS.sass.src), { allowEmpty: true })
       .pipe(
         plumber({
           errorHandler: function (error) {
@@ -394,7 +429,7 @@ function sassCompile(useCached) {
 
 // sass export vendor
 function sassExportVendor() {
-  return src(PATHS.sass.vendor).pipe(cached('sassVendor')).pipe(dest('dist/css/vendor'));
+  return src(filterExistPaths(PATHS.sass.vendor), { allowEmpty: true }).pipe(cached('sassVendor')).pipe(dest('dist/css/vendor'));
 }
 
 function sassReloadHandler() {
@@ -404,17 +439,9 @@ function sassReloadHandler() {
 
 // image compile
 
-// 配合 gulp-imagemin 8.0.0 的寫法，延後再入套件
-const imagePluginStartup = async () => {
-  imagemin = (await import('gulp-imagemin')).default;
-  gifsicle = (await import('imagemin-gifsicle')).default;
-  jpegRecompress = (await import('imagemin-jpeg-recompress')).default;
-  pngquant = (await import('imagemin-pngquant')).default;
-};
-
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 function image() {
-  return src(PATHS.images.src)
+  return src(filterExistPaths(PATHS.images.src), { allowEmpty: true })
     .pipe(plumber())
     .pipe(cached('image'))
     .pipe(debug({ title: 'Debug for compile file:' }))
@@ -423,26 +450,17 @@ function image() {
       gulpif(
         '!**/*--uc.*',
         imagemin([
-          gifsicle({ interlaced: true }),
-
           // [jpg] quality setting
-          jpegRecompress({
-            quality: 'veryhigh',
+          mozjpeg({
+            quality: 75,
             progressive: true,
-            max: 75 /* 符合google speed 範疇 */,
-            min: 60,
           }),
 
           // [png] quality setting
-          // Type: Array<min: number, max: number>
-          // 原設定數字：[0.8, 0.9]
-          pngquant({ quality: [0.8, 0.9] }),
-
-          // [svg] quality setting
-          // svg壓縮怕會壓縮到不該壓縮的程式碼，導致動畫無法製作
-          // 目前需自行壓縮整理處理svg檔案
-          // SVG線上壓縮：https://jakearchibald.github.io/svgomg/
-          // svgo({plugins: [{removeViewBox: false}]})
+          imageminPngquant({
+            quality: [0.8, 0.9],
+            speed: 1,
+          }),
         ])
       )
     )
@@ -458,7 +476,7 @@ function image() {
 
 // ICO(Favicon)※位於第一層的ico
 function imageIco() {
-  return src(PATHS.images.ico)
+  return src(filterExistPaths(PATHS.images.ico), { allowEmpty: true })
     .pipe(cached('imageIco'))
     .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
@@ -467,7 +485,7 @@ function imageIco() {
 
 // JS compile
 function jsFile() {
-  return src(PATHS.js.src)
+  return src(filterExistPaths(PATHS.js.src), { allowEmpty: true })
     .pipe(
       plumber({
         errorHandler: function (error) {
@@ -495,7 +513,7 @@ function jsFile() {
 
 // JS vendor compile
 function jsVendor() {
-  return src(PATHS.js.vendor)
+  return src(filterExistPaths(PATHS.js.vendor), { allowEmpty: true })
     .pipe(
       plumber({
         errorHandler: function (error) {
@@ -518,8 +536,9 @@ function jsVendor() {
     );
 }
 // JS Vendor Min compile
+// JS Vendor Min compile
 function jsVendorMin() {
-  return src(PATHS.js.vendorMin)
+  return src(filterExistPaths(PATHS.js.vendorMin), { allowEmpty: true })
     .pipe(plumber())
     .pipe(cached('jsVendorMin'))
     .pipe(debug({ title: 'Debug for compile file:' }))
@@ -535,7 +554,7 @@ function jsVendorMin() {
 // JSON File
 function json() {
   return (
-    src(PATHS.json.src)
+    src(filterExistPaths(PATHS.json.src), { allowEmpty: true })
       .pipe(plumber())
       .pipe(cached('json'))
       .pipe(debug({ title: 'Debug for compile file:' }))
@@ -556,7 +575,7 @@ function json() {
 // Pug
 // 一般非layout（非底線開頭檔案） => 看watch才能看的出來
 function pagePugNormal() {
-  return src(PATHS.pug.src)
+  return src(filterExistPaths(PATHS.pug.src))
     .pipe(
       plumber({
         errorHandler: function (error) {
@@ -585,7 +604,7 @@ function pagePugNormal() {
 // 用於layout（底線開頭檔案）：確認檔案是否有更改
 function pagePugLayoutCheck() {
   var fileList = [];
-  return src(PATHS.pug.layout)
+  return src(filterExistPaths(PATHS.pug.layout), { allowEmpty: true })
     .pipe(
       plumber({
         errorHandler: function (error) {
@@ -618,7 +637,7 @@ function pagePugLayoutCheck() {
 // 用於layout（底線開頭檔案）：生成所有頁面檔案
 // const timestamp = (new Date()).getTime();
 function pagePugLayoutBuild() {
-  return src(PATHS.pug.src)
+  return src(filterExistPaths(PATHS.pug.src))
     .pipe(
       plumber({
         errorHandler: function (error) {
@@ -644,7 +663,7 @@ function pagePugLayoutBuild() {
 }
 
 function pageHtml() {
-  return src(PATHS.html.src)
+  return src(filterExistPaths(PATHS.html.src), { allowEmpty: true })
     .pipe(cached('html'))
     .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
@@ -658,7 +677,7 @@ function pageHtml() {
 
 // Font File
 function fontFile() {
-  return src(PATHS.fonts.src)
+  return src(filterExistPaths(PATHS.fonts.src), { allowEmpty: true })
     .pipe(cached('font'))
     .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist/fonts'))
@@ -672,7 +691,7 @@ function fontFile() {
 
 // Other File(EX. robots.txt)
 function otherFile() {
-  return src(PATHS.other.src, { base: './src/' })
+  return src(filterExistPaths(PATHS.other.src), { base: './src/', allowEmpty: true })
     .pipe(cached('other'))
     .pipe(debug({ title: 'Debug for compile file:' }))
     .pipe(dest('dist'))
@@ -686,7 +705,7 @@ function otherFile() {
 
 // clean file
 function clean() {
-  return del(['dist']);
+  return deleteAsync(['dist']);
 }
 
 // browserSync
@@ -741,20 +760,20 @@ function watchFiles() {
 // define complex tasks
 const jsTask = series(errorRemoveHandler, jsFile, jsVendor, jsVendorMin, json);
 const cssTask = series(errorRemoveHandler, sassExportVendor, sassCompile);
-const imgTask = series(imagePluginStartup, image, imageIco);
+const imgTask = series(image, imageIco); // Removed imagePluginStartup
 const htmlTask = series(pagePugNormal, pageHtml);
 const otherTask = series(fontFile, otherFile);
 const watchTask = parallel(browsersyncInit, watchFiles);
 
 // ===================== Export ========================
 
-const buildUncompressTask = series(
+export const buildUncompressTask = series(
   clean,
   iconFontCreateEmptyFile,
   parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask),
   watchTask
 );
-const buildCompressTask = series(
+export const buildCompressTask = series(
   setProduct,
   clean,
   iconFontCreateEmptyFile,
@@ -763,9 +782,9 @@ const buildCompressTask = series(
 );
 
 // Export tasks
-exports.buildProd = buildCompressTask;
-exports.buildDev = buildUncompressTask;
+export const buildProd = buildCompressTask;
+export const buildDev = buildUncompressTask;
 
 // 有需要自行更換 default 值
 // 需要更換為壓縮版本情況：上傳FTP時僅提供壓縮檔給客戶（以防忘記）
-exports.default = buildUncompressTask;
+export default buildUncompressTask;
