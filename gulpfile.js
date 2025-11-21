@@ -11,7 +11,7 @@ import { PATHS, setProduct } from './gulp/config.js';
 import { browsersyncInit, browsersyncReload } from './gulp/server.js';
 import { sassCompile, sassExportVendor } from './gulp/tasks/css.js';
 import { jsFile, jsVendor, jsStatic, jsVendorMin } from './gulp/tasks/js.js';
-import { image, imageIco } from './gulp/tasks/images.js';
+import { image, imageIco, imageCopy, imageCopyIco } from './gulp/tasks/images.js';
 import { pagePugNormal, pagePugLayoutCheck, pageHtml } from './gulp/tasks/html.js';
 import { json, fontFile, otherFile } from './gulp/tasks/other.js';
 import { iconFontCreateEmptyFile, iconFont } from './gulp/tasks/iconfont.js';
@@ -40,23 +40,45 @@ function watchFiles() {
   watch(PATHS.html.src, series(pageHtml, browsersyncReload));
 }
 
+// 背景執行圖片壓縮（不阻塞啟動）
+function imageTaskBackground(done) {
+  done(); // 立即返回，不阻塞主流程
+
+  // 使用 setImmediate 讓圖片壓縮在背景執行
+  setImmediate(() => {
+    console.log('🖼️ Starting compress images...');
+    const compressTask = series(image, imageIco);
+    compressTask((err) => {
+      if (err) {
+        console.error('❌ image compress fail:', err);
+      } else {
+        console.log('✅ image compress success!');
+      }
+    });
+  });
+}
+
+
 // define complex tasks
 export const jsTask = series(errorRemoveHandler, jsFile, jsVendor, jsVendorMin, jsStatic, json);
 export const cssTask = series(errorRemoveHandler, sassExportVendor, sassCompile);
 export const imgTask = series(image, imageIco);
+export const imgCopyTask = series(imageCopy, imageCopyIco); // 快速複製圖片
 export const htmlTask = series(pagePugNormal, pageHtml);
 export const otherTask = series(fontFile, otherFile);
 export const watchTask = parallel(browsersyncInit, watchFiles);
 
 // ===================== Export ========================
 
+// 開發模式：快速啟動，先複製圖片，壓縮在背景執行
 export const buildUncompressTask = series(
   clean,
   iconFontCreateEmptyFile,
-  parallel(iconFont, imgTask, jsTask, cssTask, htmlTask, otherTask),
-  watchTask
+  parallel(iconFont, imgCopyTask, jsTask, cssTask, htmlTask, otherTask), // 使用 imgCopyTask 快速複製
+  parallel(watchTask, imageTaskBackground) // watchTask 和背景壓縮同時執行
 );
 
+// 生產模式：完整編譯（包含圖片壓縮）
 export const buildCompressTask = series(
   setProduct,
   clean,

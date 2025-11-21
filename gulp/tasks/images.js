@@ -11,8 +11,31 @@ import { filterExistPaths } from '../utils.js';
 import { PATHS } from '../config.js';
 import { browserSync } from '../server.js';
 
-// image compile
+// 快速複製圖片（不壓縮，用於開發模式快速啟動）
+export function imageCopy() {
+  return src(filterExistPaths(PATHS.images.src), { allowEmpty: true, encoding: false })
+    .pipe(plumber())
+    .pipe(debug({ title: 'Debug for compile file:' }))
+    .pipe(gulpIgnore.exclude('**--nocopy.*'))
+    .pipe(dest('dist/images'))
+    .pipe(browserSync.stream())
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'Images copied!',
+      })
+    );
+}
 
+// 快速複製 ICO
+export function imageCopyIco() {
+  return src(filterExistPaths(PATHS.images.ico), { allowEmpty: true })
+    .pipe(debug({ title: 'Debug for compile file:' }))
+    .pipe(dest('dist'))
+    .pipe(browserSync.stream());
+}
+
+// image compile (with compression)
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 export function image() {
   return src(filterExistPaths(PATHS.images.src), { allowEmpty: true, encoding: false })
