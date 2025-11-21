@@ -64,8 +64,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'; // [JS] Node resolve
 import commonjs from '@rollup/plugin-commonjs'; // [JS] CommonJS plugin
 
 // Image
-import imagemin, { mozjpeg } from 'gulp-imagemin'; // [IMG] Image壓縮
-import imageminPngquant from 'imagemin-pngquant'; // [IMG] PNG壓縮
+import imagemin, { mozjpeg, optipng } from 'gulp-imagemin'; // [IMG] Image壓縮
 
 // HTML
 import pug from 'gulp-pug'; // [HTML / PUG] 編譯 PUG（PUG模板）
@@ -441,7 +440,7 @@ function sassReloadHandler() {
 
 // 如果命名結尾有"--uc"（例如：banner--uc.png, bg--uc.jpg），不會壓縮檔案，也不會重新命名
 function image() {
-  return src(filterExistPaths(PATHS.images.src), { allowEmpty: true })
+  return src(filterExistPaths(PATHS.images.src), { allowEmpty: true, encoding: false })
     .pipe(plumber())
     .pipe(cached('image'))
     .pipe(debug({ title: 'Debug for compile file:' }))
@@ -457,10 +456,7 @@ function image() {
           }),
 
           // [png] quality setting
-          imageminPngquant({
-            quality: [0.8, 0.9],
-            speed: 1,
-          }),
+          optipng({ optimizationLevel: 7 }),
         ])
       )
     )
