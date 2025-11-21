@@ -1,8 +1,25 @@
 //- ---------------------------------------- [START] 生成顯示幾乘幾的灰色圖
 //- 使用方式
-  img(src=imgRender(寬, 高))
--
-  function imgRender(width, height, color) {
-    return `https://via.placeholder.com/${width}x${height}/${color||'ccc'}`
-  }
+  +imgRender(300, 200)
+  +imgRender(400, 300, '999')
+  +imgRender(500, 400, '333', 'fff')
+
+mixin imgRender(width, height, bgColor, textColor)
+  -
+    // 預設值
+    const bg = bgColor || 'cccccc';
+    const text = textColor || '666666';
+    const displayText = `${width} × ${height}`;
+    
+    // 計算字體大小（根據圖片尺寸自動調整）
+    const fontSize = Math.min(width, height) * 0.15;
+    
+    // 生成 SVG
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="${width}" height="${height}" fill="#${bg}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="${fontSize}" fill="#${text}">${displayText}</text></svg>`;
+    
+    // 轉換為 Data URI
+    const dataUri = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  
+  img(src=dataUri alt=`Placeholder ${width}x${height}`)
+
 //- ---------------------------------------- [END] 生成顯示幾乘幾的灰色圖
