@@ -1,11 +1,26 @@
-# 範本（專案名稱） - 前端開發 - Gulp
+# Gulp 5 前端開發範本專案
 
-前端開發 無框架版本
+> **這是一個範本專案**，用於快速啟動新的前端開發專案。使用 Gulp 5 作為建置工具，支援 Pug、SCSS、ES6+ JavaScript 等前端開發技術。
+
+## 🚀 如何使用此範本
+
+1. 複製此專案作為新專案的起點
+2. 修改專案名稱與相關資訊（見下方「專案資訊」區塊）
+3. 執行 `npm install` 安裝相依套件
+4. 執行 `gulp` 啟動開發環境
+5. 開始開發您的專案！
+
+---
+
+## 📋 專案資訊
+
+**專案名稱**：（請在此填入實際專案名稱）
 
 ### 日期紀錄
 
 ```
-2021/XX/XX by Reginna - 工作內容
+20XX/XX/XX by Reginna - 工作內容
+（請記錄專案重要的開發日期與內容）
 ```
 
 ### 測試站網址
@@ -23,33 +38,25 @@
 ##### 架構資訊
 
 1. 使用 PUG 生成（HTML 架構）：PUG
-1. 可使用自製 iconFont，詳細運用見 gulpfile.js
+1. 可使用自製 iconFont，詳細運用見 gulp/tasks/iconfont.js
    - 參考 iconfont 生成後的 html，請在網址列後加入`/fonts/icons/`）[範例（需啟動 gulp）](http://localhost:3000/fonts/icons/)
-1. 使用 ESLint，統一 JS 格式寫法；使用 Stylelint 與 sass-lint，統一 SCSS 與 SASS 格式寫法
+1. 使用 ESLint，統一 JS 格式寫法；使用 Stylelint，統一 SCSS 格式寫法（不建議用 SASS）
    - ESLint - VSCode 要安裝相關套件 [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
    - Stylelint - VSCode 要安裝相關套件 [stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint)，`.scss` 格式檢測
-   - Sass Lint - VSCode 要安裝相關套件 [Sass Lint](https://marketplace.visualstudio.com/items?itemName=glen-84.sass-lint)，`.sass` 格式檢測
-1. Foundation JS 嘗試使用載入 Component 形式，見 \_layout.pug 下方 JS 區塊
-   使用時，需依照此步驟：
-   - 開啟相關的 CSS (見 `src/sass/foundation/_foundation.scss` 設定）
-   - 開啟相關的 JS (見 `src/_layout.pug` 設定）
-     ※須查詢所使用的套件含有什麼基本的檔案（檔案為 `_foundation.util` 開頭者）
-     例如：[Tooltip，查詢 Javascript Reference](https://get.foundation/sites/docs/tooltip.html#javascript-reference)，有使用 util.box.js、util.mediaQuery.js、util.triggers.js
 1. JS 啟動：因為一般套件有用 `async` 延後載入，所以啟動要在 `window.onload` 以後，如：
 
 ```
-$(window).on('load', function() {
-$(document).foundation();
+window.addEventListener('load', function() {
+  // Do something...
 })
 ```
 
 ##### 版本資訊
 
 ```diff
-// Node version v10.15.1
-// NPM version V6.4.1
-// Gulp version v2.2.0
-// Gulp CLI version v4.0.2
+// Node version v22+ (22.21.1)
+// NPM version V10.9.4
+// Gulp version v5.0.1
 ```
 
 ##### 安裝與啟動
@@ -61,9 +68,9 @@ $(document).foundation();
 
 ### 使用外掛列表
 
-- [JQuery 3.6.0](https://code.jquery.com/jquery/) - jQuery 版本
+- [JQuery 3.7.1](https://code.jquery.com/jquery/) - jQuery 版本
 - [easeScroll 改良版](https://github.com/ivmello/easeScroll) - 平滑滾動改良版（修正 Chrome passtive: true 錯誤、改為純 JavaScript） | by ivmello
-- [Vanilla LazyLoad 17.8.1](https://github.com/verlok/vanilla-lazyload) - 延遲載入圖片 | by Verlok
+- [Vanilla LazyLoad 19.1](https://github.com/verlok/vanilla-lazyload) - 延遲載入圖片 | by Verlok
 
 > 請將有使用的外掛套件撰寫於此
 
@@ -73,7 +80,7 @@ $(document).foundation();
 
    ```
        空格：4
-       使用 Tab 進行排版
+       使用 Space 進行排版
    ```
 
    ※使用 VSCode 的人建議將下列項目設定快捷鍵，開啟「鍵盤快速鍵」(Windows: Ctrl+K Ctrl+S | Mac 自行查閱)：
@@ -89,43 +96,29 @@ $(document).foundation();
 
 - 使用[BEM 命名](http://getbem.com/)方式，或是將選取器的層級數減少(EX: .el > ul > li > a => .el a)
 - 檔案大致功能：
-  - 頁面分法與規則見 `src/sass/style.sass`
-  - 多頁共用樣式放置於 `src/sass/layout/_common.sass`
-  - Layout 樣式放置於 `src/sass/layout/_layout.sass`
+  - 頁面分法與規則見 `src/sass/all.scss`
+  - 多頁共用樣式放置於 `src/sass/layout/_common.scss`
+  - Layout 樣式放置於 `src/sass/layout/_layout.scss`
   - Layout 相關其餘項目放置於 `src/sass/layout/` 資料夾內
   - 外掛套件樣式放置於 `src/sass/vendor/` 資料夾內
-- 主要網頁 breakpoint (或參考 Foundation 文件)：尺寸請看 `sass/foundation/setting/setting.scss`
-- 整體項目設定包含：h1-h6 字體、字級、顏色、breakpoint、主要顯示寬度範圍...等基礎設定，整體設置顏色與字體大小放在 `sass/foundation/setting/setting.scss` 、 `src/sass/layout/_common.sass`
-- 如果想要增減 foundation 的項目開啟，請使用 `sass/foundation/foundation.scss`
 - 各單元 SCSS 通用元素置於檔案頂部
-- [切版規範](https://drive.google.com/open?id=0B-95R-GtK6XNM1dVZlVlS2xnSEVTS0Z5YnRJZllwa1d1LUJv) - 其他整體事項請參考
 
 ##### -------------------- JS --------------------
 
 - JS 資料夾外層請放置各個頁面檔案配合 JS
-- `src/js/vendor/` 裡頭請放置專案用的外掛或是套件檔案
-  （沒壓縮或有壓縮檔皆可放置，Gulp 編譯會自動判斷並產出 `.min` 檔案，建議 js 頁面載入時請統一載入壓縮 `.min` 檔）
-- JS 檔案已兼容 ES6 以及 ES5 可在檔案內撰寫，Gulp 編譯後會自動產生 ES5 語法
+- `src/js/static/`: 直接複製到 dist ，不會經過 Gulp 編譯
+- `src/js/vendor/` 裡頭請放置專案用的外掛或是套件檔案，目前只會編譯要使用的項目，需要使用請在 lib-main import
 
 ---
 
 ### 相關文件
 
-##### 設計部提供
-
-- 內部切版進度：[文件名稱](文件網址，此為範例網站，請首次切整體Layout的前端工程師，更換正確連結)
-  以上進度請開放權限給 **「老大、莉莉安、Evonne、設計主管、PM 主管、該專案 PM」**
-
-> 設計部提供寫於此
-
-##### PM/UX 提供
-
 - [專案資料夾](專案資料夾網址)
-- [專案前端規格\_和泰產險官網網站](前端規格網址)
+- [專案進度管理表](前端規格網址)
 - [WF](WF網址)
 - [SIT](SIT網址)
 
-> PM/UX 提供寫於此
+> 相關文件寫於此
 
 ##### 其他
 

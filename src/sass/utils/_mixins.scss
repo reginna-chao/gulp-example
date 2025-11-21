@@ -16,6 +16,7 @@
     align-items: $align;
   }
 }
+
 // ---------------------------------------- [END] Flex
 
 // ---------------------------------------- [START] BEM Mixin
@@ -29,6 +30,7 @@
     @content;
   }
 }
+
 // ---------------------------------------- [END] BEM Mixin
 
 // ---------------------------------------- [START] before-img-size
@@ -41,46 +43,32 @@
 
   padding-top: math.percentage($height / $width);
 }
+
 // ---------------------------------------- [END] before-img-size
 
 // ---------------------------------------- [START] Media Query 相關
-// Hover Media Query (使用 Foundation Mixin)
-$project-has-ie: false; // 專案是否有含 IE => 有 IE 就不能使用 @media hover
-
+// Hover Media Query
 @mixin breakpoint-hover($hover-enable: true) {
-  // 有 IE 專案
-  @if $project-has-ie {
-    @if $hover-enable {
-      @media screen and (min-width: 75rem) {
-        @content;
-      }
-    } @else {
-      @media screen and (max-width: 74.9375rem) {
-        @content;
-      }
+  @if $hover-enable {
+    @media (hover: hover) {
+      @content;
     }
   }
 
-  // 無 IE 專案
   @else {
-    @if $hover-enable {
-      @media (hover: hover) {
-        @content;
-      }
-    } @else {
-      @media (hover: none) {
-        @content;
-      }
+    @media (hover: none) {
+      @content;
     }
   }
 }
 
-// Breakpoint Between (使用 Foundation Mixin)
+// Breakpoint Between
 @mixin breakpoint-between($start, $end) {
   @media screen and (min-width: #{$start}px) and (max-width: #{$end}px) {
     @content;
   }
 }
+
 // ---------------------------------------- [END] Media Query 相關
 
 // ---------------------------------------- [START] Custom Scroll Bar
@@ -90,6 +78,7 @@ $scrollbar-width: 6px; // 寬度(瀏覽器預設為15px)
 $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
 
 @mixin custom-scroll-bar($thumb-color: $scrollbar-thumb-color, $track-color: $scrollbar-track-color) {
+
   // For Chrome, Opera, Safari, Android, iOS
   &::-webkit-scrollbar {
     width: $scrollbar-width;
@@ -120,6 +109,7 @@ $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
     scrollbar-width: thin;
   }
 }
+
 // ---------------------------------------- [END] Custom Scroll Bar
 
 // ---------------------------------------- [START] Animation Set
@@ -156,4 +146,5 @@ $scrollbar-border-radius: 6px; // 圓角，Firefox不支援
     }
   }
 }
+
 // ---------------------------------------- [END] Animation Set
