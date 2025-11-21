@@ -65,11 +65,17 @@ export function iconFont(done) {
         })
       )
       .on('glyphs', function (glyphs, options) {
+        // 處理 glyphs，移除 .svg 擴展名
+        const processedGlyphs = glyphs.map((glyph) => ({
+          ...glyph,
+          name: glyph.name.replace(/\.svg$/, ''), // 移除 .svg 擴展名
+        }));
+
         // 生成 ICON SCSS
         src('src/sass/vendor/font/templates/_icons.scss')
           .pipe(
             consolidate('underscore', {
-              glyphs: glyphs,
+              glyphs: processedGlyphs,
               fontName: options.fontName, // 使用的font-family
               fontPath: '../fonts/icons/', // 生成的SCSS讀取font檔案讀取位置
               cssClass: fontClassName, // 使用的class名稱: <i class="{{fontClassName}} {{fontClassName}}-{{svg file name}}"></i>
@@ -87,7 +93,7 @@ export function iconFont(done) {
         src('src/sass/vendor/font/templates/_icons.scss')
           .pipe(
             consolidate('underscore', {
-              glyphs: glyphs,
+              glyphs: processedGlyphs,
               fontName: options.fontName,
               fontPath: '',
               cssClass: fontClassName,
