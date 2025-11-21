@@ -80,7 +80,7 @@ const runTimestamp = Math.round(Date.now() / 1000);
 // [路徑配置] 統一管理所有檔案路徑
 const PATHS = {
   js: {
-    src: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.*'],
+    src: ['src/js/**/*.js', '!src/js/**/_*.js', '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap,static}/**/*.*'],
     vendor: [
       'src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.js',
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/*.min.js',
@@ -94,6 +94,7 @@ const PATHS = {
       '!src/js/{vendor,lib,plugin,plugins,foundation,bootstrap}/**/_*.min.js',
       'src/js/**/{i18n,l10n}/**/*.js',
     ],
+    static: 'src/js/static/**/*.js',
   },
   sass: {
     src: 'src/sass/**/*.+(scss|sass)',
@@ -547,6 +548,21 @@ function jsVendorMin() {
     );
 }
 
+// JS Static (Direct Copy)
+function jsStatic() {
+  return src(filterExistPaths(PATHS.js.static), { allowEmpty: true })
+    .pipe(plumber())
+    .pipe(cached('jsStatic'))
+    .pipe(debug({ title: 'Debug for compile file:' }))
+    .pipe(dest('dist/js'))
+    .pipe(
+      notify({
+        onLast: true,
+        message: 'JS Static Task Complete!',
+      })
+    );
+}
+
 // JSON File
 function json() {
   return (
@@ -741,6 +757,7 @@ function watchFiles() {
   watch(PATHS.js.src, series(errorRemoveHandler, jsFile, browsersyncReload));
   watch(PATHS.js.vendor, series(errorRemoveHandler, jsVendor, browsersyncReload));
   watch(PATHS.js.vendorMin, series(jsVendorMin, browsersyncReload));
+  watch(PATHS.js.static, series(jsStatic, browsersyncReload));
   watch(PATHS.json.src, series(json, browsersyncReload));
   watch(PATHS.images.src, image);
   watch(PATHS.images.ico, imageIco);
@@ -754,7 +771,7 @@ function watchFiles() {
 }
 
 // define complex tasks
-const jsTask = series(errorRemoveHandler, jsFile, jsVendor, jsVendorMin, json);
+const jsTask = series(errorRemoveHandler, jsFile, jsVendor, jsVendorMin, jsStatic, json);
 const cssTask = series(errorRemoveHandler, sassExportVendor, sassCompile);
 const imgTask = series(image, imageIco); // Removed imagePluginStartup
 const htmlTask = series(pagePugNormal, pageHtml);
