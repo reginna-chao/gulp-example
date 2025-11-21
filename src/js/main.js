@@ -137,37 +137,6 @@ if (!('remove' in Element.prototype)) {
   // }
   /* ----------------------------------- [END] Loader 移除 */
 
-  /* ---------------------------------------- [START] Ease scroll */
-  var buildEaseScroll = function () {
-    if (window.EaseScroll === undefined) return false;
-    const es = new EaseScroll({
-      frameRate: 60,
-      animationTime: 1000,
-      stepSize: 100,
-      pulseAlgorithm: 1,
-      pulseScale: 6,
-      pulseNormalize: 1,
-      accelerationDelta: 20,
-      accelerationMax: 1,
-      keyboardSupport: true,
-      arrowScroll: 30,
-      touchpadSupport: true,
-      fixedBackground: true,
-      // disabledClass: 'modal-open',
-
-      /* Browser Setting Control */
-      browser: {
-        Chrome: true,
-        FireFox: false,
-        Safari: true,
-        IE: true,
-        Edge: true,
-      },
-    });
-  };
-  on(window, 'load', buildEaseScroll);
-  /* ---------------------------------------- [END] Ease scroll */
-
   /* ---------------------------------------- [START] Lazyload */
   /*
    * 使用：https://github.com/verlok/vanilla-lazyload
