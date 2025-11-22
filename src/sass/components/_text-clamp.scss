@@ -1,0 +1,43 @@
+// 文字溢行
+@mixin clamp($line-limit: 1, $line-height: 1.6) {
+  position: relative;
+  display: block;
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 100%;
+  line-height: 1.6;
+  line-height: var(--line-height, $line-height);
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--line-limit, $line-limit);
+}
+
+%clamp {
+  @include clamp;
+}
+
+.clamp {
+
+  &,
+  &-1 {
+    @extend %clamp;
+
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+
+  @function limit-height-get($i, $line-height) {
+    @return calc(1em * #{$line-height} * #{$i});
+  }
+
+  @for $i from 2 through 6 {
+    &-#{$i} {
+      @extend %clamp;
+
+      --line-limit: #{$i};
+
+      max-height: calc(1em * var(--line-height, 1.6) * var(--line-limit, 1));
+    }
+  }
+}
