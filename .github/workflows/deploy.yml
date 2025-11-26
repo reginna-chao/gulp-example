@@ -1,0 +1,43 @@
+name: Deploy dist.zip to FTP
+
+on:
+  push:
+    branches:
+      - main # 觸發的分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if dist.zip exists
+        run: |
+          if [ ! -f dist.zip ]; then
+            echo "dist.zip not found"
+            exit 1
+          fi
+
+      - name: Check FTP credentials
+        run: |
+          if [ -z "${{ secrets.FTP_SERVER }}" ] || [ -z "${{ secrets.FTP_USERNAME }}" ] || [ -z "${{ secrets.FTP_PASSWORD }}" ] || [ -z "${{ secrets.DEPLOY_PATH }}" ]; then
+            echo "Missing FTP credentials"
+            exit 1
+          fi
+
+      - name: Unzip dist.zip
+        run: unzip dist.zip -d dist
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: dist/dist/
+          server-dir: ${{ env.DEPLOY_PATH }}
+
+    env:
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '/public_html/project-name/' }}

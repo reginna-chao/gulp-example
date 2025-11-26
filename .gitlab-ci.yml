@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: ubuntu:latest
+  script:
+    - if [ ! -f dist.zip ]; then echo "dist.zip not found"; exit 1; fi
+    - if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then echo "Missing FTP credentials"; exit 1; fi
+    - DEPLOY_PATH=${DEPLOY_PATH:-/public_html/project-name/}
+    - apt-get update && apt-get install -y unzip
+    - unzip dist.zip -d dist
+    - apt-get install -y lftp
+    - lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e "set ssl:verify-certificate no; mirror -R dist/dist/ $DEPLOY_PATH; bye"
+  only:
+    - main
