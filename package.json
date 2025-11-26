@@ -21,6 +21,7 @@
     "not dead"
   ],
   "dependencies": {
+    "foundation-sites": "^6.9.0",
     "ua-parser-js": "^2.0.6",
     "underscore": "^1.13.6"
   },

@@ -39,6 +39,8 @@ export function sassCompile(useCached) {
         sass({
           outputStyle: 'expanded',
           includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
+          quietDeps: true, // 忽略 node_modules 的警告
+          silenceDeprecations: ['import'], // 忽略 @import 的警告
         })
       )
       // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一
