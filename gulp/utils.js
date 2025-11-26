@@ -112,17 +112,9 @@ export function errorShowHandler(error) {
   // Error Message
   let errorString = '<strong style="color: #f4ff00;">[' + error.plugin + ']</strong>\n';
   errorString += ' ' + errorMessageParam;
-  // [START] 檔案名稱顏色更改
-  errorString = errorString.replace(/\[4m/g, '<span style="color: #00fbff;">');
-  errorString = errorString.replace(/\[24m/g, '</span>');
-  // [END] 檔案名稱顏色更改
-  // [START] JS Babel 會出現的錯誤有命令提示字元的格式
-  errorString = errorString.replace(/ /g, '');
-  errorString = errorString.replace(/\[0m|\[33m|\[36m/g, '');
-  errorString = errorString.replace(/\[90m/g, '<span style="color: gray;">');
-  errorString = errorString.replace(/\[31m\[1m/g, '<span style="color: red;">');
-  errorString = errorString.replace(/\[22m|\[39m/g, '</span>');
-  // [END] JS Babel 會出現的錯誤有命令提示字元的格式
+  // Remove ANSI codes
+  // eslint-disable-next-line no-control-regex
+  errorString = errorString.replace(/\x1b\[[0-9;]*m/g, '');
   var errorMessage =
     '\n============[Error Message]============\n\n' + errorString + '\n\n=======================================\n';
 

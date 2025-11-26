@@ -1,4 +1,5 @@
 import { src, dest } from 'gulp';
+import path from 'path';
 import gulpif from 'gulp-if';
 import debug from 'gulp-debug';
 import rename from 'gulp-rename';
@@ -38,7 +39,9 @@ export function sassCompile(useCached) {
       .pipe(
         sass({
           outputStyle: 'expanded',
-          includePaths: ['node_modules'], // 為了SCSS可以讀取node_module專案
+          // includePaths: [path.resolve('node_modules')], // 為了SCSS可以讀取node_module專案
+          // includePaths: ['node_modules/bootstrap/scss/'], // 為了SCSS可以讀取node_module專案
+          includePaths: ['node_modules/bootstrap/scss/'], // 為了SCSS可以讀取node_module專案
         })
       )
       // .pipe(autoprefixer('last 2 version', 'ie 11', 'ios 8', 'android 4')) // 要符合 IE11，二擇一

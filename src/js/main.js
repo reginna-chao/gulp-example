@@ -1,5 +1,7 @@
 'use strict';
 
+import './vendor/bootstrap';
+
 import { initBrowserDetect } from './modules/browser-detect';
 import { initLoader } from './modules/ui-loader';
 import { initLazyLoad } from './modules/ui-lazyload';
