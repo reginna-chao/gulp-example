@@ -42,8 +42,8 @@ Thumbs.db
 *.exe
 *.war
 
-# Settings
-.claude
+# AI
+.claude/
 
 # 專案客製化
 src/sass/vendor/font/_icons.scss

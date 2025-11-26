@@ -1,0 +1,12 @@
+# 正式站使用
+# 相關規則：https://support.google.com/webmasters/answer/6062596?hl=zh-Hant
+
+# 正式上線更換步驟：
+# Step1. 將內容複製進 robots.txt
+# Step2. 更換 Sitemap 為正式站網址
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.example.com/sitemap.xml
