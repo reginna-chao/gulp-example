@@ -130,3 +130,30 @@ npm run lint:fix  # 自動修復樣式錯誤
 - JS 資料夾外層請放置各個頁面檔案配合 JS
 - `src/js/static/`: 直接複製到 dist ，不會經過 Gulp 編譯
 - `src/js/vendor/` 裡頭請放置專案用的外掛或是套件檔案，目前只會編譯要使用的項目，需要使用請在 lib-main import
+
+---
+
+## 🐳 Docker 快速開始
+
+如果您不想在本機安裝 Node.js 或 Gulp，可以使用 Docker 來執行此專案。
+
+### 前置需求
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+### 啟動方式
+
+1. 確保 Docker Desktop 正在執行。
+2. 在專案根目錄執行以下指令：
+
+   ```bash
+   docker-compose up
+   ```
+
+3. 等待安裝完成並啟動伺服器後，打開瀏覽器訪問 [http://localhost:3000](http://localhost:3000)。
+
+### 注意事項
+
+- 第一次執行時，Docker 會在容器內安裝 `node_modules`，這可能需要幾分鐘的時間。
+- 為了避免本機的 `node_modules` 覆蓋容器內的依賴，我們使用了 Docker volume。您在本機不需要看到 `node_modules` 資料夾。
+- 您在 `src/` 資料夾中的任何修改都會即時反映在瀏覽器中（Hot Reload）。
