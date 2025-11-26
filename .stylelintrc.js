@@ -1,7 +1,8 @@
 module.exports = {
-  extends: ['stylelint-config-standard-scss', 'stylelint-config-prettier'],
-  plugins: ['stylelint-order'],
+  extends: ['stylelint-config-standard', 'stylelint-config-prettier', 'stylelint-config-sass-guidelines'],
+  plugins: ['stylelint-scss', 'stylelint-order'],
   ignoreFiles: [
+    'node_modules/',
     'dist/',
     '**/*.js',
     '**/*.sass',
@@ -10,79 +11,41 @@ module.exports = {
     'src/sass/vendor/**/*.scss',
   ],
   rules: {
-    'max-nesting-depth': null, // 限制層級數量
+    'max-nesting-depth': null,
     'no-empty-source': null,
     'no-descending-specificity': null,
     'order/properties-alphabetical-order': null,
     'property-no-vendor-prefix': null,
     'selector-max-compound-selectors': null,
+    'import-notation': null,
+    'scss/at-import-partial-extension-blacklist': null,
+    'function-no-unknown': null,
     'value-no-vendor-prefix': null,
     indentation: 'tab',
     'selector-pseudo-class-no-unknown': [
-      // 不認識的 Selector
       true,
       {
         ignorePseudoClasses: ['window-inactive'],
       },
     ],
     'selector-no-qualifying-type': [
-      // 禁止用類型選擇器來限定一個選擇器
       true,
       {
-        ignore: [
-          // "attribute",
-          'class',
-          // "id",
-        ],
+        ignore: ['class'],
       },
     ],
     'order/order': [
       [
-        // 指定 mixin 名稱，不影響在文件中的順序(待確認???)
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'breakpoint',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'breakpoint-between',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'breakpoint-hover',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'media-breakpoint-up',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'media-breakpoint-down',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'media-breakpoint-only',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'media-breakpoint-between',
-        },
-        {
-          type: 'at-rule',
-          name: 'include',
-          parameter: 'media-breakpoint-number',
-        },
+        { type: 'at-rule', name: 'include', parameter: 'breakpoint' },
+        { type: 'at-rule', name: 'include', parameter: 'breakpoint-between' },
+        { type: 'at-rule', name: 'include', parameter: 'breakpoint-hover' },
+        { type: 'at-rule', name: 'include', parameter: 'media-breakpoint-up' },
+        { type: 'at-rule', name: 'include', parameter: 'media-breakpoint-down' },
+        { type: 'at-rule', name: 'include', parameter: 'media-breakpoint-only' },
+        { type: 'at-rule', name: 'include', parameter: 'media-breakpoint-between' },
+        { type: 'at-rule', name: 'include', parameter: 'media-breakpoint-number' },
       ],
-      {
-        unspecified: 'ignore',
-      },
+      { unspecified: 'ignore' },
     ],
     'order/properties-order': [
       'counter-reset',
