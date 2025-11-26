@@ -27,14 +27,14 @@
 ### 版本資訊
 
 ```diff
-// Node version v22+ (22.21.1)
+// Node version v18+ (建議使用 18.x LTS 或更高版本)
 // NPM version V10.9.4
 // Gulp version v5.0.1
 ```
 
 ### 前置需求
 
-請確保您的電腦已安裝 [Node.js](https://nodejs.org/) (建議使用 18+ LTS 版本)。
+請確保您的電腦已安裝 [Node.js](https://nodejs.org/) (需要 18.0.0 或更高版本)。
 
 ### 安裝
 

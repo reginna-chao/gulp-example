@@ -4,6 +4,9 @@
   "description": "建立此環境所需套件",
   "type": "module",
   "author": "Reginna Chao",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "gulp",
     "build:dev": "gulp buildDev",
